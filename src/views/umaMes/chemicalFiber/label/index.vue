@@ -11,7 +11,7 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','umaLabelChemicalFiber:add']"
+          v-permission="['admin','chemicalFiberLabel:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -46,11 +46,11 @@
       <el-table-column prop="grossWeight" label="毛重"/>
       <el-table-column prop="shifts" label="班次"/>
       <el-table-column prop="packer" label="包装员"/>
-      <el-table-column v-if="checkPermission(['admin','umaLabelChemicalFiber:edit','umaLabelChemicalFiber:del'])" label="操作" width="150px" align="center">
+      <el-table-column v-if="checkPermission(['admin','chemicalFiberLabel:edit','chemicalFiberLabel:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','umaLabelChemicalFiber:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <el-button v-permission="['admin','chemicalFiberLabel:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
-            v-permission="['admin','umaLabelChemicalFiber:del']"
+            v-permission="['admin','chemicalFiberLabel:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
@@ -78,7 +78,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUmaLabelChemicalFiber } from '@/api/umaLabelChemicalFiber'
+import { del, downloadChemicalFiberLabel } from '@/api/chemicalFiberLabel'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -105,7 +105,7 @@ export default {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.url = 'api/umaLabelChemicalFiber'
+      this.url = 'api/chemicalFiberLabel'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
@@ -154,7 +154,11 @@ export default {
         rkNumber: data.rkNumber,
         shNumber: data.shNumber,
         tkNumber: data.tkNumber,
-        thNumber: data.thNumber
+        thNumber: data.thNumber,
+        rkScanTime: data.rkScanTime,
+        shScanTime: data.shScanTime,
+        tkScanTime: data.tkScanTime,
+        thScanTime: data.thScanTime
       }
       _this.dialog = true
     },
@@ -162,8 +166,8 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadUmaLabelChemicalFiber(this.params).then(result => {
-        downloadFile(result, 'UmaLabelChemicalFiber列表', 'xlsx')
+      downloadChemicalFiberLabel(this.params).then(result => {
+        downloadFile(result, 'ChemicalFiberLabel列表', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

@@ -5,7 +5,7 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','umaConfigClassify:add']"
+          v-permission="['admin','configClassify:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -32,21 +32,21 @@
       <el-table-column prop="name" label="配置分类名称"/>
       <el-table-column prop="alias" label="别名"/>
       <el-table-column
-        v-if="checkPermission(['admin','umaConfigClassify:edit','umaConfigClassify:del'])"
+        v-if="checkPermission(['admin','configClassify:edit','configClassify:del'])"
         label="操作"
         width="150px"
         align="center"
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['admin','umaConfigClassify:edit']"
+            v-permission="['admin','configClassify:edit']"
             size="mini"
             type="primary"
             icon="el-icon-edit"
             @click="edit(scope.row)"
           />
           <el-popover
-            v-permission="['admin','umaConfigClassify:del']"
+            v-permission="['admin','configClassify:del']"
             :ref="scope.row.id"
             placement="top"
             width="180"
@@ -81,7 +81,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUmaConfigClassify } from '@/api/umaConfigClassify'
+import { del, downloadConfigClassify } from '@/api/configClassify'
 import { downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -100,7 +100,7 @@ export default {
   methods: {
     checkPermission,
     beforeInit() {
-      this.url = 'api/umaConfigClassify'
+      this.url = 'api/configClassify'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       return true
@@ -142,8 +142,8 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadUmaConfigClassify(this.params).then(result => {
-        downloadFile(result, 'UmaConfigClassify列表', 'xlsx')
+      downloadConfigClassify(this.params).then(result => {
+        downloadFile(result, 'ConfigClassify列表', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

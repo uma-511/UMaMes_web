@@ -11,7 +11,7 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','umaProductionChemicalFiber:add']"
+          v-permission="['admin','chemicalFiberProduction:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -33,14 +33,11 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="id" label="id"/>
       <el-table-column prop="number" label="订单编号"/>
-      <el-table-column prop="prodId" label="产品id"/>
       <el-table-column prop="prodModel" label="产品型号"/>
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodColor" label="产品颜色"/>
       <el-table-column prop="prodFineness" label="产品纤度"/>
-      <el-table-column prop="customerId" label="客户id"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerContactPhone" label="联系电话"/>
       <el-table-column prop="customerContacts" label="联系人"/>
@@ -59,17 +56,17 @@
       <el-table-column prop="machineNumber" label="机器编号"/>
       <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="status" label="状态"/>
-      <el-table-column prop="createTime" label="创建时间">
+      <el-table-column prop="createTime" label="制单时间">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createUser" label="创建人"/>
-      <el-table-column v-if="checkPermission(['admin','umaProductionChemicalFiber:edit','umaProductionChemicalFiber:del'])" label="操作" width="150px" align="center">
+      <el-table-column prop="createUser" label="制单人"/>
+      <el-table-column v-if="checkPermission(['admin','chemicalFiberProduction:edit','chemicalFiberProduction:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','umaProductionChemicalFiber:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <el-button v-permission="['admin','chemicalFiberProduction:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
-            v-permission="['admin','umaProductionChemicalFiber:del']"
+            v-permission="['admin','chemicalFiberProduction:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
@@ -97,7 +94,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUmaProductionChemicalFiber } from '@/api/umaProductionChemicalFiber'
+import { del, downloadChemicalFiberProduction } from '@/api/chemicalFiberProduction'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -108,21 +105,15 @@ export default {
       delLoading: false,
       queryTypeOptions: [
         { key: 'number', display_name: '订单编号' },
-        { key: 'prodId', display_name: '产品id' },
         { key: 'prodModel', display_name: '产品型号' },
         { key: 'prodName', display_name: '产品名称' },
         { key: 'prodColor', display_name: '产品颜色' },
         { key: 'prodFineness', display_name: '产品纤度' },
-        { key: 'customerId', display_name: '客户id' },
         { key: 'customerName', display_name: '客户名称' },
         { key: 'customerContactPhone', display_name: '联系电话' },
         { key: 'customerContacts', display_name: '联系人' },
         { key: 'customerAddress', display_name: '客户地址' },
-        { key: 'customerCode', display_name: '客户编号' },
-        { key: 'deliveryDate', display_name: '交货日期' },
-        { key: 'machineNumber', display_name: '机器编号' },
-        { key: 'createTime', display_name: '创建时间' },
-        { key: 'createUser', display_name: '创建人' }
+        { key: 'customerCode', display_name: '客户编号' }
       ]
     }
   },
@@ -135,7 +126,7 @@ export default {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.url = 'api/umaProductionChemicalFiber'
+      this.url = 'api/chemicalFiberProduction'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
@@ -201,8 +192,8 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadUmaProductionChemicalFiber(this.params).then(result => {
-        downloadFile(result, 'UmaProductionChemicalFiber列表', 'xlsx')
+      downloadChemicalFiberProduction(this.params).then(result => {
+        downloadFile(result, 'ChemicalFiberProduction列表', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

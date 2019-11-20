@@ -11,7 +11,7 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','umaScanRecord:add']"
+          v-permission="['admin','scanRecord:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -33,7 +33,7 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="scanNumber" label="单号"/>
+      <el-table-column prop="scanNumber" label="扫描单号"/>
       <el-table-column prop="scanUser" label="扫描员"/>
       <el-table-column prop="scanTime" label="扫描时间">
         <template slot-scope="scope">
@@ -41,11 +41,11 @@
         </template>
       </el-table-column>
       <el-table-column prop="type" label="扫描类型"/>
-      <el-table-column v-if="checkPermission(['admin','umaScanRecord:edit','umaScanRecord:del'])" label="操作" width="150px" align="center">
+      <el-table-column v-if="checkPermission(['admin','scanRecord:edit','scanRecord:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','umaScanRecord:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <el-button v-permission="['admin','scanRecord:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
-            v-permission="['admin','umaScanRecord:del']"
+            v-permission="['admin','scanRecord:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
@@ -73,7 +73,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUmaScanRecord } from '@/api/umaScanRecord'
+import { del, downloadScanRecord } from '@/api/scanRecord'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -83,7 +83,7 @@ export default {
     return {
       delLoading: false,
       queryTypeOptions: [
-        { key: 'scanNumber', display_name: '单号' },
+        { key: 'scanNumber', display_name: '扫描单号' },
         { key: 'scanUser', display_name: '扫描员' },
         { key: 'scanTime', display_name: '扫描时间' },
         { key: 'type', display_name: '扫描类型' }
@@ -99,7 +99,7 @@ export default {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.url = 'api/umaScanRecord'
+      this.url = 'api/scanRecord'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
@@ -136,7 +136,6 @@ export default {
       _this.form = {
         id: data.id,
         scanNumber: data.scanNumber,
-        labelId: data.labelId,
         scanUser: data.scanUser,
         scanTime: data.scanTime,
         type: data.type
@@ -147,8 +146,8 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadUmaScanRecord(this.params).then(result => {
-        downloadFile(result, 'UmaScanRecord列表', 'xlsx')
+      downloadScanRecord(this.params).then(result => {
+        downloadFile(result, 'ScanRecord列表', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

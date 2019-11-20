@@ -64,10 +64,10 @@
       <el-form-item label="状态" >
         <el-input v-model="form.status" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="创建时间" >
+      <el-form-item label="制单时间" >
         <el-date-picker v-model="form.createTime" type="datetime" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="创建人" >
+      <el-form-item label="制单人" >
         <el-input v-model="form.createUser" style="width: 370px;"/>
       </el-form-item>
     </el-form>
@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/umaProductionChemicalFiber'
+import { add, edit } from '@/api/chemicalFiberProduction'
 export default {
   props: {
     isAdd: {

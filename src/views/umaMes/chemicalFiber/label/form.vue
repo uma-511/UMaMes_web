@@ -43,6 +43,18 @@
       <el-form-item label="退货单号" >
         <el-input v-model="form.thNumber" style="width: 370px;"/>
       </el-form-item>
+      <el-form-item label="入库扫描时间" >
+        <el-date-picker v-model="form.rkScanTime" type="datetime" style="width: 370px;"/>
+      </el-form-item>
+      <el-form-item label="出库扫描时间" >
+        <el-date-picker v-model="form.shScanTime" type="datetime" style="width: 370px;"/>
+      </el-form-item>
+      <el-form-item label="退库扫描时间" >
+        <el-date-picker v-model="form.tkScanTime" type="datetime" style="width: 370px;"/>
+      </el-form-item>
+      <el-form-item label="退货扫描时间" >
+        <el-date-picker v-model="form.thScanTime" type="datetime" style="width: 370px;"/>
+      </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
@@ -52,7 +64,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/umaLabelChemicalFiber'
+import { add, edit } from '@/api/chemicalFiberLabel'
 export default {
   props: {
     isAdd: {
@@ -78,7 +90,11 @@ export default {
         rkNumber: '',
         shNumber: '',
         tkNumber: '',
-        thNumber: ''
+        thNumber: '',
+        rkScanTime: '',
+        shScanTime: '',
+        tkScanTime: '',
+        thScanTime: ''
       },
       rules: {
       }
@@ -142,7 +158,11 @@ export default {
         rkNumber: '',
         shNumber: '',
         tkNumber: '',
-        thNumber: ''
+        thNumber: '',
+        rkScanTime: '',
+        shScanTime: '',
+        tkScanTime: '',
+        thScanTime: ''
       }
     }
   }

@@ -1,38 +1,31 @@
 <template>
-  <el-dialog
-    :append-to-body="true"
-    :close-on-click-modal="false"
-    :before-close="cancel"
-    :visible.sync="dialog"
-    :title="isAdd ? '新增' : '编辑'"
-    width="500px"
-  >
+  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="客户名称">
+      <el-form-item label="客户名称" >
         <el-input v-model="form.name" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="客户编号">
+      <el-form-item label="客户编号" >
         <el-input v-model="form.code" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="客户地址">
+      <el-form-item label="客户地址" >
         <el-input v-model="form.address" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="联系人">
+      <el-form-item label="联系人" >
         <el-input v-model="form.contacts" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="联系电话">
+      <el-form-item label="联系电话" >
         <el-input v-model="form.contactPhone" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="备注">
+      <el-form-item label="备注" >
         <el-input v-model="form.remark" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="创建日期">
+      <el-form-item label="创建日期" >
         <el-date-picker v-model="form.createDate" type="datetime" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="创建人">
+      <el-form-item label="创建人" >
         <el-input v-model="form.createUser" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="删除标识">
+      <el-form-item label="删除标识" >
         <el-input v-model="form.delFlag" style="width: 370px;"/>
       </el-form-item>
     </el-form>
@@ -44,7 +37,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/umaCustomer'
+import { add, edit } from '@/api/customer'
 export default {
   props: {
     isAdd: {
@@ -132,4 +125,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>

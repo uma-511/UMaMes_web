@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/umaConfigClassify'
+import { add, edit } from '@/api/configClassify'
 export default {
   props: {
     isAdd: {

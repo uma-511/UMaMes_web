@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/umaConfig'
+import { add, edit } from '@/api/config'
 export default {
   props: {
     isAdd: {

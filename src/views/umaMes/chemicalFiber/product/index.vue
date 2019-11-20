@@ -11,7 +11,7 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','umaProductChemicalFiber:add']"
+          v-permission="['admin','chemicalFiberProduct:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -43,11 +43,12 @@
         </template>
       </el-table-column>
       <el-table-column prop="createUser" label="创建人"/>
-      <el-table-column v-if="checkPermission(['admin','umaProductChemicalFiber:edit','umaProductChemicalFiber:del'])" label="操作" width="150px" align="center">
+      <el-table-column prop="delFlag" label="删除标识"/>
+      <el-table-column v-if="checkPermission(['admin','chemicalFiberProduct:edit','chemicalFiberProduct:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','umaProductChemicalFiber:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
-            v-permission="['admin','umaProductChemicalFiber:del']"
+            v-permission="['admin','chemicalFiberProduct:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
@@ -75,7 +76,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUmaProductChemicalFiber } from '@/api/umaProductChemicalFiber'
+import { del, downloadChemicalFiberProduct } from '@/api/chemicalFiberProduct'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -88,9 +89,7 @@ export default {
         { key: 'model', display_name: '产品型号' },
         { key: 'name', display_name: '产品名称' },
         { key: 'color', display_name: '色号' },
-        { key: 'fineness', display_name: '纤度' },
-        { key: 'createDate', display_name: '创建日期' },
-        { key: 'createUser', display_name: '创建人' }
+        { key: 'fineness', display_name: '纤度' }
       ]
     }
   },
@@ -103,7 +102,7 @@ export default {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.url = 'api/umaProductChemicalFiber'
+      this.url = 'api/chemicalFiberProduct'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
@@ -153,8 +152,8 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadUmaProductChemicalFiber(this.params).then(result => {
-        downloadFile(result, 'UmaProductChemicalFiber列表', 'xlsx')
+      downloadChemicalFiberProduct(this.params).then(result => {
+        downloadFile(result, 'ChemicalFiberProduct列表', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

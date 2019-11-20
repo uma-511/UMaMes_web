@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/umaDeliveryNote'
+import { add, edit } from '@/api/chemicalFiberDeliveryNote'
 export default {
   props: {
     isAdd: {

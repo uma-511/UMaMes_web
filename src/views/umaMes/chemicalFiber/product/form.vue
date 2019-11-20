@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/umaProductChemicalFiber'
+import { add, edit } from '@/api/chemicalFiberProduct'
 export default {
   props: {
     isAdd: {

@@ -5,7 +5,7 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','umaDeliveryDetailChemicalFiber:add']"
+          v-permission="['admin','config:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -29,32 +29,25 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="prodModel" label="产品型号"/>
-      <el-table-column prop="prodName" label="产品名称"/>
-      <el-table-column prop="prodColor" label="产品色号"/>
-      <el-table-column prop="prodFineness" label="产品纤度"/>
-      <el-table-column prop="cost" label="成本单价"/>
-      <el-table-column prop="sellingPrice" label="销售单价"/>
-      <el-table-column prop="unit" label="单位"/>
-      <el-table-column prop="totalCost" label="总成本"/>
-      <el-table-column prop="totalPrice" label="总金额"/>
-      <el-table-column prop="totalBag" label="总件数"/>
+      <el-table-column prop="name" label="配置名称"/>
+      <el-table-column prop="value" label="配置值"/>
+      <el-table-column prop="isDefault" label="默认值"/>
       <el-table-column
-        v-if="checkPermission(['admin','umaDeliveryDetailChemicalFiber:edit','umaDeliveryDetailChemicalFiber:del'])"
+        v-if="checkPermission(['admin','config:edit','config:del'])"
         label="操作"
         width="150px"
         align="center"
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['admin','umaDeliveryDetailChemicalFiber:edit']"
+            v-permission="['admin','config:edit']"
             size="mini"
             type="primary"
             icon="el-icon-edit"
             @click="edit(scope.row)"
           />
           <el-popover
-            v-permission="['admin','umaDeliveryDetailChemicalFiber:del']"
+            v-permission="['admin','config:del']"
             :ref="scope.row.id"
             placement="top"
             width="180"
@@ -89,7 +82,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUmaDeliveryDetailChemicalFiber } from '@/api/umaDeliveryDetailChemicalFiber'
+import { del, downloadConfig } from '@/api/config'
 import { downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -108,7 +101,7 @@ export default {
   methods: {
     checkPermission,
     beforeInit() {
-      this.url = 'api/umaDeliveryDetailChemicalFiber'
+      this.url = 'api/config'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       return true
@@ -140,17 +133,10 @@ export default {
       const _this = this.$refs.form
       _this.form = {
         id: data.id,
-        prodId: data.prodId,
-        prodModel: data.prodModel,
-        prodName: data.prodName,
-        prodColor: data.prodColor,
-        prodFineness: data.prodFineness,
-        cost: data.cost,
-        sellingPrice: data.sellingPrice,
-        unit: data.unit,
-        totalCost: data.totalCost,
-        totalPrice: data.totalPrice,
-        totalBag: data.totalBag
+        classifyId: data.classifyId,
+        name: data.name,
+        value: data.value,
+        isDefault: data.isDefault
       }
       _this.dialog = true
     },
@@ -158,8 +144,8 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadUmaDeliveryDetailChemicalFiber(this.params).then(result => {
-        downloadFile(result, 'UmaDeliveryDetailChemicalFiber列表', 'xlsx')
+      downloadConfig(this.params).then(result => {
+        downloadFile(result, 'Config列表', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

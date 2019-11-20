@@ -35,7 +35,7 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','umaStock:add']"
+          v-permission="['admin','chemicalFiberDeliveryDetail:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -63,31 +63,28 @@
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodColor" label="产品色号"/>
       <el-table-column prop="prodFineness" label="产品纤度"/>
-      <el-table-column prop="totalNetWeight" label="总净重"/>
-      <el-table-column prop="totalTare" label="总皮重"/>
-      <el-table-column prop="totalGrossWeight" label="总毛重"/>
-      <el-table-column prop="totalNumber" label="总个数"/>
+      <el-table-column prop="cost" label="成本单价"/>
+      <el-table-column prop="sellingPrice" label="销售单价"/>
+      <el-table-column prop="unit" label="单位"/>
+      <el-table-column prop="totalCost" label="总成本"/>
+      <el-table-column prop="totalPrice" label="总金额"/>
       <el-table-column prop="totalBag" label="总件数"/>
-      <el-table-column prop="max" label="最大值"/>
-      <el-table-column prop="min" label="最小值"/>
-      <el-table-column prop="flag" label="库存指标"/>
-      <el-table-column prop="status" label="状态"/>
       <el-table-column
-        v-if="checkPermission(['admin','umaStock:edit','umaStock:del'])"
+        v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])"
         label="操作"
         width="150px"
         align="center"
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['admin','umaStock:edit']"
+            v-permission="['admin','chemicalFiberDeliveryDetail:edit']"
             size="mini"
             type="primary"
             icon="el-icon-edit"
             @click="edit(scope.row)"
           />
           <el-popover
-            v-permission="['admin','umaStock:del']"
+            v-permission="['admin','chemicalFiberDeliveryDetail:del']"
             :ref="scope.row.id"
             placement="top"
             width="180"
@@ -122,7 +119,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUmaStock } from '@/api/umaStock'
+import { del, downloadChemicalFiberDeliveryDetail } from '@/api/chemicalFiberDeliveryDetail'
 import { downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -147,7 +144,7 @@ export default {
   methods: {
     checkPermission,
     beforeInit() {
-      this.url = 'api/umaStock'
+      this.url = 'api/chemicalFiberDeliveryDetail'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
@@ -188,15 +185,12 @@ export default {
         prodName: data.prodName,
         prodColor: data.prodColor,
         prodFineness: data.prodFineness,
-        totalNetWeight: data.totalNetWeight,
-        totalTare: data.totalTare,
-        totalGrossWeight: data.totalGrossWeight,
-        totalNumber: data.totalNumber,
-        totalBag: data.totalBag,
-        max: data.max,
-        min: data.min,
-        flag: data.flag,
-        status: data.status
+        cost: data.cost,
+        sellingPrice: data.sellingPrice,
+        unit: data.unit,
+        totalCost: data.totalCost,
+        totalPrice: data.totalPrice,
+        totalBag: data.totalBag
       }
       _this.dialog = true
     },
@@ -204,8 +198,8 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadUmaStock(this.params).then(result => {
-        downloadFile(result, 'UmaStock列表', 'xlsx')
+      downloadChemicalFiberDeliveryDetail(this.params).then(result => {
+        downloadFile(result, 'ChemicalFiberDeliveryDetail列表', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

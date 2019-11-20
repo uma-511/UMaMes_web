@@ -11,7 +11,7 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','umaDeliveryNote:add']"
+          v-permission="['admin','chemicalFiberDeliveryNote:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -50,11 +50,11 @@
         </template>
       </el-table-column>
       <el-table-column prop="createUser" label="制单人"/>
-      <el-table-column v-if="checkPermission(['admin','umaDeliveryNote:edit','umaDeliveryNote:del'])" label="操作" width="150px" align="center">
+      <el-table-column v-if="checkPermission(['admin','chemicalFiberDeliveryNote:edit','chemicalFiberDeliveryNote:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','umaDeliveryNote:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <el-button v-permission="['admin','chemicalFiberDeliveryNote:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
-            v-permission="['admin','umaDeliveryNote:del']"
+            v-permission="['admin','chemicalFiberDeliveryNote:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
@@ -82,7 +82,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUmaDeliveryNote } from '@/api/umaDeliveryNote'
+import { del, downloadChemicalFiberDeliveryNote } from '@/api/chemicalFiberDeliveryNote'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -92,6 +92,7 @@ export default {
     return {
       delLoading: false,
       queryTypeOptions: [
+        { key: 'scanNumber', display_name: '出库单号' },
         { key: 'customerName', display_name: '客户名称' },
         { key: 'customerCode', display_name: '客户编号' },
         { key: 'customerAddress', display_name: '客户地址' },
@@ -109,7 +110,7 @@ export default {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.url = 'api/umaDeliveryNote'
+      this.url = 'api/chemicalFiberDeliveryNote'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
@@ -166,8 +167,8 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadUmaDeliveryNote(this.params).then(result => {
-        downloadFile(result, 'UmaDeliveryNote列表', 'xlsx')
+      downloadChemicalFiberDeliveryNote(this.params).then(result => {
+        downloadFile(result, 'ChemicalFiberDeliveryNote列表', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

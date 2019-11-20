@@ -16,32 +16,23 @@
       <el-form-item label="产品纤度" >
         <el-input v-model="form.prodFineness" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="总净重" >
-        <el-input v-model="form.totalNetWeight" style="width: 370px;"/>
+      <el-form-item label="成本单价" >
+        <el-input v-model="form.cost" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="总皮重" >
-        <el-input v-model="form.totalTare" style="width: 370px;"/>
+      <el-form-item label="销售单价" >
+        <el-input v-model="form.sellingPrice" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="总毛重" >
-        <el-input v-model="form.totalGrossWeight" style="width: 370px;"/>
+      <el-form-item label="单位" >
+        <el-input v-model="form.unit" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="总个数" >
-        <el-input v-model="form.totalNumber" style="width: 370px;"/>
+      <el-form-item label="总成本" >
+        <el-input v-model="form.totalCost" style="width: 370px;"/>
+      </el-form-item>
+      <el-form-item label="总金额" >
+        <el-input v-model="form.totalPrice" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="总件数" >
         <el-input v-model="form.totalBag" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="最大值" >
-        <el-input v-model="form.max" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="最小值" >
-        <el-input v-model="form.min" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="库存指标" >
-        <el-input v-model="form.flag" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="状态" >
-        <el-input v-model="form.status" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -52,7 +43,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/umaStock'
+import { add, edit } from '@/api/chemicalFiberDeliveryDetail'
 export default {
   props: {
     isAdd: {
@@ -70,15 +61,12 @@ export default {
         prodName: '',
         prodColor: '',
         prodFineness: '',
-        totalNetWeight: '',
-        totalTare: '',
-        totalGrossWeight: '',
-        totalNumber: '',
-        totalBag: '',
-        max: '',
-        min: '',
-        flag: '',
-        status: ''
+        cost: '',
+        sellingPrice: '',
+        unit: '',
+        totalCost: '',
+        totalPrice: '',
+        totalBag: ''
       },
       rules: {
       }
@@ -134,15 +122,12 @@ export default {
         prodName: '',
         prodColor: '',
         prodFineness: '',
-        totalNetWeight: '',
-        totalTare: '',
-        totalGrossWeight: '',
-        totalNumber: '',
-        totalBag: '',
-        max: '',
-        min: '',
-        flag: '',
-        status: ''
+        cost: '',
+        sellingPrice: '',
+        unit: '',
+        totalCost: '',
+        totalPrice: '',
+        totalBag: ''
       }
     }
   }

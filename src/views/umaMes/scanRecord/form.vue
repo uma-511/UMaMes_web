@@ -1,11 +1,8 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="单号" >
+      <el-form-item label="扫描单号" >
         <el-input v-model="form.scanNumber" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="labelId" >
-        <el-input v-model="form.labelId" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="扫描员" >
         <el-input v-model="form.scanUser" style="width: 370px;"/>
@@ -25,7 +22,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/umaScanRecord'
+import { add, edit } from '@/api/scanRecord'
 export default {
   props: {
     isAdd: {
@@ -39,7 +36,6 @@ export default {
       form: {
         id: '',
         scanNumber: '',
-        labelId: '',
         scanUser: '',
         scanTime: '',
         type: ''
@@ -94,7 +90,6 @@ export default {
       this.form = {
         id: '',
         scanNumber: '',
-        labelId: '',
         scanUser: '',
         scanTime: '',
         type: ''

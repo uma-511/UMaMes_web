@@ -2,10 +2,40 @@
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container">
+      <!-- 搜索 -->
+      <el-input
+        v-model="query.value"
+        clearable
+        placeholder="输入搜索内容"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="toQuery"
+      />
+      <el-select
+        v-model="query.type"
+        clearable
+        placeholder="类型"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in queryTypeOptions"
+          :key="item.key"
+          :label="item.display_name"
+          :value="item.key"
+        />
+      </el-select>
+      <el-button
+        class="filter-item"
+        size="mini"
+        type="success"
+        icon="el-icon-search"
+        @click="toQuery"
+      >搜索</el-button>
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin', 'umaCustomer:add']"
+          v-permission="['admin','customer:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -29,7 +59,6 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="id" label="id"/>
       <el-table-column prop="name" label="客户名称"/>
       <el-table-column prop="code" label="客户编号"/>
       <el-table-column prop="address" label="客户地址"/>
@@ -42,23 +71,22 @@
         </template>
       </el-table-column>
       <el-table-column prop="createUser" label="创建人"/>
-      <el-table-column prop="delFlag" label="删除标识"/>
       <el-table-column
-        v-if="checkPermission(['admin', 'umaCustomer:edit', 'umaCustomer:del'])"
+        v-if="checkPermission(['admin','customer:edit','customer:del'])"
         label="操作"
         width="150px"
         align="center"
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['admin', 'umaCustomer:edit']"
+            v-permission="['admin','customer:edit']"
             size="mini"
             type="primary"
             icon="el-icon-edit"
             @click="edit(scope.row)"
           />
           <el-popover
-            v-permission="['admin', 'umaCustomer:del']"
+            v-permission="['admin','customer:del']"
             :ref="scope.row.id"
             placement="top"
             width="180"
@@ -93,7 +121,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUmaCustomer } from '@/api/umaCustomer'
+import { del, downloadCustomer } from '@/api/customer'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -101,7 +129,14 @@ export default {
   mixins: [initData],
   data() {
     return {
-      delLoading: false
+      delLoading: false,
+      queryTypeOptions: [
+        { key: 'name', display_name: '客户名称' },
+        { key: 'code', display_name: '客户编号' },
+        { key: 'address', display_name: '客户地址' },
+        { key: 'contacts', display_name: '联系人' },
+        { key: 'contactPhone', display_name: '联系电话' }
+      ]
     }
   },
   created() {
@@ -113,30 +148,32 @@ export default {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.url = 'api/umaCustomer'
+      this.url = 'api/customer'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
+      const query = this.query
+      const type = query.type
+      const value = query.value
+      if (type && value) { this.params[type] = value }
       return true
     },
     subDelete(id) {
       this.delLoading = true
-      del(id)
-        .then(res => {
-          this.delLoading = false
-          this.$refs[id].doClose()
-          this.dleChangePage()
-          this.init()
-          this.$notify({
-            title: '删除成功',
-            type: 'success',
-            duration: 2500
-          })
+      del(id).then(res => {
+        this.delLoading = false
+        this.$refs[id].doClose()
+        this.dleChangePage()
+        this.init()
+        this.$notify({
+          title: '删除成功',
+          type: 'success',
+          duration: 2500
         })
-        .catch(err => {
-          this.delLoading = false
-          this.$refs[id].doClose()
-          console.log(err.response.data.message)
-        })
+      }).catch(err => {
+        this.delLoading = false
+        this.$refs[id].doClose()
+        console.log(err.response.data.message)
+      })
     },
     add() {
       this.isAdd = true
@@ -163,17 +200,16 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadUmaCustomer(this.params)
-        .then(result => {
-          downloadFile(result, 'UmaCustomer列表', 'xlsx')
-          this.downloadLoading = false
-        })
-        .catch(() => {
-          this.downloadLoading = false
-        })
+      downloadCustomer(this.params).then(result => {
+        downloadFile(result, 'Customer列表', 'xlsx')
+        this.downloadLoading = false
+      }).catch(() => {
+        this.downloadLoading = false
+      })
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>
