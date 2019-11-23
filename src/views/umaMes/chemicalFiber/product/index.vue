@@ -39,11 +39,11 @@
       <el-table-column prop="fineness" label="纤度"/>
       <el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createDate) }}</span>
+          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="createUser" label="创建人"/>
-      <el-table-column prop="delFlag" label="删除标识"/>
+      <!-- <el-table-column prop="delFlag" label="删除标识"/> -->
       <el-table-column v-if="checkPermission(['admin','chemicalFiberProduct:edit','chemicalFiberProduct:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
@@ -77,7 +77,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberProduct } from '@/api/chemicalFiberProduct'
-import { parseTime, downloadFile } from '@/utils/index'
+import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -100,6 +100,7 @@ export default {
   },
   methods: {
     parseTime,
+    parseTimeToDate,
     checkPermission,
     beforeInit() {
       this.url = 'api/chemicalFiberProduct'
