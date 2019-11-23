@@ -1,25 +1,25 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="客户名称" >
+      <el-form-item label="客户名称" prop="name">
         <el-input v-model="form.name" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="客户编号" >
+      <el-form-item label="客户编号" prop="code">
         <el-input v-model="form.code" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="客户地址" >
+      <el-form-item label="客户地址" prop="address">
         <el-input v-model="form.address" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="联系人" >
+      <el-form-item label="联系人" prop="contacts">
         <el-input v-model="form.contacts" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="联系电话" >
+      <el-form-item label="联系电话" prop="contactPhone">
         <el-input v-model="form.contactPhone" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="备注" >
         <el-input v-model="form.remark" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="创建日期" >
+      <!-- <el-form-item label="创建日期" >
         <el-date-picker v-model="form.createDate" type="datetime" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="创建人" >
@@ -27,7 +27,7 @@
       </el-form-item>
       <el-form-item label="删除标识" >
         <el-input v-model="form.delFlag" style="width: 370px;"/>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
@@ -61,6 +61,31 @@ export default {
         delFlag: ''
       },
       rules: {
+        name: [
+          {
+            required: true, message: '请输入客户名称', trigger: 'blur'
+          }
+        ],
+        code: [
+          {
+            required: true, message: '请输入客户编号', trigger: 'blur'
+          }
+        ],
+        address: [
+          {
+            required: true, message: '请输入客户地址', trigger: 'blur'
+          }
+        ],
+        contacts: [
+          {
+            required: true, message: '请输入客户联系人', trigger: 'blur'
+          }
+        ],
+        contactPhone: [
+          {
+            required: true, message: '请输入客户联系电话', trigger: 'blur'
+          }
+        ]
       }
     }
   },
@@ -69,10 +94,14 @@ export default {
       this.resetForm()
     },
     doSubmit() {
-      this.loading = true
-      if (this.isAdd) {
-        this.doAdd()
-      } else this.doEdit()
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          if (this.isAdd) {
+            this.doAdd()
+          } else this.doEdit()
+        }
+      })
     },
     doAdd() {
       add(this.form).then(res => {

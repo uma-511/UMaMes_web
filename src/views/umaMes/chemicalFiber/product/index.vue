@@ -19,7 +19,7 @@
           @click="add">新增</el-button>
       </div>
       <!-- 导出 -->
-      <div style="display: inline-block;">
+      <!-- <div style="display: inline-block;">
         <el-button
           :loading="downloadLoading"
           size="mini"
@@ -27,7 +27,7 @@
           type="warning"
           icon="el-icon-download"
           @click="download">导出</el-button>
-      </div>
+      </div> -->
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
