@@ -10,7 +10,8 @@
           size="mini"
           type="primary"
           icon="el-icon-plus"
-          @click="add">新增</el-button>
+          @click="add"
+        >新增</el-button>
       </div>
       <!-- 导出 -->
       <div style="display: inline-block;">
@@ -20,7 +21,8 @@
           class="filter-item"
           type="warning"
           icon="el-icon-download"
-          @click="download">导出</el-button>
+          @click="download"
+        >导出</el-button>
       </div>
     </div>
     <!--表单组件-->
@@ -29,18 +31,35 @@
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="number" label="机台号"/>
       <el-table-column prop="status" label="机台状态"/>
-      <el-table-column v-if="checkPermission(['admin','machine:edit','machine:del'])" label="操作" width="150px" align="center">
+      <el-table-column
+        v-if="checkPermission(['admin','machine:edit','machine:del'])"
+        label="操作"
+        width="150px"
+        align="center"
+      >
         <template slot-scope="scope">
-          <el-button v-permission="['admin','machine:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <el-button
+            v-permission="['admin','machine:edit']"
+            size="mini"
+            type="primary"
+            icon="el-icon-edit"
+            @click="edit(scope.row)"
+          />
           <el-popover
             v-permission="['admin','machine:del']"
             :ref="scope.row.id"
             placement="top"
-            width="180">
+            width="180"
+          >
             <p>确定删除本条数据吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-              <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
+              <el-button
+                :loading="delLoading"
+                type="primary"
+                size="mini"
+                @click="subDelete(scope.row.id)"
+              >确定</el-button>
             </div>
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
           </el-popover>
@@ -54,7 +73,8 @@
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
       @size-change="sizeChange"
-      @current-change="pageChange"/>
+      @current-change="pageChange"
+    />
   </div>
 </template>
 
@@ -62,13 +82,14 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadMachine } from '@/api/machine'
+import { downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
   mixins: [initData],
   data() {
     return {
-      delLoading: false,
+      delLoading: false
     }
   },
   created() {
@@ -134,5 +155,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

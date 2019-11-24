@@ -31,3 +31,11 @@ export function downloadChemicalFiberProduct(params) {
     responseType: 'blob'
   })
 }
+
+export function getProdList(data) {
+  return request({
+    url: 'api/chemicalFiberProduct/getProdList',
+    method: 'post',
+    data
+  })
+}

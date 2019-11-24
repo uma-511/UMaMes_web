@@ -31,3 +31,19 @@ export function downloadChemicalFiberProduction(params) {
     responseType: 'blob'
   })
 }
+
+export function setMachines(data) {
+  return request({
+    url: 'api/chemicalFiberProduction/setMachines',
+    method: 'post',
+    data
+  })
+}
+
+export function setProductionStatus(data) {
+  return request({
+    url: 'api/chemicalFiberProduction/setProductionStatus',
+    method: 'post',
+    data
+  })
+}

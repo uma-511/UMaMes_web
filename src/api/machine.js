@@ -31,3 +31,11 @@ export function downloadMachine(params) {
     responseType: 'blob'
   })
 }
+
+export function getMachinesAllList() {
+  return request({
+    url: 'api/machine/getMachinesAllList',
+    method: 'post'
+  })
+}
+

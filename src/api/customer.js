@@ -31,3 +31,11 @@ export function downloadCustomer(params) {
     responseType: 'blob'
   })
 }
+
+export function getCustomerList(data) {
+  return request({
+    url: 'api/customer/getCustomerList',
+    method: 'post',
+    data
+  })
+}
