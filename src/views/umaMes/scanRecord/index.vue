@@ -9,7 +9,7 @@
       </el-select>
       <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
       <!-- 新增 -->
-      <div style="display: inline-block;margin: 0px 2px;">
+      <!-- <div style="display: inline-block;margin: 0px 2px;">
         <el-button
           v-permission="['admin','scanRecord:add']"
           class="filter-item"
@@ -17,9 +17,9 @@
           type="primary"
           icon="el-icon-plus"
           @click="add">新增</el-button>
-      </div>
+      </div> -->
       <!-- 导出 -->
-      <div style="display: inline-block;">
+      <!-- <div style="display: inline-block;">
         <el-button
           :loading="downloadLoading"
           size="mini"
@@ -27,7 +27,7 @@
           type="warning"
           icon="el-icon-download"
           @click="download">导出</el-button>
-      </div>
+      </div> -->
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -41,7 +41,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="type" label="扫描类型"/>
-      <el-table-column v-if="checkPermission(['admin','scanRecord:edit','scanRecord:del'])" label="操作" width="150px" align="center">
+      <!-- <el-table-column v-if="checkPermission(['admin','scanRecord:edit','scanRecord:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','scanRecord:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
@@ -57,7 +57,7 @@
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
           </el-popover>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <!--分页组件-->
     <el-pagination

@@ -33,7 +33,7 @@
         @click="toQuery"
       >搜索</el-button>
       <!-- 新增 -->
-      <div style="display: inline-block;margin: 0px 2px;">
+      <!-- <div style="display: inline-block;margin: 0px 2px;">
         <el-button
           v-permission="['admin','chemicalFiberStock:add']"
           class="filter-item"
@@ -42,9 +42,9 @@
           icon="el-icon-plus"
           @click="add"
         >新增</el-button>
-      </div>
+      </div>-->
       <!-- 导出 -->
-      <div style="display: inline-block;">
+      <!-- <div style="display: inline-block;">
         <el-button
           :loading="downloadLoading"
           size="mini"
@@ -53,7 +53,7 @@
           icon="el-icon-download"
           @click="download"
         >导出</el-button>
-      </div>
+      </div> -->
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
