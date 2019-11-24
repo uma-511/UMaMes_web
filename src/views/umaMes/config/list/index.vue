@@ -14,7 +14,7 @@
         >新增</el-button>
       </div>
       <!-- 导出 -->
-      <div style="display: inline-block;">
+      <!-- <div style="display: inline-block;">
         <el-button
           :loading="downloadLoading"
           size="mini"
@@ -23,7 +23,7 @@
           icon="el-icon-download"
           @click="download"
         >导出</el-button>
-      </div>
+      </div> -->
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -90,20 +90,23 @@ export default {
   mixins: [initData],
   data() {
     return {
-      delLoading: false
+      delLoading: false,
+      loading: false,
+      classifyId: 0
     }
   },
   created() {
-    this.$nextTick(() => {
-      this.init()
-    })
+    // this.$nextTick(() => {
+    //   this.init(2)
+    // })
   },
   methods: {
     checkPermission,
-    beforeInit() {
+    beforeInit(classifyId) {
       this.url = 'api/config'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
+      this.params['classifyId'] = this.classifyId
       return true
     },
     subDelete(id) {
@@ -127,6 +130,7 @@ export default {
     add() {
       this.isAdd = true
       this.$refs.form.dialog = true
+      this.$refs['form'].initClassifyId(this.classifyId)
     },
     edit(data) {
       this.isAdd = false
@@ -150,6 +154,10 @@ export default {
       }).catch(() => {
         this.downloadLoading = false
       })
+    },
+    // 初始化 classifyId
+    initClassifyId(classifyId) {
+      this.classifyId = classifyId
     }
   }
 }
