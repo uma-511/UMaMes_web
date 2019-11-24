@@ -1,15 +1,15 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="配置分类名称" >
+      <el-form-item label="配置名称" >
         <el-input v-model="form.name" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="别名" >
         <el-input v-model="form.alias" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="delFlag" >
+      <!-- <el-form-item label="delFlag" >
         <el-input v-model="form.delFlag" style="width: 370px;"/>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>

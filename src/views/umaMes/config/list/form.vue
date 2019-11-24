@@ -1,9 +1,9 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="分类id" >
+      <!-- <el-form-item label="分类id" >
         <el-input v-model="form.classifyId" style="width: 370px;"/>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="配置名称" >
         <el-input v-model="form.name" style="width: 370px;"/>
       </el-form-item>
@@ -50,6 +50,14 @@ export default {
     },
     doSubmit() {
       this.loading = true
+      if (this.form.classifyId === 0) {
+        this.$notify.error({
+          title: '错误',
+          message: '请选择左侧变量设置'
+        })
+        this.loading = false
+        return
+      }
       if (this.isAdd) {
         this.doAdd()
       } else this.doEdit()
@@ -94,6 +102,9 @@ export default {
         value: '',
         isDefault: ''
       }
+    },
+    initClassifyId(classifyId) {
+      this.form.classifyId = classifyId
     }
   }
 }

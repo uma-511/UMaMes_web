@@ -44,7 +44,7 @@
         >新增</el-button>
       </div>
       <!-- 导出 -->
-      <div style="display: inline-block;">
+      <!-- <div style="display: inline-block;">
         <el-button
           :loading="downloadLoading"
           size="mini"
@@ -53,7 +53,7 @@
           icon="el-icon-download"
           @click="download"
         >导出</el-button>
-      </div>
+      </div> -->
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -67,7 +67,7 @@
       <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createDate) }}</span>
+          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="createUser" label="创建人"/>
@@ -122,7 +122,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadCustomer } from '@/api/customer'
-import { parseTime, downloadFile } from '@/utils/index'
+import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -146,6 +146,7 @@ export default {
   },
   methods: {
     parseTime,
+    parseTimeToDate,
     checkPermission,
     beforeInit() {
       this.url = 'api/customer'
