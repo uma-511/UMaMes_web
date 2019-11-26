@@ -26,18 +26,16 @@
         />
       </el-select>
       <el-select
-        v-model="query.status"
+        v-model="query.scanStatus"
         clearable
-        placeholder="状态"
+        placeholder="扫描状态"
         class="filter-item"
         style="width: 130px"
       >
-        <el-option key="0" label="待入仓" value="0"/>
-        <el-option key="1" label="已入仓" value="1"/>
-        <el-option key="2" label="已出仓" value="2"/>
-        <el-option key="3" label="已作废" value="3"/>
-        <el-option key="4" label="已返仓" value="4"/>
-        <el-option key="5" label="已退货" value="5"/>
+        <el-option key="RK" label="入库" value="RK"/>
+        <el-option key="SH" label="出库" value="SH"/>
+        <el-option key="TK" label="退库" value="TK"/>
+        <el-option key="TH" label="退货" value="TH"/>
       </el-select>
       <el-date-picker
         v-model="dateQuery"
@@ -57,7 +55,7 @@
       <!-- 新增 -->
       <!-- <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','chemicalFiberLabel:add']"
+          v-permission="['admin','viewScanRecord:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -79,33 +77,39 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="labelNumber" label="条码号"/>
-      <el-table-column prop="status" label="状态">
+      <el-table-column prop="scanTime" label="扫描时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.scanTime) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="scanNumber" label="扫描单号"/>
+      <el-table-column prop="type" label="扫描类型">
         <template slot-scope="scope">
           <div slot="reference" class="name-wrapper">
             <el-tag
-              :type="typeMapping[scope.row.status]"
+              :type="scanMapping[scope.row.type]"
               size="medium"
-            >{{ typeValue[scope.row.status] }}</el-tag>
+            >{{ scanValue[scope.row.type] }}</el-tag>
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="printTime" label="打印时间">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.printTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="factPerBagNumber" label="每袋个数"/>
+      <el-table-column prop="labelNumber" label="标签编号（条码号）"/>
+      <el-table-column prop="factPerBagNumber" label="实际每袋个数"/>
       <el-table-column prop="netWeight" label="净重"/>
       <el-table-column prop="tare" label="皮重"/>
       <el-table-column prop="grossWeight" label="毛重"/>
       <el-table-column prop="shifts" label="班次"/>
       <el-table-column prop="packer" label="包装员"/>
-      <!-- <el-table-column v-if="checkPermission(['admin','chemicalFiberLabel:edit','chemicalFiberLabel:del'])" label="操作" width="150px" align="center">
+      <el-table-column prop="number" label="订单编号"/>
+      <el-table-column prop="customerCode" label="客户编号"/>
+      <el-table-column prop="prodName" label="产品名称"/>
+      <el-table-column prop="prodColor" label="产品颜色"/>
+      <el-table-column prop="prodFineness" label="产品纤度"/>
+      <!-- <el-table-column v-if="checkPermission(['admin','viewScanRecord:edit','viewScanRecord:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','chemicalFiberLabel:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <el-button v-permission="['admin','viewScanRecord:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
-            v-permission="['admin','chemicalFiberLabel:del']"
+            v-permission="['admin','viewScanRecord:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
@@ -134,7 +138,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberLabel } from '@/api/chemicalFiberLabel'
+import { del, downloadViewScanRecord } from '@/api/viewScanRecord'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -142,30 +146,29 @@ export default {
   mixins: [initData],
   data() {
     return {
-      delLoading: false,
       dateQuery: '',
+      delLoading: false,
       queryTypeOptions: [
-        { key: 'labelNumber', display_name: '条码号' },
-        // { key: 'status', display_name: '状态' },
-        // { key: 'printTime', display_name: '打印时间' },
+        { key: 'scanNumber', display_name: '扫描单号' },
+        // { key: 'type', display_name: '扫描类型（入库：RK 出库：SH 退库：TK 退货：TH）' },
+        { key: 'labelNumber', display_name: '标签编号（条码号）' },
         { key: 'shifts', display_name: '班次' },
-        { key: 'packer', display_name: '包装员' }
+        { key: 'packer', display_name: '包装员' },
+        { key: 'number', display_name: '订单编号' },
+        { key: 'customerCode', display_name: '客户编号' },
+        { key: 'prodName', display_name: '产品名称' }
       ],
-      typeMapping: {
-        0: '',
-        1: 'success',
-        2: 'success',
-        3: 'info',
-        4: 'warning',
-        5: 'danger'
+      scanMapping: {
+        'RK': 'success',
+        'SH': '',
+        'TK': 'warning',
+        'TH': 'danger'
       },
-      typeValue: {
-        0: '待入仓',
-        1: '已入仓',
-        2: '已出仓',
-        3: '已作废',
-        4: '已返仓',
-        5: '已退货'
+      scanValue: {
+        'RK': '入库',
+        'SH': '出库',
+        'TK': '退库',
+        'TH': '退货'
       }
     }
   },
@@ -178,24 +181,25 @@ export default {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.url = 'api/chemicalFiberLabel'
+      this.url = 'api/viewScanRecord'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
       const type = query.type
       const value = query.value
-      const status = query.status
       const dateQuery = this.dateQuery
-      if (type && value) {
-        this.params[type] = value
+      const scanStatus = query.scanStatus
+      if (type && value) { this.params[type] = value }
+
+      if (scanStatus) {
+        this.params['type'] = scanStatus
       }
-      if (status) {
-        this.params['status'] = status
-      }
+
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
+
       return true
     },
     subDelete(id) {
@@ -225,24 +229,21 @@ export default {
       const _this = this.$refs.form
       _this.form = {
         id: data.id,
+        scanTime: data.scanTime,
+        scanNumber: data.scanNumber,
+        type: data.type,
         labelNumber: data.labelNumber,
-        productionId: data.productionId,
-        status: data.status,
-        printTime: data.printTime,
         factPerBagNumber: data.factPerBagNumber,
         netWeight: data.netWeight,
         tare: data.tare,
         grossWeight: data.grossWeight,
         shifts: data.shifts,
         packer: data.packer,
-        rkNumber: data.rkNumber,
-        shNumber: data.shNumber,
-        tkNumber: data.tkNumber,
-        thNumber: data.thNumber,
-        rkScanTime: data.rkScanTime,
-        shScanTime: data.shScanTime,
-        tkScanTime: data.tkScanTime,
-        thScanTime: data.thScanTime
+        number: data.number,
+        customerCode: data.customerCode,
+        prodName: data.prodName,
+        prodColor: data.prodColor,
+        prodFineness: data.prodFineness
       }
       _this.dialog = true
     },
@@ -250,8 +251,8 @@ export default {
     download() {
       this.beforeInit()
       this.downloadLoading = true
-      downloadChemicalFiberLabel(this.params).then(result => {
-        downloadFile(result, 'ChemicalFiberLabel列表', 'xlsx')
+      downloadViewScanRecord(this.params).then(result => {
+        downloadFile(result, 'ViewScanRecord列表', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false
