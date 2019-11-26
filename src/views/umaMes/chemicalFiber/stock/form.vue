@@ -1,7 +1,14 @@
 <template>
-  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
+  <el-dialog
+    :append-to-body="true"
+    :close-on-click-modal="false"
+    :before-close="cancel"
+    :visible.sync="dialog"
+    :title="isAdd ? '新增' : '编辑'"
+    width="500px"
+  >
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="产品id" >
+      <!-- <el-form-item label="产品id" >
         <el-input v-model="form.prodId" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="产品型号" >
@@ -30,19 +37,19 @@
       </el-form-item>
       <el-form-item label="总件数" >
         <el-input v-model="form.totalBag" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="最大值" >
+      </el-form-item>-->
+      <el-form-item label="最大值">
         <el-input v-model="form.max" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="最小值" >
+      <el-form-item label="最小值">
         <el-input v-model="form.min" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="库存指标" >
+      <el-form-item label="库存指标">
         <el-input v-model="form.flag" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="状态" >
+      <!-- <el-form-item label="状态" >
         <el-input v-model="form.status" style="width: 370px;"/>
-      </el-form-item>
+      </el-form-item>-->
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
@@ -150,5 +157,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

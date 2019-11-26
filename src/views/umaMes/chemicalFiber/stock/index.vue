@@ -53,7 +53,7 @@
           icon="el-icon-download"
           @click="download"
         >导出</el-button>
-      </div> -->
+      </div>-->
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -71,7 +71,16 @@
       <el-table-column prop="max" label="最大值"/>
       <el-table-column prop="min" label="最小值"/>
       <el-table-column prop="flag" label="库存指标"/>
-      <el-table-column prop="status" label="状态"/>
+      <el-table-column prop="status" label="状态">
+        <template slot-scope="scope">
+          <div slot="reference" class="name-wrapper">
+            <el-tag
+              :type="stockMapping[scope.row.status]"
+              size="medium"
+            >{{ stockValue[scope.row.status] }}</el-tag>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column
         v-if="checkPermission(['admin','chemicalFiberStock:edit','chemicalFiberStock:del'])"
         label="操作"
@@ -86,7 +95,7 @@
             icon="el-icon-edit"
             @click="edit(scope.row)"
           />
-          <el-popover
+          <!-- <el-popover
             v-permission="['admin','chemicalFiberStock:del']"
             :ref="scope.row.id"
             placement="top"
@@ -103,7 +112,7 @@
               >确定</el-button>
             </div>
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
-          </el-popover>
+          </el-popover>-->
         </template>
       </el-table-column>
     </el-table>
@@ -136,7 +145,17 @@ export default {
         { key: 'prodName', display_name: '产品名称' },
         { key: 'prodColor', display_name: '产品色号' },
         { key: 'prodFineness', display_name: '产品纤度' }
-      ]
+      ],
+      stockMapping: {
+        0: 'success',
+        1: 'warning',
+        2: 'info'
+      },
+      stockValue: {
+        0: '正常',
+        1: '高库存',
+        2: '低库存'
+      }
     }
   },
   created() {
