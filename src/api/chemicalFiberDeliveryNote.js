@@ -31,3 +31,10 @@ export function downloadChemicalFiberDeliveryNote(params) {
     responseType: 'blob'
   })
 }
+
+export function downloadDeliveryNote(id) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/downloadDeliveryNote/' + id,
+    method: 'get'
+  })
+}

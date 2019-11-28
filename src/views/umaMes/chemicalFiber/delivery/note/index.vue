@@ -3,11 +3,35 @@
     <!--工具栏-->
     <div class="head-container">
       <!-- 搜索 -->
-      <el-input v-model="query.value" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
-      <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
-        <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
+      <el-input
+        v-model="query.value"
+        clearable
+        placeholder="输入搜索内容"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="toQuery"
+      />
+      <el-select
+        v-model="query.type"
+        clearable
+        placeholder="类型"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in queryTypeOptions"
+          :key="item.key"
+          :label="item.display_name"
+          :value="item.key"
+        />
       </el-select>
-      <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
+      <el-button
+        class="filter-item"
+        size="mini"
+        type="success"
+        icon="el-icon-search"
+        @click="toQuery"
+      >搜索</el-button>
       <!-- 新增 -->
       <!-- <div style="display: inline-block;margin: 0px 2px;">
         <el-button
@@ -17,7 +41,7 @@
           type="primary"
           icon="el-icon-plus"
           @click="add">新增</el-button>
-      </div> -->
+      </div>-->
       <!-- 导出 -->
       <!-- <div style="display: inline-block;">
         <el-button
@@ -27,7 +51,7 @@
           type="warning"
           icon="el-icon-download"
           @click="download">导出</el-button>
-      </div> -->
+      </div>-->
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -50,21 +74,45 @@
         </template>
       </el-table-column>
       <el-table-column prop="createUser" label="制单人"/>
-      <el-table-column v-if="checkPermission(['admin','chemicalFiberDeliveryNote:edit','chemicalFiberDeliveryNote:del'])" label="操作" width="150px" align="center">
+      <el-table-column
+        v-if="checkPermission(['admin','chemicalFiberDeliveryNote:edit','chemicalFiberDeliveryNote:del'])"
+        label="操作"
+        width="150px"
+        align="center"
+      >
         <template slot-scope="scope">
-          <el-button v-permission="['admin','chemicalFiberDeliveryNote:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
-          <el-popover
+          <el-button
+            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            size="mini"
+            type="primary"
+            icon="el-icon-edit"
+            @click="edit(scope.row)"
+          />
+          <el-button
+            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            size="mini"
+            type="success"
+            icon="el-icon-tickets"
+            @click="detail(scope.row)"
+          />
+          <!-- <el-popover
             v-permission="['admin','chemicalFiberDeliveryNote:del']"
             :ref="scope.row.id"
             placement="top"
-            width="180">
+            width="180"
+          >
             <p>确定删除本条数据吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-              <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
+              <el-button
+                :loading="delLoading"
+                type="primary"
+                size="mini"
+                @click="subDelete(scope.row.id)"
+              >确定</el-button>
             </div>
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
-          </el-popover>
+          </el-popover>-->
         </template>
       </el-table-column>
     </el-table>
@@ -75,14 +123,95 @@
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
       @size-change="sizeChange"
-      @current-change="pageChange"/>
+      @current-change="pageChange"
+    />
+    <el-dialog
+      :visible.sync="dialogVisible"
+      :append-to-body="true"
+      :modal="true"
+      title="出货单详情"
+      width="75%"
+    >
+      <el-row style="width: 100%">
+        <el-container>
+          <el-aside width="10%">收货单位</el-aside>
+          <el-main style="height: 160px; width:30%">
+            <el-main>公司：{{ unitInfoMsg.customerName }}</el-main>
+            <el-main>地址：{{ unitInfoMsg.customerAddress }}</el-main>
+          </el-main>
+          <el-aside width="1px"/>
+          <el-main style="height: 160px; width:30%">
+            <el-main>联 系 人：{{ unitInfoMsg.contacts }}</el-main>
+            <el-main>联系信息：{{ unitInfoMsg.contactPhone }}</el-main>
+          </el-main>
+          <el-aside width="1px"/>
+          <el-main style="height: 160px; width:30%">
+            <el-main>单 号：{{ unitInfoMsg.scanNumber }}</el-main>
+          </el-main>
+        </el-container>
+      </el-row>
+      <el-row>
+        <el-table
+          v-loading="detailLoading"
+          :data="detailList"
+          :summary-method="getSummaries"
+          style="width: 100%"
+          show-summary
+          highlight-current-row
+          @current-change="handleCurrentChange"
+        >
+          <el-table-column prop="prodModel" label="型号" align="center"/>
+          <el-table-column prop="prodName" label="品名" align="center"/>
+          <el-table-column prop="totalNumber" label="数量" width="80%" align="center"/>
+          <el-table-column prop="totalBag" label="件数" width="80%" align="center"/>
+          <el-table-column prop="unit" label="单位" width="125%" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.unit" placeholder="请输入单位"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="cost" label="成本单价" width="200%" align="center">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.cost" :min="0.1" placeholder="请输入成本单价"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalCost" label="总成本（元）" width="80%" align="center"/>
+          <el-table-column prop="sellingPrice" label="销售单价" width="200%" align="center">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.sellingPrice" :min="0.1" placeholder="请输入销售单价"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalPrice" label="总金额（元）" width="80%" align="center"/>
+          <el-table-column
+            v-if="checkPermission(['admin','configClassify:edit','configClassify:del'])"
+            label="操作"
+            align="center"
+            width="80%"
+          >
+            <template slot-scope="scope">
+              <el-button
+                v-permission="['admin','configClassify:edit']"
+                size="mini"
+                type="success"
+                icon="el-icon-edit"
+                @click="sutmitDetail(scope.row)"
+              />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="exportDelivery()">导 出</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberDeliveryNote } from '@/api/chemicalFiberDeliveryNote'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote } from '@/api/chemicalFiberDeliveryNote'
+import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -91,6 +220,17 @@ export default {
   data() {
     return {
       delLoading: false,
+      dialogVisible: false,
+      detailLoading: false,
+      sutmitDetailLoading: false,
+      unitInfoMsg: {
+        id: '',
+        customerName: '',
+        customerAddress: '',
+        scanNumber: '',
+        contactPhone: '',
+        contacts: ''
+      },
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '出库单号' },
         { key: 'customerName', display_name: '客户名称' },
@@ -98,7 +238,39 @@ export default {
         { key: 'customerAddress', display_name: '客户地址' },
         { key: 'contacts', display_name: '联系人' },
         { key: 'contactPhone', display_name: '联系电话' }
-      ]
+      ],
+      detailList: [],
+      tableData6: [{
+        id: '12987122',
+        name: '王小虎',
+        amount1: '234',
+        amount2: '3.2',
+        amount3: 10
+      }, {
+        id: '12987123',
+        name: '王小虎',
+        amount1: '165',
+        amount2: '4.43',
+        amount3: 12
+      }, {
+        id: '12987124',
+        name: '王小虎',
+        amount1: '324',
+        amount2: '1.9',
+        amount3: 9
+      }, {
+        id: '12987125',
+        name: '王小虎',
+        amount1: '621',
+        amount2: '2.2',
+        amount3: 17
+      }, {
+        id: '12987126',
+        name: '王小虎',
+        amount1: '539',
+        amount2: '4.1',
+        amount3: 15
+      }]
     }
   },
   created() {
@@ -161,6 +333,8 @@ export default {
         createDate: data.createDate,
         createUser: data.createUser
       }
+      this.$refs.form.tempCustomerId = data.customerId
+      this.$refs.form.tempCustomerName = data.customerName
       _this.dialog = true
     },
     // 导出
@@ -173,11 +347,99 @@ export default {
       }).catch(() => {
         this.downloadLoading = false
       })
+    },
+    detail(data) {
+      this.unitInfoMsg = {
+        id: data.id,
+        customerName: data.customerName,
+        customerAddress: data.customerAddress,
+        scanNumber: data.scanNumber,
+        contactPhone: data.contactPhone,
+        contacts: data.contacts
+      }
+      this.detailLoading = true
+      this.dialogVisible = true
+      var params = { 'scanNumber': data.scanNumber }
+      getChemicalFiberDeliveryDetailsList(params).then(res => {
+        this.detailLoading = false
+        this.detailList = res
+      })
+    },
+    handleCurrentChange(val) {
+      this.currentChangeItem = val
+    },
+    sutmitDetail(data) {
+      this.detailLoading = true
+      if (data.cost) {
+        data.totalCost = data.totalNumber * data.cost
+      }
+      if (data.sellingPrice) {
+        data.totalPrice = data.totalNumber * data.sellingPrice
+      }
+      edit(data).then(res => {
+        this.detailLoading = false
+        this.$notify({
+          title: '编辑详情成功',
+          type: 'success',
+          duration: 2500
+        })
+      })
+    },
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (index === 8) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index] += ' 元'
+        }
+      })
+      return sums
+    },
+    exportDelivery() {
+      if (this.unitInfoMsg.customerName === null) {
+        this.$notify({
+          title: '请返回填写客户信息',
+          type: 'warning',
+          duration: 2500
+        })
+      }
+      console.log(this.unitInfoMsg)
+      downloadDeliveryNote(this.unitInfoMsg.id).then(result => {
+        downloadFile(result, '生产单导出', 'xlsx')
+      }).catch(() => {
+      })
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style>
+.el-aside {
+  background-color: #d3dce6;
+  color: #333;
+  text-align: center;
+  line-height: 160px;
+}
+.el-main {
+  background-color: #e9eef3;
+  color: #333;
+  text-align: left;
+  line-height: 10px;
+}
+.el-container {
+  height: 160px;
+}
 </style>
