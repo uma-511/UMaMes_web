@@ -162,8 +162,8 @@
         >
           <el-table-column prop="prodModel" label="型号" align="center"/>
           <el-table-column prop="prodName" label="品名" align="center"/>
-          <el-table-column prop="totalNumber" label="数量" width="80%" align="center"/>
-          <el-table-column prop="totalBag" label="件数" width="80%" align="center"/>
+          <el-table-column prop="totalNumber" label="数量" width="60%" align="center"/>
+          <el-table-column prop="totalBag" label="件数" width="60%" align="center"/>
           <el-table-column prop="unit" label="单位" width="125%" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.unit" placeholder="请输入单位"/>
@@ -185,7 +185,7 @@
             v-if="checkPermission(['admin','configClassify:edit','configClassify:del'])"
             label="操作"
             align="center"
-            width="80%"
+            width="130%"
           >
             <template slot-scope="scope">
               <el-button
@@ -195,13 +195,19 @@
                 icon="el-icon-edit"
                 @click="sutmitDetail(scope.row)"
               />
+              <el-button
+                size="mini"
+                type="primary"
+                icon="el-icon-download"
+                @click="exportPoundExcel(scope.row)"
+              />
             </template>
           </el-table-column>
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="exportDelivery()">导 出</el-button>
+        <el-button :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
       </span>
     </el-dialog>
   </div>
@@ -210,7 +216,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote } from '@/api/chemicalFiberDeliveryNote'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel } from '@/api/chemicalFiberDeliveryNote'
 import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
@@ -229,7 +235,8 @@ export default {
         customerAddress: '',
         scanNumber: '',
         contactPhone: '',
-        contacts: ''
+        contacts: '',
+        createDate: ''
       },
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '出库单号' },
@@ -239,38 +246,7 @@ export default {
         { key: 'contacts', display_name: '联系人' },
         { key: 'contactPhone', display_name: '联系电话' }
       ],
-      detailList: [],
-      tableData6: [{
-        id: '12987122',
-        name: '王小虎',
-        amount1: '234',
-        amount2: '3.2',
-        amount3: 10
-      }, {
-        id: '12987123',
-        name: '王小虎',
-        amount1: '165',
-        amount2: '4.43',
-        amount3: 12
-      }, {
-        id: '12987124',
-        name: '王小虎',
-        amount1: '324',
-        amount2: '1.9',
-        amount3: 9
-      }, {
-        id: '12987125',
-        name: '王小虎',
-        amount1: '621',
-        amount2: '2.2',
-        amount3: 17
-      }, {
-        id: '12987126',
-        name: '王小虎',
-        amount1: '539',
-        amount2: '4.1',
-        amount3: 15
-      }]
+      detailList: []
     }
   },
   created() {
@@ -355,7 +331,8 @@ export default {
         customerAddress: data.customerAddress,
         scanNumber: data.scanNumber,
         contactPhone: data.contactPhone,
-        contacts: data.contacts
+        contacts: data.contacts,
+        createDate: data.createDate
       }
       this.detailLoading = true
       this.dialogVisible = true
@@ -383,6 +360,7 @@ export default {
           type: 'success',
           duration: 2500
         })
+        this.init()
       })
     },
     getSummaries(param) {
@@ -416,10 +394,28 @@ export default {
           duration: 2500
         })
       }
-      console.log(this.unitInfoMsg)
+      this.downloadLoading = true
       downloadDeliveryNote(this.unitInfoMsg.id).then(result => {
+        this.downloadLoading = false
         downloadFile(result, '生产单导出', 'xlsx')
       }).catch(() => {
+        this.downloadLoading = false
+      })
+    },
+    exportPoundExcel(data) {
+      this.detailLoading = true
+      var dto = {
+        scanNumber: this.unitInfoMsg.scanNumber,
+        prodId: data.prodId,
+        prodName: data.prodName,
+        customerName: this.unitInfoMsg.customerName,
+        createDate: this.unitInfoMsg.createDate
+      }
+      exportPoundExcel(dto).then(result => {
+        this.detailLoading = false
+        downloadFile(result, '磅码单导出', 'xlsx')
+      }).catch(() => {
+        this.detailLoading = false
       })
     }
   }

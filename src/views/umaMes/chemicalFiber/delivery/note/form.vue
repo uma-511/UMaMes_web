@@ -48,13 +48,13 @@
       </el-form-item>
       <el-form-item label="联系电话" >
         <el-input v-model="form.contactPhone" style="width: 370px;"/>
-      </el-form-item>-->
+      </el-form-item>
       <el-form-item label="总成本" prop="totalCost">
         <el-input-number :min="0.1" v-model="form.totalCost" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="总价" prop="totalPrice">
         <el-input-number :min="0.1" v-model="form.totalPrice" style="width: 370px;"/>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item label="业务员" prop="seller">
         <el-input v-model="form.seller" style="width: 370px;"/>
       </el-form-item>

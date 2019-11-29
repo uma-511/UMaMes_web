@@ -35,6 +35,16 @@ export function downloadChemicalFiberDeliveryNote(params) {
 export function downloadDeliveryNote(id) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/downloadDeliveryNote/' + id,
-    method: 'get'
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
+export function exportPoundExcel(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/exportPoundExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
