@@ -32,9 +32,9 @@
         class="filter-item"
         style="width: 130px"
       >
-        <el-option key="RK" label="入库" value="RK"/>
-        <el-option key="SH" label="出库" value="SH"/>
-        <el-option key="TK" label="退库" value="TK"/>
+        <el-option key="RK" label="入仓" value="RK"/>
+        <el-option key="SH" label="出仓" value="SH"/>
+        <el-option key="TK" label="返仓" value="TK"/>
         <el-option key="TH" label="退货" value="TH"/>
       </el-select>
       <el-date-picker
@@ -165,9 +165,9 @@ export default {
         'TH': 'danger'
       },
       scanValue: {
-        'RK': '入库',
-        'SH': '出库',
-        'TK': '退库',
+        'RK': '入仓',
+        'SH': '出仓',
+        'TK': '返仓',
         'TH': '退货'
       }
     }

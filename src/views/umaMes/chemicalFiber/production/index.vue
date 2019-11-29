@@ -135,7 +135,7 @@
                   type="info"
                   icon="el-icon-setting"
                   @click="cancel(scope.row)"
-                >取消</el-button>
+                >作废</el-button>
               </el-dropdown-item>
               <el-dropdown-item v-if="optionMapping[scope.row.status].indexOf(2)>=0">
                 <el-button
@@ -285,7 +285,7 @@ export default {
         0: '待产',
         1: '生产中',
         2: '暂停',
-        3: '取消',
+        3: '作废',
         4: '完成'
       },
       machinesMapping: {
@@ -306,8 +306,8 @@ export default {
         // '生产中'
         1: [2, 4],
         // '暂停'
-        2: [1, 3, 4],
-        // '取消'
+        2: [0, 1, 4],
+        // '作废'
         3: [],
         // '完成'
         4: []

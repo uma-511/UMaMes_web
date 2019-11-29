@@ -85,7 +85,7 @@
         <el-input v-model="form.customerCode" style="width: 370px;"/>
       </el-form-item>-->
       <el-form-item label="纸芯重量">
-        <el-input-number v-model="form.coreWeight" :min="1" style="width: 370px;"/>
+        <el-input-number v-model="form.coreWeight" :min="0.1" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="每袋个数">
         <el-input-number v-model="form.perBagNumber" :min="1" style="width: 370px;"/>

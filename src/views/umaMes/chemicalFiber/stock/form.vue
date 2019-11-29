@@ -44,10 +44,10 @@
       <el-form-item label="最小值">
         <el-input v-model="form.min" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="库存指标">
+      <!-- <el-form-item label="库存指标">
         <el-input v-model="form.flag" style="width: 370px;"/>
       </el-form-item>
-      <!-- <el-form-item label="状态" >
+      <el-form-item label="状态" >
         <el-input v-model="form.status" style="width: 370px;"/>
       </el-form-item>-->
     </el-form>

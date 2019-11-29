@@ -25,6 +25,14 @@
           :value="item.key"
         />
       </el-select>
+      <el-date-picker
+        v-model="dateQuery"
+        class="el-range-editor--small filter-item"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+      />
       <el-button
         class="filter-item"
         size="mini"
@@ -77,7 +85,7 @@
       <el-table-column
         v-if="checkPermission(['admin','chemicalFiberDeliveryNote:edit','chemicalFiberDeliveryNote:del'])"
         label="操作"
-        width="150px"
+        width="180px"
         align="center"
       >
         <template slot-scope="scope">
@@ -87,14 +95,14 @@
             type="primary"
             icon="el-icon-edit"
             @click="edit(scope.row)"
-          />
+          >编辑</el-button>
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             size="mini"
             type="success"
             icon="el-icon-tickets"
             @click="detail(scope.row)"
-          />
+          >详情</el-button>
           <!-- <el-popover
             v-permission="['admin','chemicalFiberDeliveryNote:del']"
             :ref="scope.row.id"
@@ -162,22 +170,31 @@
         >
           <el-table-column prop="prodModel" label="型号" align="center"/>
           <el-table-column prop="prodName" label="品名" align="center"/>
+          <el-table-column prop="totalWeight" label="重量" width="60%" align="center"/>
           <el-table-column prop="totalNumber" label="数量" width="60%" align="center"/>
           <el-table-column prop="totalBag" label="件数" width="60%" align="center"/>
           <el-table-column prop="unit" label="单位" width="125%" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.unit" placeholder="请输入单位"/>
+              <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
+              <el-select v-model="scope.row.unit" placeholder="请选择单位">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column prop="cost" label="成本单价" width="200%" align="center">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.cost" :min="0.1" placeholder="请输入成本单价"/>
+              <el-input-number v-model="scope.row.cost" :min="0" placeholder="请输入成本单价"/>
             </template>
           </el-table-column>
           <el-table-column prop="totalCost" label="总成本（元）" width="80%" align="center"/>
           <el-table-column prop="sellingPrice" label="销售单价" width="200%" align="center">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.sellingPrice" :min="0.1" placeholder="请输入销售单价"/>
+              <el-input-number v-model="scope.row.sellingPrice" :min="0" placeholder="请输入销售单价"/>
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="总金额（元）" width="80%" align="center"/>
@@ -185,7 +202,7 @@
             v-if="checkPermission(['admin','configClassify:edit','configClassify:del'])"
             label="操作"
             align="center"
-            width="130%"
+            width="195%"
           >
             <template slot-scope="scope">
               <el-button
@@ -194,13 +211,13 @@
                 type="success"
                 icon="el-icon-edit"
                 @click="sutmitDetail(scope.row)"
-              />
+              >更新</el-button>
               <el-button
                 size="mini"
                 type="primary"
                 icon="el-icon-download"
                 @click="exportPoundExcel(scope.row)"
-              />
+              >磅码单</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -225,6 +242,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      dateQuery: '',
       delLoading: false,
       dialogVisible: false,
       detailLoading: false,
@@ -246,7 +264,16 @@ export default {
         { key: 'contacts', display_name: '联系人' },
         { key: 'contactPhone', display_name: '联系电话' }
       ],
-      detailList: []
+      detailList: [],
+      options: [
+        {
+          value: '个',
+          label: '个'
+        }, {
+          value: '公斤',
+          label: '公斤'
+        }
+      ]
     }
   },
   created() {
@@ -264,7 +291,12 @@ export default {
       const query = this.query
       const type = query.type
       const value = query.value
+      const dateQuery = this.dateQuery
       if (type && value) { this.params[type] = value }
+      if (dateQuery) {
+        this.params['tempStartTime'] = dateQuery[0].getTime()
+        this.params['tempEndTime'] = dateQuery[1].getTime()
+      }
       return true
     },
     subDelete(id) {
@@ -322,6 +354,10 @@ export default {
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false
+        this.$notify.error({
+          title: '请确保已选择单位',
+          duration: 2500
+        })
       })
     },
     detail(data) {
