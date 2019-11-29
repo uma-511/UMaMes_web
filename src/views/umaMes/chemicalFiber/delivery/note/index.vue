@@ -393,6 +393,7 @@ export default {
           type: 'warning',
           duration: 2500
         })
+        return
       }
       this.downloadLoading = true
       downloadDeliveryNote(this.unitInfoMsg.id).then(result => {
@@ -403,6 +404,14 @@ export default {
       })
     },
     exportPoundExcel(data) {
+      if (this.unitInfoMsg.customerName === null) {
+        this.$notify({
+          title: '请返回填写客户信息',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.detailLoading = true
       var dto = {
         scanNumber: this.unitInfoMsg.scanNumber,
