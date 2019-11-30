@@ -172,7 +172,7 @@ export default {
       this.deptId = null
       this.jobId = null
       this.roleIds = []
-      this.form = { username: '', email: '', enabled: 'false', roles: [], job: { id: '' }, dept: { id: '' }, phone: null }
+      this.form = { username: '', email: '', enabled: 'true', roles: [], job: { id: '' }, dept: { id: '' }, phone: null }
     },
     getRoles() {
       getAll().then(res => {

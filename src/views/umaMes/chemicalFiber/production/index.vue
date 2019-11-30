@@ -411,7 +411,7 @@ export default {
       })
     },
     setMachine(data) {
-      if (parseInt(data.status) !== 0) {
+      if (parseInt(data.status) !== 0 && parseInt(data.status) !== 2) {
         this.$notify({
           title: '生产中~~',
           type: 'warning',
@@ -430,16 +430,18 @@ export default {
       })
     },
     handleCurrentChange(val) {
-      if (val.status !== 0) {
-        this.highlight = false
-        this.setMachinesForm.machinesId = ''
-      } else {
-        this.highlight = true
-        this.setMachinesForm.machinesId = val.id
+      if (val != null) {
+        if (val.status !== 0 && val.status !== 2) {
+          this.highlight = false
+          this.setMachinesForm.machinesId = ''
+        } else {
+          this.highlight = true
+          this.setMachinesForm.machinesId = val.id
+        }
       }
     },
     tableRowClassName({ row, rowIndex }) {
-      if (parseInt(row.status) === 0) {
+      if (parseInt(row.status) === 0 || parseInt(row.status) === 2) {
         return 'success-row'
       } else {
         return 'warning-row'
