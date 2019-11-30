@@ -383,11 +383,23 @@ export default {
     },
     sutmitDetail(data) {
       this.detailLoading = true
-      if (data.cost) {
-        data.totalCost = data.totalNumber * data.cost
-      }
-      if (data.sellingPrice) {
-        data.totalPrice = data.totalNumber * data.sellingPrice
+      if (data.unit === '个') {
+        if (data.cost) {
+          data.totalCost = data.totalNumber * data.cost
+        }
+        if (data.sellingPrice) {
+          data.totalPrice = data.totalNumber * data.sellingPrice
+        }
+      } else {
+        var temp
+        if (data.cost) {
+          temp = data.totalWeight * data.cost
+          data.totalCost = temp.toFixed(2)
+        }
+        if (data.sellingPrice) {
+          temp = data.totalWeight * data.sellingPrice
+          data.totalPrice = temp.toFixed(2)
+        }
       }
       edit(data).then(res => {
         this.detailLoading = false
@@ -408,7 +420,7 @@ export default {
           return
         }
         const values = data.map(item => Number(item[column.property]))
-        if (index === 8) {
+        if (index === 9) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
@@ -416,7 +428,7 @@ export default {
             } else {
               return prev
             }
-          }, 0)
+          }, 0).toFixed(2)
           sums[index] += ' 元'
         }
       })
