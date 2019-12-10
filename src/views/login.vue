@@ -31,8 +31,8 @@
     <!--  底部  -->
     <div v-if="$store.state.settings.showFooter" id="el-login-footer">
       <span v-html="$store.state.settings.footerTxt"/>
-      <span> ⋅ </span>
-      <a href="http://www.beian.miit.gov.cn" target="_blank">{{ $store.state.settings.caseNumber }}</a>
+      <!-- <span> ⋅ </span> -->
+      <!-- <a href="http://www.beian.miit.gov.cn" target="_blank">{{ $store.state.settings.caseNumber }}</a> -->
     </div>
   </div>
 </template>
@@ -143,7 +143,7 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100%;
-    background-image:url(	https://docs-1255840532.cos.ap-shanghai.myqcloud.com/3968.jpg );
+    background-image:url(../assets/login_bg.jpg);
     background-size: cover;
   }
   .title {
