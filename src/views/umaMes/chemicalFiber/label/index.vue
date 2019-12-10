@@ -74,12 +74,17 @@
           icon="el-icon-download"
           @click="download">导出</el-button>
       </div>-->
+      <el-tag class="filter-item" type="success">个数汇总 {{ sumFactPerBagNumber }}</el-tag>
+      <el-tag class="filter-item" type="info">净重汇总 {{ sumNetWeight }}</el-tag>
+      <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }}</el-tag>
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="labelNumber" label="条码号"/>
+      <el-table-column prop="fineness" label="纤度"/>
+      <el-table-column prop="color" label="色号"/>
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
           <div slot="reference" class="name-wrapper">
@@ -101,6 +106,7 @@
       <el-table-column prop="grossWeight" label="毛重"/>
       <el-table-column prop="shifts" label="班次"/>
       <el-table-column prop="packer" label="包装员"/>
+      <el-table-column prop="machine" label="机台号"/>
       <!-- <el-table-column v-if="checkPermission(['admin','chemicalFiberLabel:edit','chemicalFiberLabel:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','chemicalFiberLabel:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
@@ -134,7 +140,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberLabel } from '@/api/chemicalFiberLabel'
+import { del, downloadChemicalFiberLabel, getSummaryData } from '@/api/chemicalFiberLabel'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -143,18 +149,24 @@ export default {
   data() {
     return {
       delLoading: false,
+      sumFactPerBagNumber: 0,
+      sumNetWeight: 0,
+      sumGrossWeight: 0,
       dateQuery: '',
       queryTypeOptions: [
         { key: 'labelNumber', display_name: '条码号' },
         // { key: 'status', display_name: '状态' },
         // { key: 'printTime', display_name: '打印时间' },
         { key: 'shifts', display_name: '班次' },
-        { key: 'packer', display_name: '包装员' }
+        { key: 'packer', display_name: '包装员' },
+        { key: 'fineness', display_name: '纤度' },
+        { key: 'color', display_name: '色号' },
+        { key: 'machine', display_name: '机台号' }
       ],
       typeMapping: {
         0: '',
         1: 'success',
-        2: 'success',
+        2: '',
         3: 'info',
         4: 'warning',
         5: 'danger'
@@ -196,6 +208,7 @@ export default {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
+      this.getSummaryData(this.params)
       return true
     },
     subDelete(id) {
@@ -255,6 +268,14 @@ export default {
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false
+      })
+    },
+    // 获取汇总数据
+    getSummaryData(params) {
+      getSummaryData(params).then((res) => {
+        this.sumFactPerBagNumber = res.data.sumFactPerBagNumber
+        this.sumNetWeight = res.data.sumNetWeight
+        this.sumGrossWeight = res.data.sumGrossWeight
       })
     }
   }

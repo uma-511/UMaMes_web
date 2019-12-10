@@ -54,6 +54,9 @@
           @click="download"
         >导出</el-button>
       </div>-->
+      <el-tag class="filter-item" type="success">个数汇总 {{ sumFactPerBagNumber }}</el-tag>
+      <el-tag class="filter-item" type="info">净重汇总 {{ sumNetWeight }}</el-tag>
+      <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }}</el-tag>
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -131,7 +134,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberStock } from '@/api/chemicalFiberStock'
+import { del, downloadChemicalFiberStock, getSummaryData } from '@/api/chemicalFiberStock'
 import { downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -140,6 +143,9 @@ export default {
   data() {
     return {
       delLoading: false,
+      sumFactPerBagNumber: 0,
+      sumNetWeight: 0,
+      sumGrossWeight: 0,
       queryTypeOptions: [
         { key: 'prodModel', display_name: '产品型号' },
         { key: 'prodName', display_name: '产品名称' },
@@ -173,6 +179,7 @@ export default {
       const type = query.type
       const value = query.value
       if (type && value) { this.params[type] = value }
+      this.getSummaryData(this.params)
       return true
     },
     subDelete(id) {
@@ -228,6 +235,14 @@ export default {
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false
+      })
+    },
+    // 获取汇总数据
+    getSummaryData(params) {
+      getSummaryData(params).then((res) => {
+        this.sumFactPerBagNumber = res.data.sumFactPerBagNumber
+        this.sumNetWeight = res.data.sumNetWeight
+        this.sumGrossWeight = res.data.sumGrossWeight
       })
     }
   }

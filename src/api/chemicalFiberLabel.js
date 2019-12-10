@@ -31,3 +31,11 @@ export function downloadChemicalFiberLabel(params) {
     responseType: 'blob'
   })
 }
+
+export function getSummaryData(data) {
+  return request({
+    url: 'api/chemicalFiberLabel/getSummaryData',
+    method: 'post',
+    data
+  })
+}

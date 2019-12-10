@@ -31,3 +31,11 @@ export function downloadChemicalFiberStock(params) {
     responseType: 'blob'
   })
 }
+
+export function getSummaryData(data) {
+  return request({
+    url: 'api/chemicalFiberStock/getSummaryData',
+    method: 'post',
+    data
+  })
+}

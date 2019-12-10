@@ -55,10 +55,10 @@
       <el-form-item label="总价" prop="totalPrice">
         <el-input-number :min="0.1" v-model="form.totalPrice" style="width: 370px;"/>
       </el-form-item>-->
-      <el-form-item label="业务员" prop="seller">
+      <el-form-item label="业务员">
         <el-input v-model="form.seller" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="仓管员" prop="storeKeeper">
+      <el-form-item label="仓管员">
         <el-input v-model="form.storeKeeper" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="备注">
@@ -117,16 +117,6 @@ export default {
         totalPrice: [
           {
             required: true, message: '请输入总价格', trigger: 'blur'
-          }
-        ],
-        seller: [
-          {
-            required: true, message: '请输入业务员', trigger: 'blur'
-          }
-        ],
-        storeKeeper: [
-          {
-            required: true, message: '请输入仓管员', trigger: 'blur'
           }
         ]
       },

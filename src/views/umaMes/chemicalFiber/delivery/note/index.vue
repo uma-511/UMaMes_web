@@ -446,7 +446,7 @@ export default {
       this.downloadLoading = true
       downloadDeliveryNote(this.unitInfoMsg.id).then(result => {
         this.downloadLoading = false
-        downloadFile(result, '生产单导出', 'xlsx')
+        downloadFile(result, '生产单导出', 'xls')
       }).catch(() => {
         this.downloadLoading = false
       })
@@ -470,7 +470,7 @@ export default {
       }
       exportPoundExcel(dto).then(result => {
         this.detailLoading = false
-        downloadFile(result, '磅码单导出', 'xlsx')
+        downloadFile(result, '磅码单导出', 'xls')
       }).catch(() => {
         this.detailLoading = false
       })
