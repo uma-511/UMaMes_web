@@ -85,6 +85,13 @@
       <el-table-column prop="labelNumber" label="条码号"/>
       <el-table-column prop="fineness" label="纤度"/>
       <el-table-column prop="color" label="色号"/>
+      <el-table-column prop="factPerBagNumber" label="每袋个数"/>
+      <el-table-column prop="netWeight" label="净重"/>
+      <el-table-column prop="tare" label="皮重"/>
+      <el-table-column prop="grossWeight" label="毛重"/>
+      <el-table-column prop="shifts" label="班次"/>
+      <el-table-column prop="machine" label="机台号"/>
+      <el-table-column prop="packer" label="包装员"/>
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
           <div slot="reference" class="name-wrapper">
@@ -100,13 +107,6 @@
           <span>{{ parseTime(scope.row.printTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="factPerBagNumber" label="每袋个数"/>
-      <el-table-column prop="netWeight" label="净重"/>
-      <el-table-column prop="tare" label="皮重"/>
-      <el-table-column prop="grossWeight" label="毛重"/>
-      <el-table-column prop="shifts" label="班次"/>
-      <el-table-column prop="packer" label="包装员"/>
-      <el-table-column prop="machine" label="机台号"/>
       <!-- <el-table-column v-if="checkPermission(['admin','chemicalFiberLabel:edit','chemicalFiberLabel:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','chemicalFiberLabel:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>

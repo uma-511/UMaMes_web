@@ -199,14 +199,13 @@
           </el-table-column>
           <el-table-column prop="totalPrice" label="总金额（元）" width="80%" align="center"/>
           <el-table-column
-            v-if="checkPermission(['admin','configClassify:edit','configClassify:del'])"
+            v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])"
             label="操作"
             align="center"
             width="195%"
           >
             <template slot-scope="scope">
               <el-button
-                v-permission="['admin','configClassify:edit']"
                 size="mini"
                 type="success"
                 icon="el-icon-edit"
