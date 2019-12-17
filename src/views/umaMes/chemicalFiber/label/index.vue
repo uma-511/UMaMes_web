@@ -75,8 +75,8 @@
           @click="download">导出</el-button>
       </div>-->
       <el-tag class="filter-item" type="success">个数汇总 {{ sumFactPerBagNumber }}</el-tag>
-      <el-tag class="filter-item" type="info">净重汇总 {{ sumNetWeight }}</el-tag>
-      <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }}</el-tag>
+      <el-tag class="filter-item" type="info">净重汇总 {{ sumNetWeight }} KG</el-tag>
+      <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }} KG</el-tag>
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -86,9 +86,9 @@
       <el-table-column prop="fineness" label="纤度"/>
       <el-table-column prop="color" label="色号"/>
       <el-table-column prop="factPerBagNumber" label="每袋个数"/>
-      <el-table-column prop="netWeight" label="净重"/>
-      <el-table-column prop="tare" label="皮重"/>
-      <el-table-column prop="grossWeight" label="毛重"/>
+      <el-table-column :formatter="kgformatter" prop="netWeight" label="净重"/>
+      <el-table-column :formatter="kgformatter" prop="tare" label="皮重"/>
+      <el-table-column :formatter="kgformatter" prop="grossWeight" label="毛重"/>
       <el-table-column prop="shifts" label="班次"/>
       <el-table-column prop="machine" label="机台号"/>
       <el-table-column prop="packer" label="包装员"/>
@@ -277,6 +277,9 @@ export default {
         this.sumNetWeight = res.data.sumNetWeight
         this.sumGrossWeight = res.data.sumGrossWeight
       })
+    },
+    kgformatter(row, column, cellValue, index) {
+      return cellValue + ' KG'
     }
   }
 }
