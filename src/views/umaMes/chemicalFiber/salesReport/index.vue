@@ -66,7 +66,7 @@
     <el-dialog
       :visible.sync="dialogVisible"
       :append-to-body="true"
-      title="详情"
+      :title="detailsTitle"
       width="65%">
       <el-table
         :data="chemicalFiberDeliveryDetails"
@@ -125,7 +125,8 @@ export default {
       ],
       sums: [],
       chemicalFiberDeliveryDetails: [],
-      tempName: '客户名称'
+      tempName: '客户名称',
+      detailsTitle: ''
     }
   },
   created() {
@@ -163,6 +164,7 @@ export default {
     details(data) {
       this.dialogVisible = true
       this.chemicalFiberDeliveryDetails = data.chemicalFiberDeliveryDetails
+      this.detailsTitle = data.scanNumber + ' -- ' + (data.customerName === null ? '' : data.customerName) + ' 详情'
     }
   }
 }
