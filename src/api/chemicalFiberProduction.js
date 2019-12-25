@@ -47,3 +47,12 @@ export function setProductionStatus(data) {
     data
   })
 }
+
+export function getProductionReportSummaries(data) {
+  return request({
+    url: 'api/chemicalFiberProduction/getProductionReportSummaries',
+    method: 'post',
+    data
+  })
+}
+
