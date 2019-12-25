@@ -48,3 +48,11 @@ export function exportPoundExcel(data) {
     responseType: 'blob'
   })
 }
+
+export function getSalesReportSummaries(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/getSalesReportSummaries',
+    method: 'post',
+    data
+  })
+}

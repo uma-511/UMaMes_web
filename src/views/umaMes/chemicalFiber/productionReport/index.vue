@@ -52,7 +52,12 @@
       style="width: 100%;"
       show-summary
     >
-      <el-table-column prop="number" label="编号" align="center"/>
+      <el-table-column
+        type="index"
+        width="50"
+        label="编号"
+        align="center"/>
+      <!-- <el-table-column prop="number" label="编号" align="center"/> -->
       <el-table-column prop="prodColor" label="色号" align="center"/>
       <el-table-column prop="prodFineness" label="纤度" align="center"/>
       <el-table-column prop="warehousingPacketNumber" label="入库包数" align="center"/>
