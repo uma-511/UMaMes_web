@@ -170,7 +170,13 @@
         >
           <el-table-column prop="prodModel" label="型号" align="center"/>
           <el-table-column prop="prodName" label="品名" align="center"/>
-          <el-table-column prop="totalWeight" label="重量" width="60%" align="center"/>
+          <el-table-column
+            :formatter="kgformatter"
+            prop="totalWeight"
+            label="重量"
+            width="60%"
+            align="center"
+          />
           <el-table-column prop="totalNumber" label="数量" width="60%" align="center"/>
           <el-table-column prop="totalBag" label="件数" width="60%" align="center"/>
           <el-table-column prop="unit" label="单位" width="125%" align="center">
@@ -473,6 +479,9 @@ export default {
       }).catch(() => {
         this.detailLoading = false
       })
+    },
+    kgformatter(row, column, cellValue, index) {
+      return cellValue + ' KG'
     }
   }
 }

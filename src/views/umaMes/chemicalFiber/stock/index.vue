@@ -55,8 +55,8 @@
         >导出</el-button>
       </div>-->
       <el-tag class="filter-item" type="success">个数汇总 {{ sumFactPerBagNumber }}</el-tag>
-      <el-tag class="filter-item" type="info">净重汇总 {{ sumNetWeight }}</el-tag>
-      <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }}</el-tag>
+      <el-tag class="filter-item" type="info">净重汇总 {{ sumNetWeight }} KG</el-tag>
+      <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }} KG</el-tag>
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -66,9 +66,9 @@
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodColor" label="产品色号"/>
       <el-table-column prop="prodFineness" label="产品纤度"/>
-      <el-table-column prop="totalNetWeight" label="总净重"/>
-      <el-table-column prop="totalTare" label="总皮重"/>
-      <el-table-column prop="totalGrossWeight" label="总毛重"/>
+      <el-table-column :formatter="kgformatter" prop="totalNetWeight" label="总净重"/>
+      <el-table-column :formatter="kgformatter" prop="totalTare" label="总皮重"/>
+      <el-table-column :formatter="kgformatter" prop="totalGrossWeight" label="总毛重"/>
       <el-table-column prop="totalNumber" label="总个数"/>
       <el-table-column prop="totalBag" label="总件数"/>
       <el-table-column prop="max" label="最大值"/>
@@ -244,6 +244,9 @@ export default {
         this.sumNetWeight = res.data.sumNetWeight
         this.sumGrossWeight = res.data.sumGrossWeight
       })
+    },
+    kgformatter(row, column, cellValue, index) {
+      return cellValue + ' KG'
     }
   }
 }
