@@ -60,28 +60,76 @@
       <!-- <el-table-column prop="number" label="编号" align="center"/> -->
       <el-table-column prop="prodColor" label="色号" align="center"/>
       <el-table-column prop="prodFineness" label="纤度" align="center"/>
-      <el-table-column prop="warehousingPacketNumber" label="入库包数" align="center"/>
-      <el-table-column prop="warehousingFactPerBagNumber" label="入库个数" align="center"/>
-      <el-table-column prop="warehousingNetWeight" label="入库净重(kg)" align="center"/>
-      <el-table-column prop="warehousingGrossWeight" label="入库毛重(kg)" align="center"/>
-      <el-table-column prop="outOfstockPacketNumber" label="出库包数" align="center"/>
-      <el-table-column prop="outOfstockFactPerBagNumber" label="出库个数" align="center"/>
-      <el-table-column prop="outOfstockNetWeight" label="出库净重(kg)" align="center"/>
-      <el-table-column prop="outOfstockGrossWeight" label="出库毛重(kg)" align="center"/>
+      <el-table-column prop="warehousingPacketNumber" label="入库包数" align="center">
+        <template slot-scope="scope">
+          <span style="color:#67C23A;">{{ scope.row.warehousingPacketNumber }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="warehousingFactPerBagNumber" label="入库个数" align="center">
+        <template slot-scope="scope">
+          <span style="color:#67C23A;">{{ scope.row.warehousingFactPerBagNumber }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="warehousingNetWeight" label="入库净重(kg)" align="center">
+        <template slot-scope="scope">
+          <span style="color:#67C23A;">{{ scope.row.warehousingNetWeight }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="warehousingGrossWeight" label="入库毛重(kg)" align="center">
+        <template slot-scope="scope">
+          <span style="color:#67C23A;">{{ scope.row.warehousingGrossWeight }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="outOfstockPacketNumber" label="出库包数" align="center">
+        <template slot-scope="scope">
+          <span style="color:#409EFF;">{{ scope.row.outOfstockPacketNumber }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="outOfstockFactPerBagNumber" label="出库个数" align="center">
+        <template slot-scope="scope">
+          <span style="color:#409EFF;">{{ scope.row.outOfstockFactPerBagNumber }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="outOfstockNetWeight" label="出库净重(kg)" align="center">
+        <template slot-scope="scope">
+          <span style="color:#409EFF;">{{ scope.row.outOfstockNetWeight }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="outOfstockGrossWeight" label="出库毛重(kg)" align="center">
+        <template slot-scope="scope">
+          <span style="color:#409EFF;">{{ scope.row.outOfstockGrossWeight }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="warehousingPacketRatio" label="在库包数比例" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.warehousingPacketRatio }}%</span>
+          <span style="color:#E6A23C;">{{ scope.row.warehousingPacketRatio }}%</span>
         </template>
       </el-table-column>
       <el-table-column prop="warehousingNetWeightRatio" label="在库净重比例" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.warehousingNetWeightRatio }}%</span>
+          <span style="color:#E6A23C;">{{ scope.row.warehousingNetWeightRatio }}%</span>
         </template>
       </el-table-column>
-      <el-table-column prop="toVoidPacketNumber" label="作废包数" align="center"/>
-      <el-table-column prop="toVoidFactPerBagNumber" label="作废个数" align="center"/>
-      <el-table-column prop="toVoidNetWeight" label="作废净重(kg)" align="center"/>
-      <el-table-column prop="toVoidGrossWeight" label="作废毛重(kg)" align="center"/>
+      <el-table-column prop="toVoidPacketNumber" label="作废包数" align="center">
+        <template slot-scope="scope">
+          <span style="color:#F56C6C;">{{ scope.row.toVoidPacketNumber }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="toVoidFactPerBagNumber" label="作废个数" align="center">
+        <template slot-scope="scope">
+          <span style="color:#F56C6C;">{{ scope.row.toVoidFactPerBagNumber }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="toVoidNetWeight" label="作废净重(kg)" align="center">
+        <template slot-scope="scope">
+          <span style="color:#F56C6C;">{{ scope.row.toVoidNetWeight }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="toVoidGrossWeight" label="作废毛重(kg)" align="center">
+        <template slot-scope="scope">
+          <span style="color:#F56C6C;">{{ scope.row.toVoidGrossWeight }}</span>
+        </template>
+      </el-table-column>
     </el-table>
     <!--分页组件-->
     <el-pagination
