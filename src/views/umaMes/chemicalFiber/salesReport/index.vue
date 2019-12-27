@@ -133,8 +133,8 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
-    var curDate = new Date()
-    this.dateQuery = [curDate, new Date(curDate.getTime() + 24 * 60 * 60 * 1000)]
+    var start = new Date(new Date(new Date().toLocaleDateString()))
+    this.dateQuery = [start, new Date(start.getTime() + 24 * 60 * 60 * 1000)]
   },
   methods: {
     parseTimeToDate,
