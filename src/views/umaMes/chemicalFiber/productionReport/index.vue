@@ -60,22 +60,22 @@
       <!-- <el-table-column prop="number" label="编号" align="center"/> -->
       <el-table-column prop="prodColor" label="色号" align="center"/>
       <el-table-column prop="prodFineness" label="纤度" align="center"/>
-      <el-table-column prop="warehousingPacketNumber" label="入库包数" align="center">
+      <el-table-column prop="warehousingPacketNumber" label="在库包数" align="center">
         <template slot-scope="scope">
           <span style="color:#67C23A;">{{ scope.row.warehousingPacketNumber }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="warehousingFactPerBagNumber" label="入库个数" align="center">
+      <el-table-column prop="warehousingFactPerBagNumber" label="在库个数" align="center">
         <template slot-scope="scope">
           <span style="color:#67C23A;">{{ scope.row.warehousingFactPerBagNumber }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="warehousingNetWeight" label="入库净重(kg)" align="center">
+      <el-table-column prop="warehousingNetWeight" label="在库净重(kg)" align="center">
         <template slot-scope="scope">
           <span style="color:#67C23A;">{{ scope.row.warehousingNetWeight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="warehousingGrossWeight" label="入库毛重(kg)" align="center">
+      <el-table-column prop="warehousingGrossWeight" label="在库毛重(kg)" align="center">
         <template slot-scope="scope">
           <span style="color:#67C23A;">{{ scope.row.warehousingGrossWeight }}</span>
         </template>
