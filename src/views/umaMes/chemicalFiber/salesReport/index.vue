@@ -118,7 +118,7 @@ export default {
   mixins: [initData],
   data() {
     return {
-      dateQuery: '',
+      dateQuery: [],
       dialogVisible: false,
       queryTypeOptions: [
         { key: 'customerName', display_name: '客户名称' }
@@ -133,6 +133,8 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
+    var curDate = new Date()
+    this.dateQuery = [curDate, new Date(curDate.getTime() + 24 * 60 * 60 * 1000)]
   },
   methods: {
     parseTimeToDate,

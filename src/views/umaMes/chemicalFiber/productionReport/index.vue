@@ -151,7 +151,7 @@ export default {
   mixins: [initData],
   data() {
     return {
-      dateQuery: '',
+      dateQuery: [],
       queryTypeOptions: [
         { key: 'prodColor', display_name: '产品颜色' },
         { key: 'prodFineness', display_name: '产品纤度' }
@@ -163,6 +163,8 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
+    var curDate = new Date()
+    this.dateQuery = [curDate, new Date(curDate.getTime() + 24 * 60 * 60 * 1000)]
   },
   methods: {
     checkPermission,
