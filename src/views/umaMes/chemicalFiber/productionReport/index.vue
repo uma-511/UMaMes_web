@@ -58,76 +58,76 @@
         label="编号"
         align="center"/>
       <!-- <el-table-column prop="number" label="编号" align="center"/> -->
-      <el-table-column prop="prodColor" label="色号" align="center"/>
-      <el-table-column prop="prodFineness" label="纤度" align="center"/>
-      <el-table-column prop="warehousingPacketNumber" label="在库包数" align="center">
+      <el-table-column prop="color" label="色号" align="center"/>
+      <el-table-column prop="fineness" label="纤度" align="center"/>
+      <el-table-column prop="in_stock_pack" label="在库包数" align="center">
         <template slot-scope="scope">
-          <span style="color:#67C23A;">{{ scope.row.warehousingPacketNumber }}</span>
+          <span style="color:#67C23A;">{{ scope.row.in_stock_pack }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="warehousingFactPerBagNumber" label="在库个数" align="center">
+      <el-table-column prop="in_stock_number" label="在库个数" align="center">
         <template slot-scope="scope">
-          <span style="color:#67C23A;">{{ scope.row.warehousingFactPerBagNumber }}</span>
+          <span style="color:#67C23A;">{{ scope.row.in_stock_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="warehousingNetWeight" label="在库净重(kg)" align="center">
+      <el-table-column prop="in_net_weight" label="在库净重(kg)" align="center">
         <template slot-scope="scope">
-          <span style="color:#67C23A;">{{ scope.row.warehousingNetWeight }}</span>
+          <span style="color:#67C23A;">{{ scope.row.in_net_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="warehousingGrossWeight" label="在库毛重(kg)" align="center">
+      <el-table-column prop="in_gross_weight" label="在库毛重(kg)" align="center">
         <template slot-scope="scope">
-          <span style="color:#67C23A;">{{ scope.row.warehousingGrossWeight }}</span>
+          <span style="color:#67C23A;">{{ scope.row.in_gross_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="outOfstockPacketNumber" label="出库包数" align="center">
+      <el-table-column prop="out_stock_pack" label="出库包数" align="center">
         <template slot-scope="scope">
-          <span style="color:#409EFF;">{{ scope.row.outOfstockPacketNumber }}</span>
+          <span style="color:#409EFF;">{{ scope.row.out_stock_pack }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="outOfstockFactPerBagNumber" label="出库个数" align="center">
+      <el-table-column prop="out_stock_number" label="出库个数" align="center">
         <template slot-scope="scope">
-          <span style="color:#409EFF;">{{ scope.row.outOfstockFactPerBagNumber }}</span>
+          <span style="color:#409EFF;">{{ scope.row.out_stock_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="outOfstockNetWeight" label="出库净重(kg)" align="center">
+      <el-table-column prop="out_net_weight" label="出库净重(kg)" align="center">
         <template slot-scope="scope">
-          <span style="color:#409EFF;">{{ scope.row.outOfstockNetWeight }}</span>
+          <span style="color:#409EFF;">{{ scope.row.out_net_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="outOfstockGrossWeight" label="出库毛重(kg)" align="center">
+      <el-table-column prop="out_gross_weight" label="出库毛重(kg)" align="center">
         <template slot-scope="scope">
-          <span style="color:#409EFF;">{{ scope.row.outOfstockGrossWeight }}</span>
+          <span style="color:#409EFF;">{{ scope.row.out_gross_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="warehousingPacketRatio" label="在库包数比例" align="center">
+      <el-table-column prop="in_stock_prop" label="在库包数比例" align="center">
         <template slot-scope="scope">
-          <span style="color:#E6A23C;">{{ scope.row.warehousingPacketRatio }}%</span>
+          <span style="color:#E6A23C;">{{ scope.row.in_stock_prop }}%</span>
         </template>
       </el-table-column>
-      <el-table-column prop="warehousingNetWeightRatio" label="在库净重比例" align="center">
+      <el-table-column prop="in_weight_prop" label="在库净重比例" align="center">
         <template slot-scope="scope">
-          <span style="color:#E6A23C;">{{ scope.row.warehousingNetWeightRatio }}%</span>
+          <span style="color:#E6A23C;">{{ scope.row.in_weight_prop }}%</span>
         </template>
       </el-table-column>
-      <el-table-column prop="toVoidPacketNumber" label="作废包数" align="center">
+      <el-table-column prop="cancel_stock_pack" label="作废包数" align="center">
         <template slot-scope="scope">
-          <span style="color:#F56C6C;">{{ scope.row.toVoidPacketNumber }}</span>
+          <span style="color:#F56C6C;">{{ scope.row.cancel_stock_pack }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="toVoidFactPerBagNumber" label="作废个数" align="center">
+      <el-table-column prop="cancel_stock_number" label="作废个数" align="center">
         <template slot-scope="scope">
-          <span style="color:#F56C6C;">{{ scope.row.toVoidFactPerBagNumber }}</span>
+          <span style="color:#F56C6C;">{{ scope.row.cancel_stock_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="toVoidNetWeight" label="作废净重(kg)" align="center">
+      <el-table-column prop="cancel_net_weight" label="作废净重(kg)" align="center">
         <template slot-scope="scope">
-          <span style="color:#F56C6C;">{{ scope.row.toVoidNetWeight }}</span>
+          <span style="color:#F56C6C;">{{ scope.row.cancel_net_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="toVoidGrossWeight" label="作废毛重(kg)" align="center">
+      <el-table-column prop="cancel_gross_weight" label="作废毛重(kg)" align="center">
         <template slot-scope="scope">
-          <span style="color:#F56C6C;">{{ scope.row.toVoidGrossWeight }}</span>
+          <span style="color:#F56C6C;">{{ scope.row.cancel_gross_weight }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -180,6 +180,13 @@ export default {
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
+      } else {
+        this.$notify({
+          title: '警告',
+          message: '请选择时间',
+          type: 'warning'
+        })
+        return false
       }
       this.tempGetProductionReportSummaries()
       return true
