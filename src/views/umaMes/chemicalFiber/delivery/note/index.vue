@@ -138,7 +138,7 @@
       :append-to-body="true"
       :modal="true"
       title="出货单详情"
-      width="75%"
+      width="80%"
     >
       <el-row style="width: 100%">
         <el-container>
@@ -204,6 +204,11 @@
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="总金额（元）" width="80%" align="center"/>
+          <el-table-column prop="remark" label="备注" width="150%" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.remark" placeholder="备注"/>
+            </template>
+          </el-table-column>
           <el-table-column
             v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])"
             label="操作"
