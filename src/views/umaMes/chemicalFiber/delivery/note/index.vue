@@ -206,7 +206,7 @@
           <el-table-column prop="totalPrice" label="总金额（元）" width="80%" align="center"/>
           <el-table-column prop="remark" label="备注" width="150%" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" placeholder="备注"/>
+              <el-input v-model="scope.row.remark" placeholder="备注" maxlength="6"/>
             </template>
           </el-table-column>
           <el-table-column
