@@ -36,17 +36,17 @@
       show-summary
     >
       <el-table-column prop="scanNumber" label="销售单号" align="center"/>
+      <el-table-column prop="createTime" label="制单时间" align="center">
+        <template slot-scope="scope">
+          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="customerName" label="客户" align="center"/>
       <el-table-column prop="outOfStockPackageNumber" label="出库包数" align="center"/>
       <el-table-column prop="outOfStockFactPerBagNumber" label="出库个数" align="center"/>
       <el-table-column prop="outOfStockNetWeight" label="出库净重(kg)" align="center"/>
       <el-table-column prop="totalCost" label="成本金额" align="center"/>
       <el-table-column prop="receivablePrice" label="总金额" align="center"/>
-      <el-table-column prop="createTime" label="制单时间" align="center">
-        <template slot-scope="scope">
-          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" icon="el-icon-tickets" @click="details(scope.row)"/>
