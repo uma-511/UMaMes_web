@@ -42,16 +42,26 @@
         </template>
       </el-table-column>
       <el-table-column prop="customerName" label="客户" align="center"/>
-      <el-table-column prop="outOfStockPackageNumber" label="出库包数" align="center"/>
+      <!-- <el-table-column prop="outOfStockPackageNumber" label="出库包数" align="center"/>
       <el-table-column prop="outOfStockFactPerBagNumber" label="出库个数" align="center"/>
       <el-table-column prop="outOfStockNetWeight" label="出库净重(kg)" align="center"/>
       <el-table-column prop="totalCost" label="成本金额" align="center"/>
-      <el-table-column prop="receivablePrice" label="总金额" align="center"/>
-      <el-table-column label="操作" width="150px" align="center">
+      <el-table-column prop="receivablePrice" label="总金额" align="center"/>-->
+      <el-table-column prop="prodName" label="产品名称"/>
+      <el-table-column prop="prodColor" label="色号"/>
+      <el-table-column prop="prodFineness" label="纤度"/>
+      <el-table-column prop="totalBag" label="出库包数"/>
+      <el-table-column prop="totalNumber" label="出库个数"/>
+      <el-table-column prop="totalWeight" label="出库净重"/>
+      <el-table-column prop="cost" label="成本单价"/>
+      <el-table-column prop="totalCost" label="成本总价"/>
+      <el-table-column prop="sellingPrice" label="销售单价"/>
+      <el-table-column prop="totalPrice" label="销售总价"/>
+      <!-- <el-table-column label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" icon="el-icon-tickets" @click="details(scope.row)"/>
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
     <!--分页组件-->
     <el-pagination
@@ -62,44 +72,22 @@
       @size-change="sizeChange"
       @current-change="pageChange"
     />
-
     <el-dialog
       :visible.sync="dialogVisible"
       :append-to-body="true"
       :title="detailsTitle"
-      width="65%">
-      <el-table
-        :data="chemicalFiberDeliveryDetails"
-        style="width: 100%">
-        <el-table-column
-          prop="prodColor"
-          label="色号"
-          width="180"/>
-        <el-table-column
-          prop="prodFineness"
-          label="纤度"
-          width="180"/>
-        <el-table-column
-          prop="totalBag"
-          label="出库包数"/>
-        <el-table-column
-          prop="totalNumber"
-          label="出库个数"/>
-        <el-table-column
-          prop="totalWeight"
-          label="出库净重"/>
-        <el-table-column
-          prop="cost"
-          label="成本单价"/>
-        <el-table-column
-          prop="totalCost"
-          label="成本总价"/>
-        <el-table-column
-          prop="sellingPrice"
-          label="销售单价"/>
-        <el-table-column
-          prop="totalPrice"
-          label="销售总价"/>
+      width="65%"
+    >
+      <el-table :data="chemicalFiberDeliveryDetails" style="width: 100%">
+        <el-table-column prop="prodColor" label="色号" width="180"/>
+        <el-table-column prop="prodFineness" label="纤度" width="180"/>
+        <el-table-column prop="totalBag" label="出库包数"/>
+        <el-table-column prop="totalNumber" label="出库个数"/>
+        <el-table-column prop="totalWeight" label="出库净重"/>
+        <el-table-column prop="cost" label="成本单价"/>
+        <el-table-column prop="totalCost" label="成本总价"/>
+        <el-table-column prop="sellingPrice" label="销售单价"/>
+        <el-table-column prop="totalPrice" label="销售总价"/>
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -111,7 +99,7 @@
 
 <script>
 import checkPermission from '@/utils/permission'
-import { getSalesReportSummaries } from '@/api/chemicalFiberDeliveryNote'
+import { getSalesReportSummaries } from '@/api/chemicalFiberDeliveryDetail'
 import initData from '@/mixins/initData'
 import { parseTimeToDate } from '@/utils/index'
 export default {
@@ -140,7 +128,7 @@ export default {
     parseTimeToDate,
     checkPermission,
     beforeInit() {
-      this.url = 'api/chemicalFiberDeliveryNote/getSalesReport'
+      this.url = 'api/chemicalFiberDeliveryDetail'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query

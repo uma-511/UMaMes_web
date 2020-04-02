@@ -39,3 +39,11 @@ export function getChemicalFiberDeliveryDetailsList(data) {
     data
   })
 }
+
+export function getSalesReportSummaries(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryDetail/getSalesReportSummaries',
+    method: 'post',
+    data
+  })
+}
