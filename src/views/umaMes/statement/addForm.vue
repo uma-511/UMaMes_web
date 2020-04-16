@@ -257,6 +257,7 @@ export default {
       }
     },
     queryDateFun() {
+      console.log(this.form)
       if (this.form.customerId === '') {
         this.$notify({
           message: '请选择客户后再查询',
@@ -274,7 +275,7 @@ export default {
       this.tableLoading = true
       if (this.isAdd) {
         this.tempData = {
-          statementId: this.form.statementId,
+          customerId: this.form.customerId,
           tempStartTime: this.queryDate[0].getTime(),
           tempEndTime: this.queryDate[1].getTime(),
           pageNumber: this.page,

@@ -350,7 +350,7 @@ export default {
       this.tableLoading = true
       if (this.isAdd) {
         this.tempData = {
-          statementId: this.form.statementId,
+          customerId: this.form.customerId,
           tempStartTime: this.queryDate[0].getTime(),
           tempEndTime: this.queryDate[1].getTime(),
           pageNumber: this.page,
