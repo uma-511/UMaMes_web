@@ -70,10 +70,10 @@
       <el-table-column :formatter="kgformatter" prop="totalTare" label="总皮重"/>
       <el-table-column :formatter="kgformatter" prop="totalGrossWeight" label="总毛重"/>
       <el-table-column prop="totalNumber" label="总个数"/>
-      <el-table-column prop="totalBag" label="总件数"/>
-      <el-table-column prop="max" label="最大值"/>
-      <el-table-column prop="min" label="最小值"/>
-      <el-table-column prop="flag" label="库存指标"/>
+      <el-table-column prop="totalBag" label="总包数"/>
+      <el-table-column :formatter="maxformatter" prop="max" label="最大值" />
+      <el-table-column :formatter="maxformatter" prop="min" label="最小值"/>
+      <!-- <el-table-column prop="flag" label="库存指标"/> -->
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
           <div slot="reference" class="name-wrapper">
@@ -247,6 +247,13 @@ export default {
     },
     kgformatter(row, column, cellValue, index) {
       return cellValue + ' KG'
+    },
+    maxformatter(row, column, cellValue, index) {
+      if (cellValue == null || cellValue === 0) {
+        return ''
+      } else {
+        return cellValue
+      }
     }
   }
 }

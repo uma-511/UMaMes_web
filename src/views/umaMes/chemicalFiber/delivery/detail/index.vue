@@ -68,7 +68,7 @@
       <el-table-column prop="unit" label="单位"/>
       <el-table-column prop="totalCost" label="总成本"/>
       <el-table-column prop="totalPrice" label="总金额"/>
-      <el-table-column prop="totalBag" label="总件数"/>
+      <el-table-column prop="totalBag" label="总包数"/>
       <el-table-column
         v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])"
         label="操作"

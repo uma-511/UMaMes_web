@@ -1,59 +1,60 @@
 <template>
-  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
+  <el-dialog
+    :append-to-body="true"
+    :close-on-click-modal="false"
+    :before-close="cancel"
+    :visible.sync="dialog"
+    :title="isAdd ? '新增' : '编辑'"
+    width="500px"
+  >
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="条码号" >
+      <el-form-item label="标签编号（条码号）">
         <el-input v-model="form.labelNumber" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="生产单id" >
+      <el-form-item label="生产单id">
         <el-input v-model="form.productionId" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="状态" >
+      <el-form-item label="产品id">
+        <el-input v-model="form.productId" style="width: 370px;"/>
+      </el-form-item>
+      <el-form-item label="便签状态 0：待入库 1：入库 2：出库 3：作废 4：退库 5：退货">
         <el-input v-model="form.status" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="打印时间" >
+      <el-form-item label="打印时间">
         <el-date-picker v-model="form.printTime" type="datetime" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="每包个数" >
+      <el-form-item label="实际每包个数">
         <el-input v-model="form.factPerBagNumber" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="净重" >
+      <el-form-item label="净重">
         <el-input v-model="form.netWeight" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="皮重" >
+      <el-form-item label="皮重">
         <el-input v-model="form.tare" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="毛重" >
+      <el-form-item label="毛重">
         <el-input v-model="form.grossWeight" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="班次" >
+      <el-form-item label="班次">
         <el-input v-model="form.shifts" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="包装员" >
+      <el-form-item label="包装员">
         <el-input v-model="form.packer" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="入库单号" >
-        <el-input v-model="form.rkNumber" style="width: 370px;"/>
+      <el-form-item label="机台号">
+        <el-input v-model="form.machine" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="送货单号" >
-        <el-input v-model="form.shNumber" style="width: 370px;"/>
+      <el-form-item label="流水号">
+        <el-input v-model="form.flowNumber" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="退库单号" >
-        <el-input v-model="form.tkNumber" style="width: 370px;"/>
+      <el-form-item label="纤度">
+        <el-input v-model="form.fineness" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="退货单号" >
-        <el-input v-model="form.thNumber" style="width: 370px;"/>
+      <el-form-item label="色号">
+        <el-input v-model="form.color" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="入库扫描时间" >
-        <el-date-picker v-model="form.rkScanTime" type="datetime" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="出库扫描时间" >
-        <el-date-picker v-model="form.shScanTime" type="datetime" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="退库扫描时间" >
-        <el-date-picker v-model="form.tkScanTime" type="datetime" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="退货扫描时间" >
-        <el-date-picker v-model="form.thScanTime" type="datetime" style="width: 370px;"/>
+      <el-form-item label="芯重">
+        <el-input v-model="form.coreWeight" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -64,7 +65,7 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/chemicalFiberLabel'
+import { add, edit } from '@/api/chemicalFiberLabelInventory'
 export default {
   props: {
     isAdd: {
@@ -79,6 +80,7 @@ export default {
         id: '',
         labelNumber: '',
         productionId: '',
+        productId: '',
         status: '',
         printTime: '',
         factPerBagNumber: '',
@@ -87,14 +89,11 @@ export default {
         grossWeight: '',
         shifts: '',
         packer: '',
-        rkNumber: '',
-        shNumber: '',
-        tkNumber: '',
-        thNumber: '',
-        rkScanTime: '',
-        shScanTime: '',
-        tkScanTime: '',
-        thScanTime: ''
+        machine: '',
+        flowNumber: '',
+        fineness: '',
+        color: '',
+        coreWeight: ''
       },
       rules: {
       }
@@ -147,6 +146,7 @@ export default {
         id: '',
         labelNumber: '',
         productionId: '',
+        productId: '',
         status: '',
         printTime: '',
         factPerBagNumber: '',
@@ -155,14 +155,11 @@ export default {
         grossWeight: '',
         shifts: '',
         packer: '',
-        rkNumber: '',
-        shNumber: '',
-        tkNumber: '',
-        thNumber: '',
-        rkScanTime: '',
-        shScanTime: '',
-        tkScanTime: '',
-        thScanTime: ''
+        machine: '',
+        flowNumber: '',
+        fineness: '',
+        color: '',
+        coreWeight: ''
       }
     }
   }
@@ -170,5 +167,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

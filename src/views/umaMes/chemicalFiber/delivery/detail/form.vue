@@ -31,7 +31,7 @@
       <el-form-item label="总金额" >
         <el-input v-model="form.totalPrice" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="总件数" >
+      <el-form-item label="总包数" >
         <el-input v-model="form.totalBag" style="width: 370px;"/>
       </el-form-item>
     </el-form>

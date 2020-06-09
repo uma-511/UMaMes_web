@@ -70,7 +70,7 @@
       <el-table-column prop="customerAddress" label="客户地址"/>
       <el-table-column prop="customerCode" label="客户编号"/>
       <el-table-column :formatter="kgformatter" prop="coreWeight" label="纸芯重量"/>
-      <el-table-column prop="perBagNumber" label="每袋个数"/>
+      <el-table-column prop="perBagNumber" label="每包个数"/>
       <el-table-column prop="planNumber" label="计划生产数量"/>
       <el-table-column prop="quantityCompeted" label="完成数量"/>
       <el-table-column prop="productionSchedule" label="生产进度(%)"/>

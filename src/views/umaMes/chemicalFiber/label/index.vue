@@ -85,7 +85,7 @@
       <el-table-column prop="labelNumber" label="条码号"/>
       <el-table-column prop="fineness" label="纤度"/>
       <el-table-column prop="color" label="色号"/>
-      <el-table-column prop="factPerBagNumber" label="每袋个数"/>
+      <el-table-column prop="factPerBagNumber" label="每包个数"/>
       <el-table-column :formatter="kgformatter" prop="netWeight" label="净重"/>
       <el-table-column :formatter="kgformatter" prop="tare" label="皮重"/>
       <el-table-column :formatter="kgformatter" prop="grossWeight" label="毛重"/>

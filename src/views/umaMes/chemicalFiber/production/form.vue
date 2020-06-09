@@ -87,7 +87,7 @@
       <el-form-item label="纸芯重量">
         <el-input-number v-model="form.coreWeight" :min="0.1" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="每袋个数">
+      <el-form-item label="每包个数">
         <el-input-number v-model="form.perBagNumber" :min="1" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="计划生产数量">
@@ -217,7 +217,7 @@ export default {
       var perBagNumberTemp = /^\+?[1-9][0-9]*$/
       if (!perBagNumberTemp.test(this.form.perBagNumber)) {
         this.$notify({
-          title: '每袋个数请输入正整数',
+          title: '每包个数请输入正整数',
           type: 'warning',
           duration: 2500
         })

@@ -93,8 +93,8 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="labelNumber" label="标签编号（条码号）"/>
-      <el-table-column prop="factPerBagNumber" label="实际每袋个数"/>
+      <el-table-column prop="labelNumber" label="条码号"/>
+      <el-table-column prop="factPerBagNumber" label="每包个数"/>
       <el-table-column :formatter="kgformatter" prop="netWeight" label="净重"/>
       <el-table-column :formatter="kgformatter" prop="tare" label="皮重"/>
       <el-table-column :formatter="kgformatter" prop="grossWeight" label="毛重"/>
@@ -151,7 +151,7 @@ export default {
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '扫描单号' },
         // { key: 'type', display_name: '扫描类型（入库：RK 出库：SH 退库：TK 退货：TH）' },
-        { key: 'labelNumber', display_name: '标签编号（条码号）' },
+        { key: 'labelNumber', display_name: '条码号' },
         { key: 'shifts', display_name: '班次' },
         { key: 'packer', display_name: '包装员' },
         { key: 'number', display_name: '订单编号' },

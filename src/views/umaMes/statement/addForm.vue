@@ -98,7 +98,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="prodName" label="产品名称"/>
-          <el-table-column prop="totalBag" label="件数"/>
+          <el-table-column prop="totalBag" label="包数"/>
           <el-table-column prop="totalWeight" label="重量（KG）"/>
           <el-table-column prop="sellingPrice" label="单价"/>
           <el-table-column prop="totalPrice" label="金额"/>

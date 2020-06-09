@@ -20,7 +20,7 @@
       <el-form-item label="产品名称">
         <el-input v-model="form.prodName" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="总件数">
+      <el-form-item label="总包数">
         <el-input v-model="form.totalBag" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="重量">

@@ -13,7 +13,7 @@
       <el-form-item label="打印时间" >
         <el-date-picker v-model="form.printTime" type="datetime" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="实际每袋个数" >
+      <el-form-item label="实际每包个数" >
         <el-input v-model="form.factPerBagNumber" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="净重" >

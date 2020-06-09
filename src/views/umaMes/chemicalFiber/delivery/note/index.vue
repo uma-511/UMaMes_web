@@ -178,7 +178,7 @@
             align="center"
           />
           <el-table-column prop="totalNumber" label="数量" width="60%" align="center"/>
-          <el-table-column prop="totalBag" label="件数" width="60%" align="center"/>
+          <el-table-column prop="totalBag" label="包数" width="60%" align="center"/>
           <el-table-column prop="unit" label="单位" width="125%" align="center">
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->

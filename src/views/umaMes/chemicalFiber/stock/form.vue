@@ -35,7 +35,7 @@
       <el-form-item label="总个数" >
         <el-input v-model="form.totalNumber" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="总件数" >
+      <el-form-item label="总包数" >
         <el-input v-model="form.totalBag" style="width: 370px;"/>
       </el-form-item>-->
       <el-form-item label="最大值">
