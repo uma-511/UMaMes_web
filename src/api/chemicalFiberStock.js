@@ -8,6 +8,14 @@ export function add(data) {
   })
 }
 
+export function getSelectMap(params) {
+  return request({
+    url: 'api/chemicalFiberStock/getSelectMap',
+    method: 'get',
+    params
+  })
+}
+
 export function del(id) {
   return request({
     url: 'api/chemicalFiberStock/' + id,

@@ -32,11 +32,11 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :data="data" stripe size="small" style="width: 100%;" @row-click="rowClicker">
       <el-table-column prop="model" label="产品型号"/>
       <el-table-column prop="name" label="产品名称"/>
-      <el-table-column prop="color" label="色号"/>
-      <el-table-column prop="fineness" label="纤度"/>
+      <!-- <el-table-column prop="color" label="色号"/>
+      <el-table-column prop="fineness" label="纤度"/>-->
       <el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
@@ -46,7 +46,8 @@
       <!-- <el-table-column prop="delFlag" label="删除标识"/> -->
       <el-table-column v-if="checkPermission(['admin','chemicalFiberProduct:edit','chemicalFiberProduct:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <!--<el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+         -->
           <el-popover
             v-permission="['admin','chemicalFiberProduct:del']"
             :ref="scope.row.id"
@@ -111,6 +112,21 @@ export default {
       const value = query.value
       if (type && value) { this.params[type] = value }
       return true
+    },
+    rowClicker: function(row) {
+      this.isAdd = false
+      const _this = this.$refs.form
+      _this.form = {
+        id: row.id,
+        model: row.model,
+        name: row.name,
+        color: row.color,
+        fineness: row.fineness,
+        createDate: row.createDate,
+        createUser: row.createUser,
+        delFlag: row.delFlag
+      }
+      _this.dialog = true
     },
     subDelete(id) {
       this.delLoading = true

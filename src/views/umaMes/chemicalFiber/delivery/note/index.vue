@@ -41,7 +41,7 @@
         @click="toQuery"
       >搜索</el-button>
       <!-- 新增 -->
-      <!-- <div style="display: inline-block;margin: 0px 2px;">
+      <div style="display: inline-block;margin: 0px 2px;">
         <el-button
           v-permission="['admin','chemicalFiberDeliveryNote:add']"
           class="filter-item"
@@ -49,7 +49,7 @@
           type="primary"
           icon="el-icon-plus"
           @click="add">新增</el-button>
-      </div>-->
+      </div>
       <!-- 导出 -->
       <!-- <div style="display: inline-block;">
         <el-button
@@ -64,7 +64,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :data="data" size="small" stripe style="width: 100%;" @row-click="rowClicker">
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerCode" label="客户编号"/>
@@ -308,6 +308,30 @@ export default {
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
       return true
+    },
+    rowClicker: function(row) {
+      this.isAdd = false
+      const _this = this.$refs.form
+      _this.form = {
+        id: row.id,
+        scanNumber: row.scanNumber,
+        customerId: row.customerId,
+        customerName: row.customerName,
+        customerCode: row.customerCode,
+        customerAddress: row.customerAddress,
+        contacts: row.contacts,
+        contactPhone: row.contactPhone,
+        totalCost: row.totalCost,
+        totalPrice: row.totalPrice,
+        remark: row.remark,
+        seller: row.seller,
+        storeKeeper: row.storeKeeper,
+        createDate: row.createDate,
+        createUser: row.createUser
+      }
+      this.$refs.form.tempCustomerId = row.customerId
+      this.$refs.form.tempCustomerName = row.customerName
+      _this.dialog = true
     },
     subDelete(id) {
       this.delLoading = true

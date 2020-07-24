@@ -7,12 +7,12 @@
       <el-form-item label="产品名称" prop="name">
         <el-input v-model="form.name" style="width: 370px;" maxlength="25"/>
       </el-form-item>
-      <el-form-item label="色号" prop="color">
+    <!--  <el-form-item label="色号" prop="color">
         <el-input v-model="form.color" style="width: 370px;" maxlength="10"/>
       </el-form-item>
       <el-form-item label="纤度" prop="fineness">
         <el-input v-model="form.fineness" style="width: 370px;" maxlength="10"/>
-      </el-form-item>
+      </el-form-item>-->
       <!-- <el-form-item label="创建日期" >
         <el-date-picker v-model="form.createDate" type="datetime" style="width: 370px;"/>
       </el-form-item>
@@ -50,6 +50,7 @@ export default {
         fineness: '',
         createDate: '',
         createUser: '',
+        unit: '',
         delFlag: ''
       },
       rules: {
@@ -71,6 +72,11 @@ export default {
         fineness: [
           {
             required: true, message: '请输入产品纤度', trigger: 'blur'
+          }
+        ],
+        unit: [
+          {
+            required: true, message: '计量单位', trigger: 'blur'
           }
         ]
       }
@@ -131,7 +137,8 @@ export default {
         fineness: '',
         createDate: '',
         createUser: '',
-        delFlag: ''
+        delFlag: '',
+        unit: ''
       }
     }
   }

@@ -33,7 +33,7 @@
         @click="toQuery"
       >搜索</el-button>
       <!-- 新增 -->
-      <!-- <div style="display: inline-block;margin: 0px 2px;">
+      <div style="display: inline-block;margin: 0px 2px;">
         <el-button
           v-permission="['admin','chemicalFiberStock:add']"
           class="filter-item"
@@ -42,7 +42,7 @@
           icon="el-icon-plus"
           @click="add"
         >新增</el-button>
-      </div>-->
+      </div>
       <!-- 导出 -->
       <!-- <div style="display: inline-block;">
         <el-button
@@ -61,26 +61,34 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :data="data" size="small" stripe style="width: 100%;">
       <el-table-column prop="prodModel" label="产品型号"/>
       <el-table-column prop="prodName" label="产品名称"/>
-      <el-table-column prop="prodColor" label="产品色号"/>
-      <el-table-column prop="prodFineness" label="产品纤度"/>
-      <el-table-column :formatter="kgformatter" prop="totalNetWeight" label="总净重"/>
-      <el-table-column :formatter="kgformatter" prop="totalTare" label="总皮重"/>
-      <el-table-column :formatter="kgformatter" prop="totalGrossWeight" label="总毛重"/>
-      <el-table-column prop="totalNumber" label="总个数"/>
-      <el-table-column prop="totalBag" label="总包数"/>
-      <el-table-column :formatter="maxformatter" prop="max" label="最大值" />
-      <el-table-column :formatter="maxformatter" prop="min" label="最小值"/>
+      <el-table-column prop="prodUnit" label="计量单位"/>
+      <el-table-column prop="totalNumber" label="数量"/>
+      <!--<el-table-column prop="totalBag" label="总包数"/>-->
+      <!--<el-table-column :formatter="maxformatter" prop="max" label="最大值" />
+      <el-table-column :formatter="maxformatter" prop="min" label="最小值"/>-->
       <!-- <el-table-column prop="flag" label="库存指标"/> -->
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          <div slot="reference" class="name-wrapper">
+          <div v-if="scope.row.totalNumber <= scope.row.min">
             <el-tag
-              :type="stockMapping[scope.row.status]"
+              :type="stockMapping[2]"
               size="medium"
-            >{{ stockValue[scope.row.status] }}</el-tag>
+            >{{ stockValue[2] }}</el-tag>
+          </div>
+          <div v-else-if=" scope.row.totalNumber >= scope.row.max">
+            <el-tag
+              :type="stockMapping[1]"
+              size="medium"
+            >{{ stockValue[1] }}</el-tag>
+          </div>
+          <div v-else>
+            <el-tag
+              :type="stockMapping[0]"
+              size="medium"
+            >{{ stockValue[0] }}</el-tag>
           </div>
         </template>
       </el-table-column>
@@ -150,7 +158,8 @@ export default {
         { key: 'prodModel', display_name: '产品型号' },
         { key: 'prodName', display_name: '产品名称' },
         { key: 'prodColor', display_name: '产品色号' },
-        { key: 'prodFineness', display_name: '产品纤度' }
+        { key: 'prodFineness', display_name: '产品纤度' },
+        { key: 'prodUnit', display_name: '计量单位' }
       ],
       stockMapping: {
         0: 'success',
@@ -219,6 +228,7 @@ export default {
         totalGrossWeight: data.totalGrossWeight,
         totalNumber: data.totalNumber,
         totalBag: data.totalBag,
+        prodUnit: data.prodUnit,
         max: data.max,
         min: data.min,
         flag: data.flag,
