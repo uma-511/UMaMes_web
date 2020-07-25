@@ -61,6 +61,24 @@
       <el-form-item label="仓管员">
         <el-input v-model="form.storeKeeper" style="width: 370px;"/>
       </el-form-item>
+      <el-form-item label="车牌号码" prop="carNumber">
+        <el-input v-model="form.carNumber" style="width: 370px;" maxlength="15"/>
+      </el-form-item>
+      <el-form-item label="交货日期" prop="deliveryDate">
+        <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 370px;" maxlength="15"/>
+      </el-form-item>
+      <el-form-item label="主司机" prop="driverMain">
+        <el-input v-model="form.driverMain" style="width: 370px;" maxlength="15"/>
+      </el-form-item>
+      <el-form-item label="副司机" prop="driverDeputy">
+        <el-input v-model="form.driverDeputy" style="width: 370px;" maxlength="15"/>
+      </el-form-item>
+      <el-form-item label="装卸员1" prop="loaderOne">
+        <el-input v-model="form.loaderOne" style="width: 370px;" maxlength="15"/>
+      </el-form-item>
+      <el-form-item label="装卸员2" prop="loaderTwo">
+        <el-input v-model="form.loaderTwo" style="width: 370px;" maxlength="15"/>
+      </el-form-item>
       <el-form-item label="备注">
         <el-input v-model="form.remark" style="width: 370px;"/>
       </el-form-item>
@@ -106,7 +124,14 @@ export default {
         seller: '',
         storeKeeper: '',
         createDate: '',
-        createUser: ''
+        createUser: '',
+        carNumber: '',
+        deliveryDate: '',
+        driverMain: '',
+        driverDeputy: '',
+        state: '',
+        loaderOne: '',
+        loaderTwo: ''
       },
       rules: {
         totalCost: [
@@ -206,7 +231,14 @@ export default {
         seller: '',
         storeKeeper: '',
         createDate: '',
-        createUser: ''
+        createUser: '',
+        carNumber: '',
+        deliveryDate: '',
+        driverMain: '',
+        driverDeputy: '',
+        state: '',
+        loaderOne: '',
+        loaderTwo: ''
       }
     },
     customerRemoteMethod(query) {

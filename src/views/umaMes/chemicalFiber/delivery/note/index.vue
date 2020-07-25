@@ -327,7 +327,14 @@ export default {
         seller: row.seller,
         storeKeeper: row.storeKeeper,
         createDate: row.createDate,
-        createUser: row.createUser
+        createUser: row.createUser,
+        carNumber: row.carNumber,
+        deliveryDate: row.deliveryDate,
+        driverMain: row.driverMain,
+        driverDeputy: row.driverDeputy,
+        state: row.state,
+        loaderOne: row.loaderOne,
+        loaderTwo: row.loaderTwo
       }
       this.$refs.form.tempCustomerId = row.customerId
       this.$refs.form.tempCustomerName = row.customerName
@@ -373,7 +380,14 @@ export default {
         seller: data.seller,
         storeKeeper: data.storeKeeper,
         createDate: data.createDate,
-        createUser: data.createUser
+        createUser: data.createUser,
+        carNumber: data.carNumber,
+        deliveryDate: data.deliveryDate,
+        driverMain: data.driverMain,
+        driverDeputy: data.driverDeputy,
+        state: data.state,
+        loaderOne: data.loaderOne,
+        loaderTwo: data.loaderTwo
       }
       this.$refs.form.tempCustomerId = data.customerId
       this.$refs.form.tempCustomerName = data.customerName

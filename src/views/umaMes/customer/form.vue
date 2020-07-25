@@ -146,6 +146,13 @@ export default {
         remark: '',
         createDate: '',
         createUser: '',
+        carNumber: '',
+        deliveryDate: '',
+        driverMain: '',
+        driverDeputy: '',
+        state: '',
+        loaderOne: '',
+        loaderTwo: '',
         delFlag: ''
       }
     }
