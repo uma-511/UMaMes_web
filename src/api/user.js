@@ -51,3 +51,11 @@ export function updateEmail(code, data) {
     data
   })
 }
+
+export function getUserListByDeptId(params) {
+  return request({
+    url: 'api/users/getUserListByDeptId',
+    method: 'get',
+    params
+  })
+}
