@@ -22,12 +22,56 @@
           reserve-keyword
           placeholder="请输入客户名称关键词"
           style="width: 370px;"
+          @change="setCustomerId($event)"
         >
           <el-option
             v-for="item in customerOptions"
             :key="item.id"
             :label="item.name"
             :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="业务员">
+        <el-select
+          v-model="form.seller"
+          :loading="userLoading"
+          :remote-method="sellerRemoteMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入业务员名称关键词"
+          style="width: 370px;"
+          @focus="cleanUpOptions"
+        >
+          <el-option
+            v-for="item in userOptions"
+            :key="item.username"
+            :label="item.username"
+            :value="item.username"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="仓管员">
+        <el-select
+          v-model="form.storeKeeper"
+          :loading="userLoading"
+          :remote-method="storeKeeperRemoteMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入仓管员名称关键词"
+          style="width: 370px;"
+          @focus="cleanUpOptions"
+        >
+          <el-option
+            v-for="item in userOptions"
+            :key="item.username"
+            :label="item.username"
+            :value="item.username"
+            @blur="userOptions"
           />
         </el-select>
       </el-form-item>
@@ -54,30 +98,106 @@
       </el-form-item>
       <el-form-item label="总价" prop="totalPrice">
         <el-input-number :min="0.1" v-model="form.totalPrice" style="width: 370px;"/>
-      </el-form-item>-->
+      </el-form-item>
       <el-form-item label="业务员">
         <el-input v-model="form.seller" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="仓管员">
         <el-input v-model="form.storeKeeper" style="width: 370px;"/>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item label="车牌号码" prop="carNumber">
         <el-input v-model="form.carNumber" style="width: 370px;" maxlength="15"/>
       </el-form-item>
       <el-form-item label="交货日期" prop="deliveryDate">
         <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 370px;" maxlength="15"/>
       </el-form-item>
-      <el-form-item label="主司机" prop="driverMain">
-        <el-input v-model="form.driverMain" style="width: 370px;" maxlength="15"/>
+      <el-form-item label="主司机">
+        <el-select
+          v-model="form.driverMain"
+          :loading="userLoading"
+          :remote-method="transporterRemoteMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入主司机名称关键词"
+          style="width: 370px;"
+          @focus="cleanUpOptions"
+        >
+          <el-option
+            v-for="item in userOptions"
+            :key="item.username"
+            :label="item.username"
+            :value="item.username"
+            @blur="userOptions"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="副司机" prop="driverDeputy">
-        <el-input v-model="form.driverDeputy" style="width: 370px;" maxlength="15"/>
+      <el-form-item label="副司机">
+        <el-select
+          v-model="form.driverDeputy"
+          :loading="userLoading"
+          :remote-method="transporterRemoteMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入副司机名称关键词"
+          style="width: 370px;"
+          @focus="cleanUpOptions"
+        >
+          <el-option
+            v-for="item in userOptions"
+            :key="item.username"
+            :label="item.username"
+            :value="item.username"
+            @blur="userOptions"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="装卸员1" prop="loaderOne">
-        <el-input v-model="form.loaderOne" style="width: 370px;" maxlength="15"/>
+      <el-form-item label="装卸员1">
+        <el-select
+          v-model="form.loaderOne"
+          :loading="userLoading"
+          :remote-method="transporterRemoteMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入装卸员1名称关键词"
+          style="width: 370px;"
+          @focus="cleanUpOptions"
+        >
+          <el-option
+            v-for="item in userOptions"
+            :key="item.username"
+            :label="item.username"
+            :value="item.username"
+            @blur="userOptions"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="装卸员2" prop="loaderTwo">
-        <el-input v-model="form.loaderTwo" style="width: 370px;" maxlength="15"/>
+      <el-form-item label="装卸员2">
+        <el-select
+          v-model="form.loaderTwo"
+          :loading="userLoading"
+          :remote-method="transporterRemoteMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入装卸员2名称关键词"
+          style="width: 370px;"
+          @focus="cleanUpOptions"
+        >
+          <el-option
+            v-for="item in userOptions"
+            :key="item.username"
+            :label="item.username"
+            :value="item.username"
+            @blur="userOptions"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="备注">
         <el-input v-model="form.remark" style="width: 370px;"/>
@@ -99,6 +219,7 @@
 <script>
 import { add, edit } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList } from '@/api/customer'
+import { getUserListByDeptId } from '@/api/user'
 export default {
   props: {
     isAdd: {
@@ -150,6 +271,12 @@ export default {
       customerLoading: false,
       customerQuery: {
         name: ''
+      },
+      userOptions: [],
+      userList: [],
+      userLoading: false,
+      userQuery: {
+        username: ''
       },
       tempCustomerId: '',
       tempCustomerName: ''
@@ -241,6 +368,12 @@ export default {
         loaderTwo: ''
       }
     },
+    setCustomerId(event) {
+      this.form.customerId = event
+    },
+    cleanUpOptions() {
+      this.userOptions = []
+    },
     customerRemoteMethod(query) {
       var _this = this
       if (query !== '') {
@@ -257,6 +390,48 @@ export default {
       } else {
         _this.customerOptions = []
       }
+    },
+    sellerRemoteMethod(query) {
+      // 业务员deptId为19
+      const params = { deptId: 19, username: query }
+      var _this = this
+      _this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        _this.userLoading = false
+        _this.userList = res
+        _this.userOptions = _this.userList.filter(item => {
+          return item.username.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
+    },
+    storeKeeperRemoteMethod(query) {
+      // 仓管员deptId为16
+      const params = { deptId: 16, username: query }
+      var _this = this
+      _this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        _this.userLoading = false
+        _this.userList = res
+        _this.userOptions = _this.userList.filter(item => {
+          return item.username.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
+    },
+    transporterRemoteMethod(query) {
+      // 运输部deptId为18
+      const params = { deptId: 18, username: query }
+      var _this = this
+      _this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        _this.userLoading = false
+        _this.userList = res
+        _this.userOptions = _this.userList.filter(item => {
+          return item.username.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
     }
   }
 }
