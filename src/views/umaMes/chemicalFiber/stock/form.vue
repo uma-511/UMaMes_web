@@ -22,7 +22,20 @@
         <el-input v-model="form.prodName" :disabled="true" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="计量单位" >
-        <el-input v-model="form.prodUnit" style="width: 370px;"/>
+        <el-select
+          v-model="form.prodUnit"
+          clearable
+          placeholder="请选择计量单位"
+          class="filter-item"
+          style="width: 370px"
+        >
+          <el-option
+            v-for="item in unitOptions"
+            :key="item.key"
+            :label="item.display_name"
+            :value="item.key"
+          />
+        </el-select>
       </el-form-item>
       <!--<el-form-item label="产品色号" >
         <el-input v-model="form.prodColor" style="width: 370px;"/>
@@ -82,6 +95,11 @@ export default {
       loading: false, dialog: false,
       searchName: [],
       prods: [],
+      unitOptions: [
+        { key: '吨', display_name: '吨' },
+        { key: '箱', display_name: '箱' },
+        { key: '支', display_name: '支' }
+      ],
       form: {
         id: '',
         prodId: '',
