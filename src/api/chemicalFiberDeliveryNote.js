@@ -23,6 +23,14 @@ export function edit(data) {
   })
 }
 
+export function editAll(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote',
+    method: 'put',
+    data
+  })
+}
+
 export function downloadChemicalFiberDeliveryNote(params) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/download',
@@ -35,6 +43,14 @@ export function downloadChemicalFiberDeliveryNote(params) {
 export function downloadDeliveryNote(id) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/downloadDeliveryNote/' + id,
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
+export function sendOut(id) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/sendOut/' + id,
     method: 'get',
     responseType: 'blob'
   })
@@ -56,3 +72,4 @@ export function getSalesReportSummaries(data) {
     data
   })
 }
+

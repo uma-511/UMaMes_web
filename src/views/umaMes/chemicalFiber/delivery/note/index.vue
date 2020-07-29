@@ -70,7 +70,7 @@
       <el-table-column prop="customerCode" label="客户编号"/>
       <el-table-column prop="customerAddress" label="客户地址"/>
       <el-table-column prop="contacts" label="联系人"/>
-      <el-table-column prop="contactPhone" label="联系电话" width="100px"/>
+      <el-table-column prop="contactPhone" label="联系电话"/>
       <el-table-column prop="totalCost" label="总成本"/>
       <el-table-column prop="totalPrice" label="总价"/>
       <el-table-column prop="remark" label="备注"/>
@@ -82,13 +82,80 @@
         </template>
       </el-table-column>
       <el-table-column prop="createUser" label="制单人"/>
+      <el-table-column prop="noteStatus" label="状态">
+        <template slot-scope="scope">
+          <!--待打印-->
+          <div v-if="scope.row.noteStatus == 1">
+            <el-tag
+              size="medium"
+            >{{ statusValue[1] }}</el-tag>
+          </div>
+          <!--待出库-->
+          <div v-if="scope.row.noteStatus == 2">
+            <el-tag
+              size="medium"
+            >{{ statusValue[2] }}</el-tag>
+          </div>
+          <!--待签收-->
+          <div v-if="scope.row.noteStatus == 3">
+            <el-tag
+              type="warning"
+              size="medium"
+            >{{ statusValue[3] }}</el-tag>
+          </div>
+          <!--待结款-->
+          <div v-if="scope.row.noteStatus == 4">
+            <el-tag
+              type="danger"
+              size="medium"
+            >{{ statusValue[4] }}</el-tag>
+          </div>
+          <!--完结-->
+          <div v-if="scope.row.noteStatus == 5">
+            <el-tag
+              type="success"
+              size="medium"
+            >{{ statusValue[5] }}</el-tag>
+          </div>
+          <!--销毁状态-->
+          <div v-if="scope.row.noteStatus <= 0 || scope.row.noteStatus >5 ">
+            <el-tag
+              type="info"
+              size="medium"
+            >{{ statusValue[0] }}</el-tag>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column
         v-if="checkPermission(['admin','chemicalFiberDeliveryNote:edit','chemicalFiberDeliveryNote:del'])"
         label="操作"
-        width="180px"
+        width="240px"
         align="center"
       >
         <template slot-scope="scope">
+          <el-button
+            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            size="mini"
+            type="primary"
+            icon="el-icon-edit"
+            @click="edit(scope.row)"
+          >编辑</el-button>
+          <el-popover
+            :ref="scope.row.id"
+            placement="top"
+          >
+            <p>是否发货？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
+              <el-button
+                :loading="sutmitDetailLoading"
+                type="primary"
+                size="mini"
+                @click="sendOut(scope.row.id)"
+              >确定</el-button>
+            </div>
+            <el-button v-if="scope.row.noteStatus == 2" slot="reference" type="warning" icon="el-icon-s-promotion" size="mini" @click.stop>发货</el-button>
+          </el-popover>
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             size="mini"
@@ -485,6 +552,14 @@ export default {
         { key: 'contacts', display_name: '联系人' },
         { key: 'contactPhone', display_name: '联系电话' }
       ],
+      statusValue: {
+        0: '已失效',
+        1: '待打印',
+        2: '待出库',
+        3: '待签收',
+        4: '待结款',
+        5: '已完结'
+      },
       detailList: [],
       option: [
         {
@@ -547,13 +622,30 @@ export default {
         deliveryDate: row.deliveryDate,
         driverMain: row.driverMain,
         driverDeputy: row.driverDeputy,
-        state: row.state,
+        noteStatus: row.noteStatus,
         loaderOne: row.loaderOne,
         loaderTwo: row.loaderTwo
       }
       this.$refs.form.tempCustomerId = row.customerId
       this.$refs.form.tempCustomerName = row.customerName
       _this.dialog = true
+    },
+    sendOut(id) {
+      this.sutmitDetailLoading = true
+      sendOut(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        this.init()
+        this.$notify({
+          title: '状态变更为已发货',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        console.log(err.response.data.message)
+      })
     },
     subDelete(id) {
       this.delLoading = true
@@ -576,6 +668,39 @@ export default {
     add() {
       this.isAdd = true
       this.$refs.form.dialog = true
+    },
+    edit(data) {
+      this.isAdd = false
+      const _this = this.$refs.form
+      _this.form = {
+        id: data.id,
+        scanNumber: data.scanNumber,
+        customerId: data.customerId,
+        customerName: data.customerName,
+        customerCode: data.customerCode,
+        customerAddress: data.customerAddress,
+        contacts: data.contacts,
+        contactPhone: data.contactPhone,
+        totalCost: data.totalCost,
+        totalPrice: data.totalPrice,
+        remark: data.remark,
+        seller: data.seller,
+        storeKeeper: data.storeKeeper,
+        createDate: data.createDate,
+        createUser: data.createUser,
+        carNumber: data.carNumber,
+        deliveryDate: data.deliveryDate,
+        driverMain: data.driverMain,
+        driverDeputy: data.driverDeputy,
+        state: data.state,
+        loaderOne: data.loaderOne,
+        loaderTwo: data.loaderTwo,
+        payment: data.payment,
+        balance: data.balance
+      }
+      this.$refs.form.tempCustomerId = data.customerId
+      this.$refs.form.tempCustomerName = data.customerName
+      _this.dialog = true
     },
     // 导出
     download() {
@@ -622,7 +747,6 @@ export default {
         storeKeeper: data.storeKeeper,
         createUser: data.createUser,
         carNumber: data.carNumber,
-        deliveryDate: data.deliveryData,
         driverMain: data.driverMain,
         driverDeputy: data.driverDeputy,
         state: data.state,
@@ -630,8 +754,11 @@ export default {
         loaderTwo: data.loaderTwo,
         totalCost: data.totalCost,
         totalPrice: data.totalPrice,
-        customerId: data.customerId
-
+        customerId: data.customerId,
+        deliveryDate: data.deliveryDate,
+        noteStatus: data.noteStatus,
+        payment: data.payment,
+        balance: data.balance
       }
       var params = { 'scanNumber': data.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
@@ -831,7 +958,6 @@ export default {
         console.log(err.response.data.message)
       })
     }
-
   }
 }
 </script>
