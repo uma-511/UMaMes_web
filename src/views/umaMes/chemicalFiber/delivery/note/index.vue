@@ -71,7 +71,6 @@
       <el-table-column prop="customerAddress" label="客户地址"/>
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
-      <el-table-column prop="totalCost" label="总成本"/>
       <el-table-column prop="totalPrice" label="总价"/>
       <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="seller" label="业务员"/>
@@ -205,7 +204,7 @@
         <el-form ref="form1" :model="form" :rules="rules" size="mini" label-width="80px" >
           <el-form size="mini" :inline="true">
             <el-form-item label="客户编号">
-              <el-input v-model="form.customerCode"  style="width: 200px;"/>
+              <el-input v-model="form.customerCode" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="仓管员">
               <el-select
@@ -253,7 +252,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="车牌号" >
-              <el-input v-model="form.carNumber"  style="width: 200px;"/>
+              <el-input v-model="form.carNumber" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="业务员" >
               <el-select
@@ -276,31 +275,30 @@
                 />
               </el-select>
             </el-form-item>
-
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户地址" >
-              <el-input v-model="form.customerAddress"  style="width: 470px;"/>
+              <el-input v-model="form.customerAddress" style="width: 470px;"/>
             </el-form-item>
             <el-form-item label="付款方式" >
-              <el-input v-model="form.payment"  style="width: 200px;"/>
+              <el-input v-model="form.payment" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="最新欠款" >
-              <el-input v-model="form.balance"  style="width: 200px;"/>
+              <el-input v-model="form.balance" style="width: 200px;"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户电话" >
-              <el-input v-model="form.contactPhone"  style="width: 200px;"/>
+              <el-input v-model="form.contactPhone" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="联系人" >
-              <el-input v-model="form.contacts"  style="width: 200px;"/>
+              <el-input v-model="form.contacts" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input v-model="form.scanNumber"  style="width: 200px;"/>
+              <el-input v-model="form.scanNumber" style="width: 200px;"/>
             </el-form-item>
-            <el-form-item label="订单交期" >
-              <el-input v-model="form.deliveryDate"  style="width: 200px;"/>
+            <el-form-item label="交货日期" >
+              <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -537,7 +535,6 @@
         </div>
       </el-dialog>
     </el-dialog>
-
   </div>
 
 </template>
@@ -645,7 +642,8 @@ export default {
         }, {
           value: '支',
           label: '支'
-        },{
+        },
+         {
           value: '箱',
           label: '箱'
         }
@@ -714,23 +712,6 @@ export default {
         this.init()
         this.$notify({
           title: '状态变更为已发货',
-          type: 'success',
-          duration: 2500
-        })
-      }).catch(err => {
-        this.sutmitDetailLoading = false
-        this.$refs[id].doClose()
-        console.log(err.response.data.message)
-      })
-    },
-    recived(id) {
-      this.sutmitDetailLoading = true
-        recived(id).then(res => {
-        this.sutmitDetailLoading = false
-        this.$refs[id].doClose()
-        this.init()
-        this.$notify({
-          title: '确认签收成功',
           type: 'success',
           duration: 2500
         })
@@ -937,8 +918,6 @@ export default {
       this.detailLoading = true
       this.dialogVisible = true
 
-
-
     },
     handleCurrentChange(val) {
       this.currentChangeItem = val
@@ -951,7 +930,6 @@ export default {
       if (data.sellingPrice) {
         data.totalPrice = data.totalNumber * data.sellingPrice
       }
-
       edit(data).then(res => {
         this.detailLoading = false
         this.$notify({
