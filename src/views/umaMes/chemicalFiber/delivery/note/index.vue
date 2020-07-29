@@ -140,22 +140,6 @@
             icon="el-icon-edit"
             @click="edit(scope.row)"
           >编辑</el-button>
-          <el-popover
-            :ref="scope.row.id"
-            placement="top"
-          >
-            <p>是否发货？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-              <el-button
-                :loading="sutmitDetailLoading"
-                type="primary"
-                size="mini"
-                @click="sendOut(scope.row.id)"
-              >确定</el-button>
-            </div>
-            <el-button v-if="scope.row.noteStatus == 2" slot="reference" type="warning" icon="el-icon-s-promotion" size="mini" @click.stop>发货</el-button>
-          </el-popover>
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             size="mini"
@@ -203,9 +187,9 @@
     >
       <el-row style="width: 100%">
         <el-form ref="form1" :model="form" :rules="rules" size="mini" label-width="80px" >
-          <el-form size="mini" :inline="true">
+          <el-form :inline="true" size="mini">
             <el-form-item label="客户编号">
-              <el-input v-model="form.customerCode"  style="width: 200px;"/>
+              <el-input v-model="form.customerCode" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="仓管员">
               <el-select
@@ -253,7 +237,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="车牌号" >
-              <el-input v-model="form.carNumber"  style="width: 200px;"/>
+              <el-input v-model="form.carNumber" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="业务员" >
               <el-select
@@ -277,32 +261,32 @@
               </el-select>
             </el-form-item>
             <el-form-item label="最新欠款" >
-              <el-input v-model="form.customerCode"  style="width: 200px;"/>
+              <el-input v-model="form.customerCode" style="width: 200px;"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户地址" >
-              <el-input v-model="form.customerAddress"  style="width: 470px;"/>
+              <el-input v-model="form.customerAddress" style="width: 470px;"/>
             </el-form-item>
             <el-form-item label="付款方式" >
-              <el-input v-model="form.payment"  style="width: 200px;"/>
+              <el-input v-model="form.payment" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="最新欠款" >
-              <el-input v-model="form.balance"  style="width: 200px;"/>
+              <el-input v-model="form.balance" style="width: 200px;"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户电话" >
-              <el-input v-model="form.contactPhone"  style="width: 200px;"/>
+              <el-input v-model="form.contactPhone" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="联系人" >
-              <el-input v-model="form.contacts"  style="width: 200px;"/>
+              <el-input v-model="form.contacts" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input v-model="form.scanNumber"  style="width: 200px;"/>
+              <el-input v-model="form.scanNumber" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="订单交期" >
-              <el-input v-model="form.deliveryDate"  style="width: 200px;"/>
+              <el-input v-model="form.deliveryDate" style="width: 200px;"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -394,7 +378,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-button :loading="loading" type="success" @click="addAll" icon="el-icon-check" size="mini" >保存</el-button>
+            <el-button :loading="loading" type="success" icon="el-icon-check" size="mini" @click="addAll" >保存</el-button>
           </el-form>
         </el-form>
       </el-row>
@@ -472,31 +456,51 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="addTable">插入数据</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button v-if="scope.row.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
-        <el-popover
-          :ref="scope.row.id"
-          placement="top"
-        >
-          <p>确认签收前，请确认回填信息</p>
-          <div style="text-align: right; margin: 0">
-            <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-            <el-button
-              :loading="sutmitDetailLoading"
-              type="primary"
-              size="mini"
-              @click="recived(scope.row.id)"
-            >确定</el-button>
-          </div>
-          <el-button v-if="scope.row.noteStatus == 3" slot="reference" type="warning" icon="el-icon-s-promotion" size="mini">发货</el-button>
-        </el-popover>
+        <el-button v-if="form.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <div v-if="form.noteStatus == 2">
+          <el-popover
+            :ref="'poper'+form.id"
+            placement="top"
+          >
+            <p>是否发货</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="pCancle(form.id)">取消</el-button>
+              <el-button
+                :loading="sutmitDetailLoading"
+                type="primary"
+                size="mini"
+                @click="sendOut(form.id)"
+              >确定</el-button>
+            </div>
+            <el-button slot="reference" type="warning" icon="el-icon-s-promotion" size="mini">发货</el-button>
+          </el-popover>
+        </div>
+        <div v-if="form.noteStatus == 3">
+          <el-popover
+            :ref="'poper'+form.id"
+            placement="top"
+          >
+            <p>确认签收前，请确认回填信息</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="pCancle(form.id)">取消</el-button>
+              <el-button
+                :loading="sutmitDetailLoading"
+                type="primary"
+                size="mini"
+                @click="recived(form.id)"
+              >确定</el-button>
+            </div>
+            <el-button slot="reference" type="warning" icon="el-icon-s-promotion" size="mini">签收</el-button>
+          </el-popover>
+        </div>
       </span>
 
       <el-dialog
-        width="40%"
-        title="插入数据"
         :visible.sync="addTableFrom"
-        :append-to-body = "true" >
-        <el-form  :model="tableForm"  size="mini" label-width="80px" >
+        :append-to-body = "true"
+        width="40%"
+        title="插入数据" >
+        <el-form :model="tableForm" size="mini" label-width="80px" >
           <el-form-item label="产品搜索" >
             <el-input v-model="tableForm.searchName" clearable placeholder="输入产品名称进行搜索" prefix-icon="el-icon-search" style="width: 100%;" class="filter-item" @input="getSelectMap"/>
             <el-tree :data="prods" :expand-on-click-node="false" default-expand-all style="width: 370px;" @node-click="handleNodeClick"/>
@@ -520,16 +524,16 @@
             </template>
           </el-form-item>
           <el-form-item label="数量">
-            <el-input v-model="tableForm.totalNumber"  style="width: 370px;"/>
+            <el-input v-model="tableForm.totalNumber" style="width: 370px;"/>
           </el-form-item>
           <el-form-item label="单价">
-            <el-input v-model="tableForm.cost"  style="width: 370px;" placeholder="请输入单价"/>
+            <el-input v-model="tableForm.cost" style="width: 370px;" placeholder="请输入单价"/>
           </el-form-item>
           <el-form-item label="销售单价">
-            <el-input v-model="tableForm.sellingPrice"  style="width: 370px;" placeholder="请输入销售单价"/>
+            <el-input v-model="tableForm.sellingPrice" style="width: 370px;" placeholder="请输入销售单价"/>
           </el-form-item>
           <el-form-item label="备注">
-            <el-input v-model="tableForm.remark"  style="width: 370px;" placeholder="请输入销售单价"/>
+            <el-input v-model="tableForm.remark" style="width: 370px;" placeholder="请输入销售单价"/>
           </el-form-item>
 
         </el-form>
@@ -646,7 +650,7 @@ export default {
         }, {
           value: '支',
           label: '支'
-        },{
+        }, {
           value: '箱',
           label: '箱'
         }
@@ -711,27 +715,11 @@ export default {
       this.sutmitDetailLoading = true
       sendOut(id).then(res => {
         this.sutmitDetailLoading = false
+        this.$refs[`poper` + id].doClose()
         this.dialogVisible = false
         this.init()
         this.$notify({
           title: '状态变更为已发货',
-          type: 'success',
-          duration: 2500
-        })
-      }).catch(err => {
-        this.sutmitDetailLoading = false
-        this.$refs[id].doClose()
-        console.log(err.response.data.message)
-      })
-    },
-    recived(id) {
-      this.sutmitDetailLoading = true
-        recived(id).then(res => {
-        this.sutmitDetailLoading = false
-        this.$refs[id].doClose()
-        this.init()
-        this.$notify({
-          title: '确认签收成功',
           type: 'success',
           duration: 2500
         })
@@ -744,6 +732,8 @@ export default {
       this.sutmitDetailLoading = true
       recived(id).then(res => {
         this.sutmitDetailLoading = false
+        this.$refs[`poper` + id].doClose()
+        this.dialogVisible = false
         this.init()
         this.$notify({
           title: '确认签收成功',
@@ -754,6 +744,9 @@ export default {
         this.sutmitDetailLoading = false
         console.log(err.response.data.message)
       })
+    },
+    pCancle(id){
+      this.$refs[`poper` + id].doClose()
     },
     subDelete(id) {
       this.delLoading = true
@@ -817,6 +810,8 @@ export default {
       downloadChemicalFiberDeliveryNote(this.params).then(result => {
         downloadFile(result, 'ChemicalFiberDeliveryNote列表', 'xlsx')
         this.downloadLoading = false
+        this.dialogVisible = false
+        this.init()
       }).catch(() => {
         this.downloadLoading = false
         this.$notify.error({
@@ -825,7 +820,7 @@ export default {
         })
       })
     },
-    addTable(){
+    addTable() {
       this.tableForm = {
         prodModel: '',
         prodName: '',
@@ -838,7 +833,7 @@ export default {
       this.prods = []
       this.addTableFrom = true
     },
-    addTableRow(){
+    addTableRow() {
       this.tableForm = {
         prodModel: this.tableForm.prodModel,
         prodName: this.tableForm.prodName,
@@ -849,7 +844,6 @@ export default {
         remark: this.tableForm.remark,
         totalNumber: this.tableForm.totalNumber
       }
-
       addTableRow(this.tableForm).then(res => {
         this.$notify({
           title: '添加成功',
@@ -858,7 +852,6 @@ export default {
         })
         this.addTableFrom = false
         this.$parent.init()
-
       }).catch(err => {
         this.addTableFrom = false
         console.log(err.response.data.message)
@@ -870,8 +863,6 @@ export default {
         this.detailList = res
       })
       this.detailLoading = true
-
-
     },
     handleNodeClick(data) {
       this.tableForm.prodName = data.prodName
@@ -884,7 +875,7 @@ export default {
         this.prods = res.content
       })
     },
-    addAll(data){
+    addAll(data) {
       if (this.form.customerId === null) {
         this.$notify({
           title: '请选择客户',
@@ -940,9 +931,9 @@ export default {
     },
     sutmitDetail(data) {
       this.detailLoading = true
-       if (data.cost) {
-         data.totalCost = data.totalNumber * data.cost
-       }
+      if (data.cost) {
+        data.totalCost = data.totalNumber * data.cost
+      }
       if (data.sellingPrice) {
         data.totalPrice = data.totalNumber * data.sellingPrice
       }
