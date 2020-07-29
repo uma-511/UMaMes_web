@@ -162,6 +162,7 @@
             type="success"
             icon="el-icon-tickets"
             @click="detail(scope.row)"
+            @click.stop
           >详情</el-button>
           <!-- <el-popover
             v-permission="['admin','chemicalFiberDeliveryNote:del']"
@@ -201,26 +202,201 @@
       width="80%"
     >
       <el-row style="width: 100%">
-        <el-container>
-          <el-aside width="10%">收货单位</el-aside>
-          <el-main style="width:30%">
-            <el-main>客户编号：{{ unitInfoMsg.customerCode }}</el-main>
-            <el-main>客户名称：{{ unitInfoMsg.customerName }}</el-main>
-            <el-main>客户地址：{{ unitInfoMsg.customerAddress }}</el-main>
-            <el-main>客户电话：{{ unitInfoMsg.contactPhone }}</el-main>
-            <el-main>主司机：{{ unitInfoMsg.driverMain }}</el-main>
-          </el-main>
-          <el-aside width="1px"/>
-          <el-main style="width:30%">
-            <el-main>车牌号：{{ unitInfoMsg.carNumber }}</el-main>
-            <el-main>联 系 人：{{ unitInfoMsg.contacts }}</el-main>
-            <el-main>副司机：{{ unitInfoMsg.driverDeputy }}</el-main>
-          </el-main>
-          <el-aside width="1px"/>
-          <el-main style="height: 160px; width:30%">
-            <el-main>单 号：{{ unitInfoMsg.scanNumber }}</el-main>
-          </el-main>
-        </el-container>
+        <el-form ref="form1" :model="form" :rules="rules" size="mini" label-width="80px" >
+          <el-form size="mini" :inline="true">
+            <el-form-item label="客户编号">
+              <el-input v-model="form.customerCode"  style="width: 200px;"/>
+            </el-form-item>
+            <el-form-item label="仓管员">
+              <el-select
+                v-model="form.storeKeeper"
+                :loading="userLoading"
+                :remote-method="storeKeeperRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入仓管员名称关键词"
+                style="width: 200px;"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in userOptions"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
+                  @blur="userOptions"
+                />
+              </el-select>
+            </el-form-item>
+          </el-form>
+          <el-form :inline="true" size="mini">
+            <el-form-item label="客户名称">
+              <el-select
+                v-model="form.customerName"
+                :loading="customerLoading"
+                :remote-method="customerRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入客户名称关键词"
+                style="width: 200px;"
+                @change="setCustomerId($event)"
+              >
+                <el-option
+                  v-for="item in customerOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="车牌号" >
+              <el-input v-model="form.carNumber"  style="width: 200px;"/>
+            </el-form-item>
+            <el-form-item label="业务员" >
+              <el-select
+                v-model="form.seller"
+                :loading="userLoading"
+                :remote-method="sellerRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入业务员名称关键词"
+                style="width: 200px;"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in userOptions"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="最新欠款" >
+              <el-input v-model="form.customerCode"  style="width: 200px;"/>
+            </el-form-item>
+          </el-form>
+          <el-form :inline="true" size="mini">
+            <el-form-item label="客户地址" >
+              <el-input v-model="form.customerAddress"  style="width: 470px;"/>
+            </el-form-item>
+            <el-form-item label="付款方式" >
+              <el-input v-model="form.customerCode"  style="width: 200px;"/>
+            </el-form-item>
+            <el-form-item label="客户单号" >
+              <el-input v-model="form.customerCode"  style="width: 200px;"/>
+            </el-form-item>
+          </el-form>
+          <el-form :inline="true" size="mini">
+            <el-form-item label="客户电话" >
+              <el-input v-model="form.contactPhone"  style="width: 200px;"/>
+            </el-form-item>
+            <el-form-item label="联系人" >
+              <el-input v-model="form.contacts"  style="width: 200px;"/>
+            </el-form-item>
+            <el-form-item label="订单号码" >
+              <el-input v-model="form.scanNumber"  style="width: 200px;"/>
+            </el-form-item>
+            <el-form-item label="订单交期" >
+              <el-input v-model="form.deliveryDate"  style="width: 200px;"/>
+            </el-form-item>
+          </el-form>
+          <el-form :inline="true" size="mini">
+            <el-form-item label="主司机" >
+              <el-select
+                v-model="form.driverMain"
+                :loading="userLoading"
+                :remote-method="transporterRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入主司机名称关键词"
+                style="width: 200px;"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in userOptions"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
+                  @blur="userOptions"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="副司机" >
+              <el-select
+                v-model="form.driverDeputy"
+                :loading="userLoading"
+                :remote-method="transporterRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入副司机名称关键词"
+                style="width: 200px;"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in userOptions"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
+                  @blur="userOptions"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="装载员1" >
+              <el-select
+                v-model="form.loaderOne"
+                :loading="userLoading"
+                :remote-method="transporterRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入装卸员1名称关键词"
+                style="width: 200px;"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in userOptions"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
+                  @blur="userOptions"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="装载员2" >
+              <el-select
+                v-model="form.loaderTwo"
+                :loading="userLoading"
+                :remote-method="transporterRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入装卸员2名称关键词"
+                style="width: 200px;"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in userOptions"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
+                  @blur="userOptions"
+                />
+              </el-select>
+            </el-form-item>
+            <el-button :loading="loading" type="success" @click="addAll" icon="el-icon-check" size="mini" >保存</el-button>
+          </el-form>
+        </el-form>
       </el-row>
       <el-row>
         <el-table
@@ -229,26 +405,25 @@
           :summary-method="getSummaries"
           style="width: 100%"
           show-summary
+          height = "260px"
           highlight-current-row
           @current-change="handleCurrentChange"
         >
-          <el-table-column prop="prodModel" label="型号" align="center"/>
-          <el-table-column prop="prodName" label="品名" align="center"/>
+          <el-table-column prop="prodModel" label="产品编号" align="center" width="120px"/>
+          <el-table-column prop="prodName" label="产品名称" align="center" width="120px"/>
           <el-table-column
             :formatter="kgformatter"
             prop="totalWeight"
             label="重量"
-            width="60%"
+            width="150px"
             align="center"
           />
-          <el-table-column prop="totalNumber" label="数量" width="60%" align="center"/>
-          <el-table-column prop="totalBag" label="包数" width="60%" align="center"/>
-          <el-table-column prop="unit" label="单位" width="125%" align="center">
+          <el-table-column prop="unit" label="单位" width="100px" align="center">
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
               <el-select v-model="scope.row.unit" placeholder="请选择单位">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in option"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -256,18 +431,19 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="cost" label="成本单价" width="200%" align="center">
+          <el-table-column prop="totalNumber" label="数量" width="80px" align="center"/>
+          <el-table-column prop="cost" label="单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.cost" :min="0" placeholder="请输入成本单价"/>
+              <el-input v-model="scope.row.cost" :min="0" placeholder="请输入单价"/>
             </template>
           </el-table-column>
-          <el-table-column prop="totalCost" label="总成本（元）" width="80%" align="center"/>
-          <el-table-column prop="sellingPrice" label="销售单价" width="200%" align="center">
+          <el-table-column prop="totalCost" label="总成本" width="120px" align="center"/>
+          <el-table-column prop="sellingPrice" label="销售单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.sellingPrice" :min="0" placeholder="请输入销售单价"/>
+              <el-input v-model="scope.row.sellingPrice" :min="0" placeholder="请输入销售单价"/>
             </template>
           </el-table-column>
-          <el-table-column prop="totalPrice" label="总金额（元）" width="80%" align="center"/>
+          <el-table-column prop="totalPrice" label="总价" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="150%" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" placeholder="备注" maxlength="6"/>
@@ -318,6 +494,7 @@
       </span>
     </el-dialog>
   </div>
+
 </template>
 
 <script>
@@ -326,6 +503,9 @@ import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
 import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
+import { getUserListByDeptId } from '@/api/user'
+import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
+import { getCustomerList } from '@/api/customer'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -337,15 +517,49 @@ export default {
       dialogVisible: false,
       detailLoading: false,
       sutmitDetailLoading: false,
-      unitInfoMsg: {
+      customerLoading: false,
+      userLoading: false,
+      customerOptions: [],
+      userOptions: [],
+      form: {
         id: '',
-        customerName: '',
-        customerAddress: '',
         scanNumber: '',
-        contactPhone: '',
+        customerId: '',
+        customerName: '',
+        customerCode: '',
+        customerAddress: '',
         contacts: '',
-        createDate: ''
+        contactPhone: '',
+        totalCost: '',
+        totalPrice: '',
+        remark: '',
+        seller: '',
+        storeKeeper: '',
+        createDate: '',
+        createUser: '',
+        carNumber: '',
+        deliveryDate: '',
+        driverMain: '',
+        driverDeputy: '',
+        state: '',
+        loaderOne: '',
+        loaderTwo: ''
       },
+      customerQuery: {
+        name: ''
+      },
+      rules: {
+      totalCost: [
+        {
+          required: true, message: '请输入总成本', trigger: 'blur'
+        }
+      ],
+        totalPrice: [
+        {
+          required: true, message: '请输入总价格', trigger: 'blur'
+        }
+      ]
+    },
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '出库单号' },
         { key: 'customerName', display_name: '客户名称' },
@@ -363,13 +577,16 @@ export default {
         5: '已完结'
       },
       detailList: [],
-      options: [
+      option: [
         {
-          value: '个',
-          label: '个'
+          value: '吨',
+          label: '吨'
         }, {
-          value: '公斤',
-          label: '公斤'
+          value: '支',
+          label: '支'
+        },{
+          value: '箱',
+          label: '箱'
         }
       ]
     }
@@ -532,8 +749,24 @@ export default {
         })
       })
     },
+    addAll(data){
+      if (this.form.customerId === null) {
+        this.$notify({
+          title: '请选择客户',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.$refs['form1'].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.doEdit()
+        }
+      })
+    },
     detail(data) {
-      this.unitInfoMsg = {
+      this.form = {
         id: data.id,
         customerName: data.customerName,
         customerAddress: data.customerAddress,
@@ -541,24 +774,32 @@ export default {
         contactPhone: data.contactPhone,
         contacts: data.contacts,
         createDate: data.createDate,
-        customerId: data.customerId,
+        customerCode: data.custmerCode,
+        seller: data.seller,
+        storeKeeper: data.storeKeeper,
+        createUser: data.createUser,
         carNumber: data.carNumber,
-        deliveryDate: data.deliveryDate,
         driverMain: data.driverMain,
         driverDeputy: data.driverDeputy,
-        noteStatus: data.noteStatus,
+        state: data.state,
         loaderOne: data.loaderOne,
         loaderTwo: data.loaderTwo,
+        totalCost: data.totalCost,
+        totalPrice: data.totalPrice,
+        customerId: data.customerId,
+        deliveryDate: data.deliveryDate,
+        noteStatus: data.noteStatus,
         payment: data.payment,
         balance: data.balance
       }
-      this.detailLoading = true
-      this.dialogVisible = true
       var params = { 'scanNumber': data.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         this.detailLoading = false
         this.detailList = res
       })
+      this.detailLoading = true
+      this.dialogVisible = true
+
     },
     handleCurrentChange(val) {
       this.currentChangeItem = val
@@ -602,7 +843,18 @@ export default {
           return
         }
         const values = data.map(item => Number(item[column.property]))
-        if (index === 9) {
+        if (index === 6) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 8) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
@@ -617,7 +869,7 @@ export default {
       return sums
     },
     exportDelivery() {
-      if (this.unitInfoMsg.customerName === null) {
+      if (this.form.customerName === null) {
         this.$notify({
           title: '请返回填写客户信息',
           type: 'warning',
@@ -626,7 +878,7 @@ export default {
         return
       }
       this.downloadLoading = true
-      downloadDeliveryNote(this.unitInfoMsg.id).then(result => {
+      downloadDeliveryNote(this.form.id).then(result => {
         this.downloadLoading = false
         downloadFile(result, '生产单导出', 'xls')
       }).catch(() => {
@@ -634,7 +886,7 @@ export default {
       })
     },
     exportPoundExcel(data) {
-      if (this.unitInfoMsg.customerName === null) {
+      if (this.form.customerName === null) {
         this.$notify({
           title: '请返回填写客户信息',
           type: 'warning',
@@ -644,11 +896,11 @@ export default {
       }
       this.detailLoading = true
       var dto = {
-        scanNumber: this.unitInfoMsg.scanNumber,
+        scanNumber: this.form.scanNumber,
         prodId: data.prodId,
         prodName: data.prodName,
-        customerName: this.unitInfoMsg.customerName,
-        createDate: this.unitInfoMsg.createDate
+        customerName: this.form.customerName,
+        createDate: this.form.createDate
       }
       exportPoundExcel(dto).then(result => {
         this.detailLoading = false
@@ -659,6 +911,83 @@ export default {
     },
     kgformatter(row, column, cellValue, index) {
       return cellValue + ' KG'
+    },
+    setCustomerId(event) {
+      this.form.customerId = event
+    },
+    cleanUpOptions() {
+      this.userOptions = []
+    },
+    customerRemoteMethod(query) {
+      if (query !== '') {
+        this.customerLoading = true
+        this.customerQuery.name = query
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerLoading = false
+          this.customerList = res
+          this.customerOptions = this.customerList.filter(item => {
+            return item.name.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
+    },
+    sellerRemoteMethod(query) {
+      // 业务员deptId为19
+      const params = { deptId: 19, username: query }
+      this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        this.userLoading = false
+        this.userList = res
+        this.userOptions = _this.userList.filter(item => {
+          return item.username.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
+    },
+    storeKeeperRemoteMethod(query) {
+      // 仓管员deptId为16
+      const params = { deptId: 16, username: query }
+      this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        this.userLoading = false
+        this.userList = res
+        this.userOptions = this.userList.filter(item => {
+          return item.username.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
+    },
+    transporterRemoteMethod(query) {
+      // 运输部deptId为18
+      const params = { deptId: 18, username: query }
+      this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        this.userLoading = false
+        this.userList = res
+        this.userOptions = this.userList.filter(item => {
+          return item.username.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
+    },
+    doEdit() {
+      editAll(this.form).then(res => {
+        //this.resetForm()
+        this.$notify({
+          title: '修改成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.init()
+        this.customerOptions = []
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
     }
   }
 }
@@ -679,5 +1008,24 @@ export default {
 }
 .el-container {
   height: 160px;
+}
+.el-dialog{
+  display: flex;
+  flex-direction: column;
+  margin:0 !important;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  /*height:600px;*/
+  max-height:calc(100% - 30px);
+  max-width:calc(100% - 30px);
+}
+.el-dialog .el-dialog__body{
+  flex:1;
+  overflow: auto;
+}
+.el-table{
+  overflow:visible !important;
 }
 </style>

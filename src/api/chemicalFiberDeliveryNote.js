@@ -23,6 +23,14 @@ export function edit(data) {
   })
 }
 
+export function editAll(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote',
+    method: 'put',
+    data
+  })
+}
+
 export function downloadChemicalFiberDeliveryNote(params) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/download',
