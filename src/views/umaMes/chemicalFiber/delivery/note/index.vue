@@ -537,7 +537,6 @@
         </div>
       </el-dialog>
     </el-dialog>
-
   </div>
 
 </template>
@@ -545,8 +544,8 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel } from '@/api/chemicalFiberDeliveryNote'
+import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
@@ -714,6 +713,23 @@ export default {
         this.init()
         this.$notify({
           title: '状态变更为已发货',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        console.log(err.response.data.message)
+      })
+    },
+    recived(id) {
+      this.sutmitDetailLoading = true
+        recived(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        this.init()
+        this.$notify({
+          title: '确认签收成功',
           type: 'success',
           duration: 2500
         })
@@ -921,8 +937,6 @@ export default {
       this.detailLoading = true
       this.dialogVisible = true
 
-
-
     },
     handleCurrentChange(val) {
       this.currentChangeItem = val
@@ -935,7 +949,6 @@ export default {
       if (data.sellingPrice) {
         data.totalPrice = data.totalNumber * data.sellingPrice
       }
-
       edit(data).then(res => {
         this.detailLoading = false
         this.$notify({
