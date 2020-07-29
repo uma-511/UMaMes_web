@@ -537,6 +537,7 @@
         </div>
       </el-dialog>
     </el-dialog>
+
   </div>
 
 </template>
@@ -544,8 +545,8 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel } from '@/api/chemicalFiberDeliveryNote'
-import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
+import { edit, getChemicalFiberDeliveryDetailsList, addTableRow } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
@@ -932,10 +933,11 @@ export default {
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         this.detailLoading = false
         this.detailList = res
-
       })
       this.detailLoading = true
       this.dialogVisible = true
+
+
 
     },
     handleCurrentChange(val) {
@@ -949,6 +951,7 @@ export default {
       if (data.sellingPrice) {
         data.totalPrice = data.totalNumber * data.sellingPrice
       }
+
       edit(data).then(res => {
         this.detailLoading = false
         this.$notify({
@@ -968,7 +971,7 @@ export default {
           return
         }
         const values = data.map(item => Number(item[column.property]))
-        if (index === 6) {
+        if (index === 5) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
