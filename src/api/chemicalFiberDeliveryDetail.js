@@ -8,6 +8,14 @@ export function add(data) {
   })
 }
 
+export function addTableRow(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryDetail',
+    method: 'post',
+    data
+  })
+}
+
 export function del(id) {
   return request({
     url: 'api/chemicalFiberDeliveryDetail/' + id,
