@@ -56,6 +56,14 @@ export function sendOut(id) {
   })
 }
 
+export function recived(id) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/recived/' + id,
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
 export function exportPoundExcel(data) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/exportPoundExcel',

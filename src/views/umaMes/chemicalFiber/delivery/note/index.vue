@@ -474,23 +474,38 @@
       </el-row>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button v-if="scope.row.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
-        <el-popover
-          :ref="scope.row.id"
-          placement="top"
-        >
-          <p>确认签收前，请确认回填信息</p>
-          <div style="text-align: right; margin: 0">
-            <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-            <el-button
-              :loading="sutmitDetailLoading"
-              type="primary"
-              size="mini"
-              @click="recived(scope.row.id)"
-            >确定</el-button>
-          </div>
-          <el-button v-if="scope.row.noteStatus == 3" slot="reference" type="warning" icon="el-icon-s-promotion" size="mini">发货</el-button>
-        </el-popover>
+        <el-button v-if="form.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <div v-if="form.noteStatus == 2">
+          <el-popover
+            placement="top"
+            width="160"
+          >
+            <p>是否发货？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="this.visible = false">取消</el-button>
+              <el-button type="primary" size="mini" @click="sendOut(form.id)">确定</el-button>
+            </div>
+            <el-button slot="reference" type="primary" icon="el-icon-s-promotion">发货</el-button>
+          </el-popover>
+        </div>
+        <div v-if="form.noteStatus == 3 ">
+          <el-popover
+            :ref="form.id"
+            placement="top"
+          >
+            <p>确认收货前，请确认回填信息</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+              <el-button
+                :loading="sutmitDetailLoading"
+                type="primary"
+                size="mini"
+                @click="recived(form.id)"
+              >已确定，并进行签收</el-button>
+            </div>
+            <el-button slot="reference" type="primary" icon="el-icon-s-promotion" @click.stop>签收</el-button>
+          </el-popover>
+        </div>
       </span>
     </el-dialog>
   </div>
@@ -515,12 +530,14 @@ export default {
       dateQuery: '',
       delLoading: false,
       dialogVisible: false,
+      popVisible: false,
       detailLoading: false,
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
       customerOptions: [],
       userOptions: [],
+      visible: false,
       form: {
         id: '',
         scanNumber: '',
@@ -549,17 +566,17 @@ export default {
         name: ''
       },
       rules: {
-      totalCost: [
-        {
-          required: true, message: '请输入总成本', trigger: 'blur'
-        }
-      ],
+        totalCost: [
+          {
+            required: true, message: '请输入总成本', trigger: 'blur'
+          }
+        ],
         totalPrice: [
-        {
-          required: true, message: '请输入总价格', trigger: 'blur'
-        }
-      ]
-    },
+          {
+            required: true, message: '请输入总价格', trigger: 'blur'
+          }
+        ]
+      },
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '出库单号' },
         { key: 'customerName', display_name: '客户名称' },
@@ -584,7 +601,7 @@ export default {
         }, {
           value: '支',
           label: '支'
-        },{
+        }, {
           value: '箱',
           label: '箱'
         }
@@ -649,7 +666,7 @@ export default {
       this.sutmitDetailLoading = true
       sendOut(id).then(res => {
         this.sutmitDetailLoading = false
-        this.$refs[id].doClose()
+        this.dialogVisible = false
         this.init()
         this.$notify({
           title: '状态变更为已发货',
@@ -658,15 +675,13 @@ export default {
         })
       }).catch(err => {
         this.sutmitDetailLoading = false
-        this.$refs[id].doClose()
         console.log(err.response.data.message)
       })
     },
     recived(id) {
       this.sutmitDetailLoading = true
-        recived(id).then(res => {
+      recived(id).then(res => {
         this.sutmitDetailLoading = false
-        this.$refs[id].doClose()
         this.init()
         this.$notify({
           title: '确认签收成功',
@@ -675,7 +690,6 @@ export default {
         })
       }).catch(err => {
         this.sutmitDetailLoading = false
-        this.$refs[id].doClose()
         console.log(err.response.data.message)
       })
     },
@@ -749,7 +763,7 @@ export default {
         })
       })
     },
-    addAll(data){
+    addAll(data) {
       if (this.form.customerId === null) {
         this.$notify({
           title: '请选择客户',
@@ -799,7 +813,6 @@ export default {
       })
       this.detailLoading = true
       this.dialogVisible = true
-
     },
     handleCurrentChange(val) {
       this.currentChangeItem = val
@@ -975,7 +988,7 @@ export default {
     },
     doEdit() {
       editAll(this.form).then(res => {
-        //this.resetForm()
+        // this.resetForm()
         this.$notify({
           title: '修改成功',
           type: 'success',
