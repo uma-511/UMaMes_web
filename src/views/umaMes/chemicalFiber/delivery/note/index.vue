@@ -298,7 +298,23 @@
       </el-row>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-button v-if="scope.row.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-popover
+          :ref="scope.row.id"
+          placement="top"
+        >
+          <p>确认签收前，请确认回填信息</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
+            <el-button
+              :loading="sutmitDetailLoading"
+              type="primary"
+              size="mini"
+              @click="recived(scope.row.id)"
+            >确定</el-button>
+          </div>
+          <el-button v-if="scope.row.noteStatus == 3" slot="reference" type="warning" icon="el-icon-s-promotion" size="mini">发货</el-button>
+        </el-popover>
       </span>
     </el-dialog>
   </div>
@@ -307,7 +323,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut } from '@/api/chemicalFiberDeliveryNote'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
 import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
@@ -420,6 +436,23 @@ export default {
         this.init()
         this.$notify({
           title: '状态变更为已发货',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        console.log(err.response.data.message)
+      })
+    },
+    recived(id) {
+      this.sutmitDetailLoading = true
+        recived(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        this.init()
+        this.$notify({
+          title: '确认签收成功',
           type: 'success',
           duration: 2500
         })
