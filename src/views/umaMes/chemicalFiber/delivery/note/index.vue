@@ -285,10 +285,10 @@
               <el-input v-model="form.customerAddress"  style="width: 470px;"/>
             </el-form-item>
             <el-form-item label="付款方式" >
-              <el-input v-model="form.customerCode"  style="width: 200px;"/>
+              <el-input v-model="form.payment"  style="width: 200px;"/>
             </el-form-item>
-            <el-form-item label="客户单号" >
-              <el-input v-model="form.customerCode"  style="width: 200px;"/>
+            <el-form-item label="最新欠款" >
+              <el-input v-model="form.balance"  style="width: 200px;"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -411,13 +411,6 @@
         >
           <el-table-column prop="prodModel" label="产品编号" align="center" width="120px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="120px"/>
-          <el-table-column
-            :formatter="kgformatter"
-            prop="totalWeight"
-            label="重量"
-            width="150px"
-            align="center"
-          />
           <el-table-column prop="unit" label="单位" width="100px" align="center">
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
@@ -431,8 +424,12 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="totalNumber" label="数量" width="80px" align="center"/>
-          <el-table-column prop="cost" label="单价" width="130px" align="center">
+          <el-table-column prop="totalNumber" label="数量" width="80px" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.totalNumber" :min="0" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="cost" label="单价" width="100px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.cost" :min="0" placeholder="请输入单价"/>
             </template>
@@ -440,7 +437,7 @@
           <el-table-column prop="totalCost" label="总成本" width="120px" align="center"/>
           <el-table-column prop="sellingPrice" label="销售单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" :min="0" placeholder="请输入销售单价"/>
+              <el-input v-model="scope.row.sellingPrice" :min="0" />
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="总价" width="120px" align="center"/>
@@ -473,40 +470,74 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
+        <el-button @click="addTable">插入数据</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button v-if="form.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
-        <div v-if="form.noteStatus == 2">
-          <el-popover
-            placement="top"
-            width="160"
-          >
-            <p>是否发货？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="this.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="sendOut(form.id)">确定</el-button>
-            </div>
-            <el-button slot="reference" type="primary" icon="el-icon-s-promotion">发货</el-button>
-          </el-popover>
-        </div>
-        <div v-if="form.noteStatus == 3 ">
-          <el-popover
-            :ref="form.id"
-            placement="top"
-          >
-            <p>确认收货前，请确认回填信息</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-              <el-button
-                :loading="sutmitDetailLoading"
-                type="primary"
-                size="mini"
-                @click="recived(form.id)"
-              >已确定，并进行签收</el-button>
-            </div>
-            <el-button slot="reference" type="primary" icon="el-icon-s-promotion" @click.stop>签收</el-button>
-          </el-popover>
-        </div>
+        <el-button v-if="scope.row.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-popover
+          :ref="scope.row.id"
+          placement="top"
+        >
+          <p>确认签收前，请确认回填信息</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
+            <el-button
+              :loading="sutmitDetailLoading"
+              type="primary"
+              size="mini"
+              @click="recived(scope.row.id)"
+            >确定</el-button>
+          </div>
+          <el-button v-if="scope.row.noteStatus == 3" slot="reference" type="warning" icon="el-icon-s-promotion" size="mini">发货</el-button>
+        </el-popover>
       </span>
+
+      <el-dialog
+        width="40%"
+        title="插入数据"
+        :visible.sync="addTableFrom"
+        :append-to-body = "true" >
+        <el-form  :model="tableForm"  size="mini" label-width="80px" >
+          <el-form-item label="产品搜索" >
+            <el-input v-model="tableForm.searchName" clearable placeholder="输入产品名称进行搜索" prefix-icon="el-icon-search" style="width: 100%;" class="filter-item" @input="getSelectMap"/>
+            <el-tree :data="prods" :expand-on-click-node="false" default-expand-all style="width: 370px;" @node-click="handleNodeClick"/>
+          </el-form-item>
+          <el-form-item label="产品型号" >
+            <el-input v-model="tableForm.prodModel" :disabled="true" style="width: 370px;" @input="getSelectMap"/>
+          </el-form-item>
+          <el-form-item label="产品名称" >
+            <el-input v-model="tableForm.prodName" :disabled="true" style="width: 370px;"/>
+          </el-form-item>
+          <el-form-item label="单位">
+            <template >
+              <el-select v-model="tableForm.unit" placeholder="请选择单位">
+                <el-option
+                  v-for="item in option"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </template>
+          </el-form-item>
+          <el-form-item label="数量">
+            <el-input v-model="tableForm.totalNumber"  style="width: 370px;"/>
+          </el-form-item>
+          <el-form-item label="单价">
+            <el-input v-model="tableForm.cost"  style="width: 370px;" placeholder="请输入单价"/>
+          </el-form-item>
+          <el-form-item label="销售单价">
+            <el-input v-model="tableForm.sellingPrice"  style="width: 370px;" placeholder="请输入销售单价"/>
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input v-model="tableForm.remark"  style="width: 370px;" placeholder="请输入销售单价"/>
+          </el-form-item>
+
+        </el-form>
+        <div style="text-align: right; margin: 0">
+          <el-button size="mini" type="text" @click="addTableFrom = false">取消</el-button>
+          <el-button :loading="delLoading" type="primary" size="mini" @click="addTableRow">确定</el-button>
+        </div>
+      </el-dialog>
     </el-dialog>
   </div>
 
@@ -516,11 +547,12 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
-import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
+import { edit, getChemicalFiberDeliveryDetailsList, addTableRow } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList } from '@/api/customer'
+import { getSelectMap } from '@/api/chemicalFiberStock'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -535,6 +567,7 @@ export default {
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
+      addTableFrom: false,
       customerOptions: [],
       userOptions: [],
       visible: false,
@@ -560,7 +593,19 @@ export default {
         driverDeputy: '',
         state: '',
         loaderOne: '',
-        loaderTwo: ''
+        loaderTwo: '',
+        balance: '',
+        payment: ''
+      },
+      tableForm: {
+        prodModel: '',
+        prodName: '',
+        scanNumber: '',
+        unit: '',
+        cost: '',
+        sellingPrice: '',
+        remark: '',
+        totalNumber: ''
       },
       customerQuery: {
         name: ''
@@ -601,7 +646,7 @@ export default {
         }, {
           value: '支',
           label: '支'
-        }, {
+        },{
           value: '箱',
           label: '箱'
         }
@@ -670,6 +715,23 @@ export default {
         this.init()
         this.$notify({
           title: '状态变更为已发货',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        console.log(err.response.data.message)
+      })
+    },
+    recived(id) {
+      this.sutmitDetailLoading = true
+        recived(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        this.init()
+        this.$notify({
+          title: '确认签收成功',
           type: 'success',
           duration: 2500
         })
@@ -763,7 +825,66 @@ export default {
         })
       })
     },
-    addAll(data) {
+    addTable(){
+      this.tableForm = {
+        prodModel: '',
+        prodName: '',
+        unit: '',
+        cost: '',
+        sellingPrice: '',
+        remark: '',
+        totalNumber: ''
+      }
+      this.prods = []
+      this.addTableFrom = true
+    },
+    addTableRow(){
+      this.tableForm = {
+        prodModel: this.tableForm.prodModel,
+        prodName: this.tableForm.prodName,
+        scanNumber: this.form.scanNumber,
+        unit: this.tableForm.unit,
+        cost: this.tableForm.cost,
+        sellingPrice: this.tableForm.sellingPrice,
+        remark: this.tableForm.remark,
+        totalNumber: this.tableForm.totalNumber
+      }
+
+      addTableRow(this.tableForm).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.addTableFrom = false
+        this.$parent.init()
+
+      }).catch(err => {
+        this.addTableFrom = false
+        console.log(err.response.data.message)
+      })
+      this.addTableFrom = false
+      var params = { 'scanNumber': this.form.scanNumber }
+      getChemicalFiberDeliveryDetailsList(params).then(res => {
+        this.detailLoading = false
+        this.detailList = res
+      })
+      this.detailLoading = true
+
+
+    },
+    handleNodeClick(data) {
+      this.tableForm.prodName = data.prodName
+      this.tableForm.prodModel = data.prodModel
+    },
+    getSelectMap() {
+      const params = {}
+      params['prodName'] = this.tableForm.searchName
+      getSelectMap(params).then(res => {
+        this.prods = res.content
+      })
+    },
+    addAll(data){
       if (this.form.customerId === null) {
         this.$notify({
           title: '请选择客户',
@@ -819,23 +940,11 @@ export default {
     },
     sutmitDetail(data) {
       this.detailLoading = true
-      if (data.unit === '个') {
-        if (data.cost) {
-          data.totalCost = data.totalNumber * data.cost
-        }
-        if (data.sellingPrice) {
-          data.totalPrice = data.totalNumber * data.sellingPrice
-        }
-      } else {
-        var temp
-        if (data.cost) {
-          temp = data.totalWeight * data.cost
-          data.totalCost = temp.toFixed(2)
-        }
-        if (data.sellingPrice) {
-          temp = data.totalWeight * data.sellingPrice
-          data.totalPrice = temp.toFixed(2)
-        }
+       if (data.cost) {
+         data.totalCost = data.totalNumber * data.cost
+       }
+      if (data.sellingPrice) {
+        data.totalPrice = data.totalNumber * data.sellingPrice
       }
       edit(data).then(res => {
         this.detailLoading = false
@@ -856,7 +965,7 @@ export default {
           return
         }
         const values = data.map(item => Number(item[column.property]))
-        if (index === 6) {
+        if (index === 5) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
@@ -867,7 +976,7 @@ export default {
           }, 0).toFixed(2)
           sums[index] += ' 元'
         }
-        if (index === 8) {
+        if (index === 7) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
