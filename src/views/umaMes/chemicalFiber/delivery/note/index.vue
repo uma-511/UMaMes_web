@@ -139,22 +139,6 @@
             icon="el-icon-edit"
             @click="edit(scope.row)"
           >编辑</el-button>
-          <el-popover
-            :ref="scope.row.id"
-            placement="top"
-          >
-            <p>是否发货？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-              <el-button
-                :loading="sutmitDetailLoading"
-                type="primary"
-                size="mini"
-                @click="sendOut(scope.row.id)"
-              >确定</el-button>
-            </div>
-            <el-button v-if="scope.row.noteStatus == 2" slot="reference" type="warning" icon="el-icon-s-promotion" size="mini" @click.stop>发货</el-button>
-          </el-popover>
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             size="mini"
@@ -275,8 +259,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="最新欠款" >
-              <el-input v-model="form.customerCode" style="width: 200px;"/>
+            <el-form-item label="出库单号" >
+              <el-input v-model="form.scanNumber" style="width: 200px;"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -298,7 +282,7 @@
               <el-input v-model="form.contacts" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input v-model="form.scanNumber" style="width: 200px;"/>
+              <el-input style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="交货日期" >
               <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
@@ -393,7 +377,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-button :loading="loading" type="success" @click="addAll" icon="el-icon-check" size="mini" >保存</el-button>
+            <el-button :loading="loading" type="success" icon="el-icon-check" size="mini" @click="addAll" >保存</el-button>
           </el-form>
         </el-form>
       </el-row>
@@ -408,8 +392,8 @@
           highlight-current-row
           @current-change="handleCurrentChange"
         >
-          <el-table-column prop="prodModel" label="产品编号" align="center" width="120px"/>
-          <el-table-column prop="prodName" label="产品名称" align="center" width="120px"/>
+          <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
+          <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
           <el-table-column prop="unit" label="单位" width="100px" align="center">
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
@@ -423,23 +407,23 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="totalNumber" label="数量" width="80px" align="center">
+          <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.totalNumber" :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="cost" label="单价" width="100px" align="center">
+          <el-table-column prop="realQuantity" label="数量" width="实收100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.cost" :min="0" placeholder="请输入单价"/>
+              <el-input v-model="scope.row.realQuantity" :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="totalCost" label="总成本" width="120px" align="center"/>
-          <el-table-column prop="sellingPrice" label="销售单价" width="130px" align="center">
+          <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.sellingPrice" :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="totalPrice" label="总价" width="120px" align="center"/>
+          <el-table-column prop="totalPrice" label="金额" width="120px" align="center"/>
+          <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="150%" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" placeholder="备注" maxlength="6"/>
@@ -449,7 +433,7 @@
             v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])"
             label="操作"
             align="center"
-            width="195%"
+            width="170%"
           >
             <template slot-scope="scope">
               <el-button
@@ -458,18 +442,18 @@
                 icon="el-icon-edit"
                 @click="sutmitDetail(scope.row)"
               >更新</el-button>
-              <el-button
+              <!--<el-button
                 size="mini"
                 type="primary"
                 icon="el-icon-download"
                 @click="exportPoundExcel(scope.row)"
-              >磅码单</el-button>
+              >磅码单</el-button>-->
             </template>
           </el-table-column>
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addTable">添加产品</el-button>
+        <el-button v-if="form.noteStatus == 1" @click="addTable" >添加产品</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button v-if="form.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <div v-if="form.noteStatus == 2">
@@ -542,9 +526,6 @@
             <el-input v-model="tableForm.totalNumber" style="width: 370px;"/>
           </el-form-item>
           <el-form-item label="单价">
-            <el-input v-model="tableForm.cost" style="width: 370px;" placeholder="请输入单价"/>
-          </el-form-item>
-          <el-form-item label="销售单价">
             <el-input v-model="tableForm.sellingPrice" style="width: 370px;" placeholder="请输入销售单价"/>
           </el-form-item>
           <el-form-item label="备注">
@@ -558,7 +539,6 @@
         </div>
       </el-dialog>
     </el-dialog>
-
   </div>
 
 </template>
@@ -590,6 +570,7 @@ export default {
       addTableFrom: false,
       customerOptions: [],
       userOptions: [],
+      prods: [],
       visible: false,
       form: {
         id: '',
@@ -600,7 +581,6 @@ export default {
         customerAddress: '',
         contacts: '',
         contactPhone: '',
-        totalCost: '',
         totalPrice: '',
         remark: '',
         seller: '',
@@ -615,27 +595,23 @@ export default {
         loaderOne: '',
         loaderTwo: '',
         balance: '',
-        payment: ''
+        payment: '',
+        realPrice: ''
       },
       tableForm: {
         prodModel: '',
         prodName: '',
         scanNumber: '',
         unit: '',
-        cost: '',
         sellingPrice: '',
         remark: '',
-        totalNumber: ''
+        totalNumber: '',
+        realQuantity: ''
       },
       customerQuery: {
         name: ''
       },
       rules: {
-        totalCost: [
-          {
-            required: true, message: '请输入总成本', trigger: 'blur'
-          }
-        ],
         totalPrice: [
           {
             required: true, message: '请输入总价格', trigger: 'blur'
@@ -666,8 +642,7 @@ export default {
         }, {
           value: '支',
           label: '支'
-        },
-         {
+        }, {
           value: '箱',
           label: '箱'
         }
@@ -709,8 +684,8 @@ export default {
         customerAddress: row.customerAddress,
         contacts: row.contacts,
         contactPhone: row.contactPhone,
-        totalCost: row.totalCost,
         totalPrice: row.totalPrice,
+        realPrice: row.realPrice,
         remark: row.remark,
         seller: row.seller,
         storeKeeper: row.storeKeeper,
@@ -762,7 +737,7 @@ export default {
         console.log(err.response.data.message)
       })
     },
-    pCancle(id){
+    pCancle(id) {
       this.$refs[`poper` + id].doClose()
     },
     subDelete(id) {
@@ -799,8 +774,8 @@ export default {
         customerAddress: data.customerAddress,
         contacts: data.contacts,
         contactPhone: data.contactPhone,
-        totalCost: data.totalCost,
         totalPrice: data.totalPrice,
+        realPrice: data.realPrice,
         remark: data.remark,
         seller: data.seller,
         storeKeeper: data.storeKeeper,
@@ -842,10 +817,11 @@ export default {
         prodModel: '',
         prodName: '',
         unit: '',
-        cost: '',
         sellingPrice: '',
         remark: '',
-        totalNumber: ''
+        totalNumber: '',
+        realPrice: '',
+        realQuantity: ''
       }
       this.prods = []
       this.addTableFrom = true
@@ -856,10 +832,12 @@ export default {
         prodName: this.tableForm.prodName,
         scanNumber: this.form.scanNumber,
         unit: this.tableForm.unit,
-        cost: this.tableForm.cost,
         sellingPrice: this.tableForm.sellingPrice,
         remark: this.tableForm.remark,
-        totalNumber: this.tableForm.totalNumber
+        totalNumber: this.tableForm.totalNumber,
+        realQuantity: this.tableForm.realQuantity,
+        totalPrice: this.tableForm.totalNumber * this.tableForm.sellingPrice,
+        realPrice: this.tableForm.realQuantity * this.tableForm.totalNumber
       }
       addTableRow(this.tableForm).then(res => {
         this.$notify({
@@ -927,8 +905,8 @@ export default {
         state: data.state,
         loaderOne: data.loaderOne,
         loaderTwo: data.loaderTwo,
-        totalCost: data.totalCost,
         totalPrice: data.totalPrice,
+        realPrice: data.realPrice,
         customerId: data.customerId,
         deliveryDate: data.deliveryDate,
         noteStatus: data.noteStatus,
@@ -948,12 +926,8 @@ export default {
     },
     sutmitDetail(data) {
       this.detailLoading = true
-      if (data.cost) {
-        data.totalCost = data.totalNumber * data.cost
-      }
-      if (data.sellingPrice) {
-        data.totalPrice = data.totalNumber * data.sellingPrice
-      }
+      data.totalPrice = data.totalNumber * data.sellingPrice
+      data.realPrice = data.realQuantity * data.sellingPrice
       edit(data).then(res => {
         this.detailLoading = false
         this.$notify({
@@ -973,18 +947,7 @@ export default {
           return
         }
         const values = data.map(item => Number(item[column.property]))
-        if (index === 5) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr)
-            if (!isNaN(value)) {
-              return prev + curr
-            } else {
-              return prev
-            }
-          }, 0).toFixed(2)
-          sums[index] += ' 元'
-        }
-        if (index === 7) {
+        if (index === 6) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
@@ -1124,38 +1087,38 @@ export default {
 </script>
 
 <style>
-.el-aside {
-  background-color: #d3dce6;
-  color: #333;
-  text-align: center;
-  line-height: 160px;
-}
-.el-main {
-  background-color: #e9eef3;
-  color: #333;
-  text-align: left;
-  line-height: 10px;
-}
-.el-container {
-  height: 160px;
-}
-.el-dialog{
-  display: flex;
-  flex-direction: column;
-  margin:0 !important;
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  /*height:600px;*/
-  max-height:calc(100% - 30px);
-  max-width:calc(100% - 30px);
-}
-.el-dialog .el-dialog__body{
-  flex:1;
-  overflow: auto;
-}
-.el-table{
-  overflow:visible !important;
-}
+  .el-aside {
+    background-color: #d3dce6;
+    color: #333;
+    text-align: center;
+    line-height: 160px;
+  }
+  .el-main {
+    background-color: #e9eef3;
+    color: #333;
+    text-align: left;
+    line-height: 10px;
+  }
+  .el-container {
+    height: 160px;
+  }
+  .el-dialog{
+    display: flex;
+    flex-direction: column;
+    margin:0 !important;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    /*height:600px;*/
+    max-height:calc(100% - 30px);
+    max-width:calc(100% - 30px);
+  }
+  .el-dialog .el-dialog__body{
+    flex:1;
+    overflow: auto;
+  }
+  .el-table{
+    overflow:visible !important;
+  }
 </style>
