@@ -229,9 +229,9 @@
               >
                 <el-option
                   v-for="item in customerOptions"
-                  :key="item.id"
+                  :key="item.code"
                   :label="item.name"
-                  :value="item.id"
+                  :value="item.code"
                 />
               </el-select>
             </el-form-item>
@@ -1027,7 +1027,7 @@ export default {
       return cellValue + ' KG'
     },
     setCustomerId(event) {
-      this.form.customerId = event
+      this.form.customerCode = event
     },
     cleanUpOptions() {
       this.userOptions = []
