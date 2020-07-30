@@ -846,7 +846,6 @@ export default {
           duration: 2500
         })
         this.addTableFrom = false
-<<<<<<<<< Temporary merge branch 1
         this.$parent.init()
       }).catch(err => {
         this.addTableFrom = false
@@ -877,8 +876,9 @@ export default {
           title: '请选择客户',
           type: 'warning',
           duration: 2500
-
-        var params = { 'scanNumber': this.form.scanNumber }
+        })
+      }
+        var params = {'scanNumber': this.form.scanNumber}
         getChemicalFiberDeliveryDetailsList(params).then(res => {
           this.detailLoading = false
           this.detailList = res
@@ -997,13 +997,13 @@ export default {
           }
         })
         return
+        this.$refs['form1'].validate((valid) => {
+          if (valid) {
+            this.loading = true
+            this.doEdit()
+          }
+        })
       }
-      this.$refs['form1'].validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.doEdit()
-        }
-      })
     },
     detail(data) {
       this.form = {
@@ -1202,7 +1202,6 @@ export default {
       })
     }
   }
-}
 </script>
 
 <style>
