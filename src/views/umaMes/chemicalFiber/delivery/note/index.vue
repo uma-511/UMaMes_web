@@ -469,7 +469,7 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addTable">插入数据</el-button>
+        <el-button @click="addTable">添加产品</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button v-if="form.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <div v-if="form.noteStatus == 2">
@@ -514,7 +514,7 @@
         :visible.sync="addTableFrom"
         :append-to-body = "true"
         width="40%"
-        title="插入数据" >
+        title="添加产品" >
         <el-form :model="tableForm" size="mini" label-width="80px" >
           <el-form-item label="产品搜索" >
             <el-input v-model="tableForm.searchName" clearable placeholder="输入产品名称进行搜索" prefix-icon="el-icon-search" style="width: 100%;" class="filter-item" @input="getSelectMap"/>
