@@ -259,6 +259,9 @@
                 />
               </el-select>
             </el-form-item>
+            <el-form-item label="出库单号" >
+              <el-input v-model="form.scanNumber" style="width: 200px;"/>
+            </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户地址" >
@@ -279,7 +282,7 @@
               <el-input v-model="form.contacts" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input v-model="form.scanNumber" style="width: 200px;"/>
+              <el-input  style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="交货日期" >
               <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
@@ -404,12 +407,12 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="totalNumber" label="数量" width="100px" align="center">
+          <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.totalNumber" :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="totalNumber" label="实收数量" width="100px" align="center">
+          <el-table-column prop="realQuantity" label="数量" width="实收100px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.realQuantity" :min="0" />
             </template>
@@ -419,12 +422,8 @@
               <el-input v-model="scope.row.sellingPrice" :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="totalPrice" label="总价" width="120px" align="center"/>
-          <el-table-column prop="realPrice" label="实收金额" width="120px" align="center">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.realPrice" :min="0" />
-            </template>
-          </el-table-column>
+          <el-table-column prop="totalPrice" label="金额" width="120px" align="center"></el-table-column>
+          <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="150%" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" placeholder="备注" maxlength="6"/>
@@ -434,7 +433,7 @@
             v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])"
             label="操作"
             align="center"
-            width="195%"
+            width="170%"
           >
             <template slot-scope="scope">
               <el-button
@@ -443,12 +442,12 @@
                 icon="el-icon-edit"
                 @click="sutmitDetail(scope.row)"
               >更新</el-button>
-              <el-button
+              <!--<el-button
                 size="mini"
                 type="primary"
                 icon="el-icon-download"
                 @click="exportPoundExcel(scope.row)"
-              >磅码单</el-button>
+              >磅码单</el-button>-->
             </template>
           </el-table-column>
         </el-table>
@@ -595,7 +594,8 @@
           loaderOne: '',
           loaderTwo: '',
           balance: '',
-          payment: ''
+          payment: '',
+          realPrice: ''
         },
         tableForm: {
           prodModel: '',
@@ -604,7 +604,8 @@
           unit: '',
           sellingPrice: '',
           remark: '',
-          totalNumber: ''
+          totalNumber: '',
+          realQuantity: ''
         },
         customerQuery: {
           name: ''
@@ -683,6 +684,7 @@
           contacts: row.contacts,
           contactPhone: row.contactPhone,
           totalPrice: row.totalPrice,
+          realPrice: row.realPrice,
           remark: row.remark,
           seller: row.seller,
           storeKeeper: row.storeKeeper,
@@ -767,6 +769,7 @@
           contacts: data.contacts,
           contactPhone: data.contactPhone,
           totalPrice: data.totalPrice,
+          realPrice: data.realPrice,
           remark: data.remark,
           seller: data.seller,
           storeKeeper: data.storeKeeper,
@@ -808,7 +811,9 @@
           unit: '',
           sellingPrice: '',
           remark: '',
-          totalNumber: ''
+          totalNumber: '',
+          realPrice: '',
+          realQuantity: ''
         }
         this.prods = []
         this.addTableFrom = true
@@ -822,7 +827,9 @@
           sellingPrice: this.tableForm.sellingPrice,
           remark: this.tableForm.remark,
           totalNumber: this.tableForm.totalNumber,
-          totalPrice: this.tableForm.totalNumber * this.tableForm.sellingPrice
+          realQuantity: this.tableForm.realQuantity,
+          totalPrice: this.tableForm.totalNumber * this.tableForm.sellingPrice,
+          realPrice: this.tableForm.realQuantity * this.tableForm.totalNumber
         }
         addTableRow(this.tableForm).then(res => {
           this.$notify({
@@ -891,6 +898,7 @@
           loaderOne: data.loaderOne,
           loaderTwo: data.loaderTwo,
           totalPrice: data.totalPrice,
+          realPrice: data.realPrice,
           customerId: data.customerId,
           deliveryDate: data.deliveryDate,
           noteStatus: data.noteStatus,
@@ -910,9 +918,8 @@
       },
       sutmitDetail(data) {
         this.detailLoading = true
-        if (data.sellingPrice) {
-          data.totalPrice = data.totalNumber * data.sellingPrice
-        }
+        data.totalPrice = data.totalNumber * data.sellingPrice
+        data.realPrice = data.realQuantity * data.sellingPrice
         edit(data).then(res => {
           this.detailLoading = false
           this.$notify({
