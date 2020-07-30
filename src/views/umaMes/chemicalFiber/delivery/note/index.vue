@@ -282,7 +282,7 @@
               <el-input v-model="form.contacts" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input  style="width: 200px;"/>
+              <el-input style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="交货日期" >
               <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
@@ -422,7 +422,7 @@
               <el-input v-model="scope.row.sellingPrice" :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="totalPrice" label="金额" width="120px" align="center"></el-table-column>
+          <el-table-column prop="totalPrice" label="金额" width="120px" align="center"/>
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="150%" align="center">
             <template slot-scope="scope">
@@ -453,7 +453,7 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addTable"  v-if="form.noteStatus == 1" >插入数据</el-button>
+        <el-button v-if="form.noteStatus == 1" @click="addTable" >插入数据</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button v-if="form.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <div v-if="form.noteStatus == 2">
@@ -543,550 +543,550 @@
 </template>
 
 <script>
-  import checkPermission from '@/utils/permission'
-  import initData from '@/mixins/initData'
-  import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
-  import { edit, getChemicalFiberDeliveryDetailsList, addTableRow } from '@/api/chemicalFiberDeliveryDetail'
-  import { parseTime, downloadFile } from '@/utils/index'
-  import { getUserListByDeptId } from '@/api/user'
-  import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
-  import { getCustomerList } from '@/api/customer'
-  import { getSelectMap } from '@/api/chemicalFiberStock'
-  import eForm from './form'
-  export default {
-    components: { eForm },
-    mixins: [initData],
-    data() {
-      return {
-        dateQuery: '',
-        delLoading: false,
-        dialogVisible: false,
-        popVisible: false,
-        detailLoading: false,
-        sutmitDetailLoading: false,
-        customerLoading: false,
-        userLoading: false,
-        addTableFrom: false,
-        customerOptions: [],
-        userOptions: [],
-        prods: [],
-        visible: false,
-        form: {
-          id: '',
-          scanNumber: '',
-          customerId: '',
-          customerName: '',
-          customerCode: '',
-          customerAddress: '',
-          contacts: '',
-          contactPhone: '',
-          totalPrice: '',
-          remark: '',
-          seller: '',
-          storeKeeper: '',
-          createDate: '',
-          createUser: '',
-          carNumber: '',
-          deliveryDate: '',
-          driverMain: '',
-          driverDeputy: '',
-          state: '',
-          loaderOne: '',
-          loaderTwo: '',
-          balance: '',
-          payment: '',
-          realPrice: ''
-        },
-        tableForm: {
-          prodModel: '',
-          prodName: '',
-          scanNumber: '',
-          unit: '',
-          sellingPrice: '',
-          remark: '',
-          totalNumber: '',
-          realQuantity: ''
-        },
-        customerQuery: {
-          name: ''
-        },
-        rules: {
-          totalPrice: [
-            {
-              required: true, message: '请输入总价格', trigger: 'blur'
-            }
-          ]
-        },
-        queryTypeOptions: [
-          { key: 'scanNumber', display_name: '出库单号' },
-          { key: 'customerName', display_name: '客户名称' },
-          { key: 'customerCode', display_name: '客户编号' },
-          { key: 'customerAddress', display_name: '客户地址' },
-          { key: 'contacts', display_name: '联系人' },
-          { key: 'contactPhone', display_name: '联系电话' }
-        ],
-        statusValue: {
-          0: '已失效',
-          1: '待打印',
-          2: '待出库',
-          3: '待签收',
-          4: '待结款',
-          5: '已完结'
-        },
-        detailList: [],
-        option: [
+import checkPermission from '@/utils/permission'
+import initData from '@/mixins/initData'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
+import { edit, getChemicalFiberDeliveryDetailsList, addTableRow } from '@/api/chemicalFiberDeliveryDetail'
+import { parseTime, downloadFile } from '@/utils/index'
+import { getUserListByDeptId } from '@/api/user'
+import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
+import { getCustomerList } from '@/api/customer'
+import { getSelectMap } from '@/api/chemicalFiberStock'
+import eForm from './form'
+export default {
+  components: { eForm },
+  mixins: [initData],
+  data() {
+    return {
+      dateQuery: '',
+      delLoading: false,
+      dialogVisible: false,
+      popVisible: false,
+      detailLoading: false,
+      sutmitDetailLoading: false,
+      customerLoading: false,
+      userLoading: false,
+      addTableFrom: false,
+      customerOptions: [],
+      userOptions: [],
+      prods: [],
+      visible: false,
+      form: {
+        id: '',
+        scanNumber: '',
+        customerId: '',
+        customerName: '',
+        customerCode: '',
+        customerAddress: '',
+        contacts: '',
+        contactPhone: '',
+        totalPrice: '',
+        remark: '',
+        seller: '',
+        storeKeeper: '',
+        createDate: '',
+        createUser: '',
+        carNumber: '',
+        deliveryDate: '',
+        driverMain: '',
+        driverDeputy: '',
+        state: '',
+        loaderOne: '',
+        loaderTwo: '',
+        balance: '',
+        payment: '',
+        realPrice: ''
+      },
+      tableForm: {
+        prodModel: '',
+        prodName: '',
+        scanNumber: '',
+        unit: '',
+        sellingPrice: '',
+        remark: '',
+        totalNumber: '',
+        realQuantity: ''
+      },
+      customerQuery: {
+        name: ''
+      },
+      rules: {
+        totalPrice: [
           {
-            value: '吨',
-            label: '吨'
-          }, {
-            value: '支',
-            label: '支'
-          }, {
-            value: '箱',
-            label: '箱'
+            required: true, message: '请输入总价格', trigger: 'blur'
           }
         ]
+      },
+      queryTypeOptions: [
+        { key: 'scanNumber', display_name: '出库单号' },
+        { key: 'customerName', display_name: '客户名称' },
+        { key: 'customerCode', display_name: '客户编号' },
+        { key: 'customerAddress', display_name: '客户地址' },
+        { key: 'contacts', display_name: '联系人' },
+        { key: 'contactPhone', display_name: '联系电话' }
+      ],
+      statusValue: {
+        0: '已失效',
+        1: '待打印',
+        2: '待出库',
+        3: '待签收',
+        4: '待结款',
+        5: '已完结'
+      },
+      detailList: [],
+      option: [
+        {
+          value: '吨',
+          label: '吨'
+        }, {
+          value: '支',
+          label: '支'
+        }, {
+          value: '箱',
+          label: '箱'
+        }
+      ]
+    }
+  },
+  created() {
+    this.$nextTick(() => {
+      this.init()
+    })
+  },
+  methods: {
+    parseTime,
+    checkPermission,
+    beforeInit() {
+      this.url = 'api/chemicalFiberDeliveryNote'
+      const sort = 'id,desc'
+      this.params = { page: this.page, size: this.size, sort: sort }
+      const query = this.query
+      const type = query.type
+      const value = query.value
+      const dateQuery = this.dateQuery
+      if (type && value) { this.params[type] = value }
+      if (dateQuery) {
+        this.params['tempStartTime'] = dateQuery[0].getTime()
+        this.params['tempEndTime'] = dateQuery[1].getTime()
       }
+      return true
     },
-    created() {
-      this.$nextTick(() => {
+    rowClicker: function(row) {
+      this.isAdd = false
+      const _this = this.$refs.form
+      _this.form = {
+        id: row.id,
+        scanNumber: row.scanNumber,
+        customerId: row.customerId,
+        customerName: row.customerName,
+        customerCode: row.customerCode,
+        customerAddress: row.customerAddress,
+        contacts: row.contacts,
+        contactPhone: row.contactPhone,
+        totalPrice: row.totalPrice,
+        realPrice: row.realPrice,
+        remark: row.remark,
+        seller: row.seller,
+        storeKeeper: row.storeKeeper,
+        createDate: row.createDate,
+        createUser: row.createUser,
+        carNumber: row.carNumber,
+        deliveryDate: row.deliveryDate,
+        driverMain: row.driverMain,
+        driverDeputy: row.driverDeputy,
+        noteStatus: row.noteStatus,
+        loaderOne: row.loaderOne,
+        loaderTwo: row.loaderTwo
+      }
+      this.$refs.form.tempCustomerId = row.customerId
+      this.$refs.form.tempCustomerName = row.customerName
+      _this.dialog = true
+    },
+    sendOut(id) {
+      this.sutmitDetailLoading = true
+      sendOut(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.visible = false
+        this.dialogVisible = false
+        this.init()
+        this.$notify({
+          title: '状态变更为已发货',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        console.log(err.response.data.message)
+      })
+    },
+    recived(id) {
+      this.sutmitDetailLoading = true
+      recived(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.init()
+        this.$notify({
+          title: '确认签收成功',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        console.log(err.response.data.message)
+      })
+    },
+    subDelete(id) {
+      this.delLoading = true
+      del(id).then(res => {
+        this.delLoading = false
+        this.$refs[id].doClose()
+        this.dleChangePage()
+        this.init()
+        this.$notify({
+          title: '删除成功',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.delLoading = false
+        this.$refs[id].doClose()
+        console.log(err.response.data.message)
+      })
+    },
+    add() {
+      this.isAdd = true
+      this.$refs.form.dialog = true
+    },
+    edit(data) {
+      this.isAdd = false
+      const _this = this.$refs.form
+      _this.form = {
+        id: data.id,
+        scanNumber: data.scanNumber,
+        customerId: data.customerId,
+        customerName: data.customerName,
+        customerCode: data.customerCode,
+        customerAddress: data.customerAddress,
+        contacts: data.contacts,
+        contactPhone: data.contactPhone,
+        totalPrice: data.totalPrice,
+        realPrice: data.realPrice,
+        remark: data.remark,
+        seller: data.seller,
+        storeKeeper: data.storeKeeper,
+        createDate: data.createDate,
+        createUser: data.createUser,
+        carNumber: data.carNumber,
+        deliveryDate: data.deliveryDate,
+        driverMain: data.driverMain,
+        driverDeputy: data.driverDeputy,
+        state: data.state,
+        loaderOne: data.loaderOne,
+        loaderTwo: data.loaderTwo,
+        payment: data.payment,
+        balance: data.balance
+      }
+      this.$refs.form.tempCustomerId = data.customerId
+      this.$refs.form.tempCustomerName = data.customerName
+      _this.dialog = true
+    },
+    // 导出
+    download() {
+      this.beforeInit()
+      this.downloadLoading = true
+      downloadChemicalFiberDeliveryNote(this.params).then(result => {
+        downloadFile(result, 'ChemicalFiberDeliveryNote列表', 'xlsx')
+        this.downloadLoading = false
+      }).catch(() => {
+        this.downloadLoading = false
+        this.$notify.error({
+          title: '请确保已选择单位',
+          duration: 2500
+        })
+      })
+    },
+    addTable() {
+      this.tableForm = {
+        prodModel: '',
+        prodName: '',
+        unit: '',
+        sellingPrice: '',
+        remark: '',
+        totalNumber: '',
+        realPrice: '',
+        realQuantity: ''
+      }
+      this.prods = []
+      this.addTableFrom = true
+    },
+    addTableRow() {
+      this.tableForm = {
+        prodModel: this.tableForm.prodModel,
+        prodName: this.tableForm.prodName,
+        scanNumber: this.form.scanNumber,
+        unit: this.tableForm.unit,
+        sellingPrice: this.tableForm.sellingPrice,
+        remark: this.tableForm.remark,
+        totalNumber: this.tableForm.totalNumber,
+        realQuantity: this.tableForm.realQuantity,
+        totalPrice: this.tableForm.totalNumber * this.tableForm.sellingPrice,
+        realPrice: this.tableForm.realQuantity * this.tableForm.totalNumber
+      }
+      addTableRow(this.tableForm).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.addTableFrom = false
+        this.$parent.init()
+      }).catch(err => {
+        this.addTableFrom = false
+        console.log(err.response.data.message)
+      })
+      this.addTableFrom = false
+      var params = { 'scanNumber': this.form.scanNumber }
+      getChemicalFiberDeliveryDetailsList(params).then(res => {
+        this.detailLoading = false
+        this.detailList = res
+      })
+      this.detailLoading = true
+    },
+    handleNodeClick(data) {
+      this.tableForm.prodName = data.prodName
+      this.tableForm.prodModel = data.prodModel
+    },
+    getSelectMap() {
+      const params = {}
+      params['prodName'] = this.tableForm.searchName
+      getSelectMap(params).then(res => {
+        this.prods = res.content
+      })
+    },
+    addAll(data) {
+      if (this.form.customerId === null) {
+        this.$notify({
+          title: '请选择客户',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.$refs['form1'].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.doEdit()
+        }
+      })
+    },
+    detail(data) {
+      this.form = {
+        id: data.id,
+        customerName: data.customerName,
+        customerAddress: data.customerAddress,
+        scanNumber: data.scanNumber,
+        contactPhone: data.contactPhone,
+        contacts: data.contacts,
+        createDate: data.createDate,
+        customerCode: data.custmerCode,
+        seller: data.seller,
+        storeKeeper: data.storeKeeper,
+        createUser: data.createUser,
+        carNumber: data.carNumber,
+        driverMain: data.driverMain,
+        driverDeputy: data.driverDeputy,
+        state: data.state,
+        loaderOne: data.loaderOne,
+        loaderTwo: data.loaderTwo,
+        totalPrice: data.totalPrice,
+        realPrice: data.realPrice,
+        customerId: data.customerId,
+        deliveryDate: data.deliveryDate,
+        noteStatus: data.noteStatus,
+        payment: data.payment,
+        balance: data.balance
+      }
+      var params = { 'scanNumber': data.scanNumber }
+      getChemicalFiberDeliveryDetailsList(params).then(res => {
+        this.detailLoading = false
+        this.detailList = res
+      })
+      this.detailLoading = true
+      this.dialogVisible = true
+    },
+    handleCurrentChange(val) {
+      this.currentChangeItem = val
+    },
+    sutmitDetail(data) {
+      this.detailLoading = true
+      data.totalPrice = data.totalNumber * data.sellingPrice
+      data.realPrice = data.realQuantity * data.sellingPrice
+      edit(data).then(res => {
+        this.detailLoading = false
+        this.$notify({
+          title: '编辑详情成功',
+          type: 'success',
+          duration: 2500
+        })
         this.init()
       })
     },
-    methods: {
-      parseTime,
-      checkPermission,
-      beforeInit() {
-        this.url = 'api/chemicalFiberDeliveryNote'
-        const sort = 'id,desc'
-        this.params = { page: this.page, size: this.size, sort: sort }
-        const query = this.query
-        const type = query.type
-        const value = query.value
-        const dateQuery = this.dateQuery
-        if (type && value) { this.params[type] = value }
-        if (dateQuery) {
-          this.params['tempStartTime'] = dateQuery[0].getTime()
-          this.params['tempEndTime'] = dateQuery[1].getTime()
-        }
-        return true
-      },
-      rowClicker: function(row) {
-        this.isAdd = false
-        const _this = this.$refs.form
-        _this.form = {
-          id: row.id,
-          scanNumber: row.scanNumber,
-          customerId: row.customerId,
-          customerName: row.customerName,
-          customerCode: row.customerCode,
-          customerAddress: row.customerAddress,
-          contacts: row.contacts,
-          contactPhone: row.contactPhone,
-          totalPrice: row.totalPrice,
-          realPrice: row.realPrice,
-          remark: row.remark,
-          seller: row.seller,
-          storeKeeper: row.storeKeeper,
-          createDate: row.createDate,
-          createUser: row.createUser,
-          carNumber: row.carNumber,
-          deliveryDate: row.deliveryDate,
-          driverMain: row.driverMain,
-          driverDeputy: row.driverDeputy,
-          noteStatus: row.noteStatus,
-          loaderOne: row.loaderOne,
-          loaderTwo: row.loaderTwo
-        }
-        this.$refs.form.tempCustomerId = row.customerId
-        this.$refs.form.tempCustomerName = row.customerName
-        _this.dialog = true
-      },
-      sendOut(id) {
-        this.sutmitDetailLoading = true
-        sendOut(id).then(res => {
-          this.sutmitDetailLoading = false
-          this.visible = false
-          this.dialogVisible = false
-          this.init()
-          this.$notify({
-            title: '状态变更为已发货',
-            type: 'success',
-            duration: 2500
-          })
-        }).catch(err => {
-          this.sutmitDetailLoading = false
-          console.log(err.response.data.message)
-        })
-      },
-      recived(id) {
-        this.sutmitDetailLoading = true
-        recived(id).then(res => {
-          this.sutmitDetailLoading = false
-          this.init()
-          this.$notify({
-            title: '确认签收成功',
-            type: 'success',
-            duration: 2500
-          })
-        }).catch(err => {
-          this.sutmitDetailLoading = false
-          console.log(err.response.data.message)
-        })
-      },
-      subDelete(id) {
-        this.delLoading = true
-        del(id).then(res => {
-          this.delLoading = false
-          this.$refs[id].doClose()
-          this.dleChangePage()
-          this.init()
-          this.$notify({
-            title: '删除成功',
-            type: 'success',
-            duration: 2500
-          })
-        }).catch(err => {
-          this.delLoading = false
-          this.$refs[id].doClose()
-          console.log(err.response.data.message)
-        })
-      },
-      add() {
-        this.isAdd = true
-        this.$refs.form.dialog = true
-      },
-      edit(data) {
-        this.isAdd = false
-        const _this = this.$refs.form
-        _this.form = {
-          id: data.id,
-          scanNumber: data.scanNumber,
-          customerId: data.customerId,
-          customerName: data.customerName,
-          customerCode: data.customerCode,
-          customerAddress: data.customerAddress,
-          contacts: data.contacts,
-          contactPhone: data.contactPhone,
-          totalPrice: data.totalPrice,
-          realPrice: data.realPrice,
-          remark: data.remark,
-          seller: data.seller,
-          storeKeeper: data.storeKeeper,
-          createDate: data.createDate,
-          createUser: data.createUser,
-          carNumber: data.carNumber,
-          deliveryDate: data.deliveryDate,
-          driverMain: data.driverMain,
-          driverDeputy: data.driverDeputy,
-          state: data.state,
-          loaderOne: data.loaderOne,
-          loaderTwo: data.loaderTwo,
-          payment: data.payment,
-          balance: data.balance
-        }
-        this.$refs.form.tempCustomerId = data.customerId
-        this.$refs.form.tempCustomerName = data.customerName
-        _this.dialog = true
-      },
-      // 导出
-      download() {
-        this.beforeInit()
-        this.downloadLoading = true
-        downloadChemicalFiberDeliveryNote(this.params).then(result => {
-          downloadFile(result, 'ChemicalFiberDeliveryNote列表', 'xlsx')
-          this.downloadLoading = false
-        }).catch(() => {
-          this.downloadLoading = false
-          this.$notify.error({
-            title: '请确保已选择单位',
-            duration: 2500
-          })
-        })
-      },
-      addTable() {
-        this.tableForm = {
-          prodModel: '',
-          prodName: '',
-          unit: '',
-          sellingPrice: '',
-          remark: '',
-          totalNumber: '',
-          realPrice: '',
-          realQuantity: ''
-        }
-        this.prods = []
-        this.addTableFrom = true
-      },
-      addTableRow() {
-        this.tableForm = {
-          prodModel: this.tableForm.prodModel,
-          prodName: this.tableForm.prodName,
-          scanNumber: this.form.scanNumber,
-          unit: this.tableForm.unit,
-          sellingPrice: this.tableForm.sellingPrice,
-          remark: this.tableForm.remark,
-          totalNumber: this.tableForm.totalNumber,
-          realQuantity: this.tableForm.realQuantity,
-          totalPrice: this.tableForm.totalNumber * this.tableForm.sellingPrice,
-          realPrice: this.tableForm.realQuantity * this.tableForm.totalNumber
-        }
-        addTableRow(this.tableForm).then(res => {
-          this.$notify({
-            title: '添加成功',
-            type: 'success',
-            duration: 2500
-          })
-          this.addTableFrom = false
-          this.$parent.init()
-        }).catch(err => {
-          this.addTableFrom = false
-          console.log(err.response.data.message)
-        })
-        this.addTableFrom = false
-        var params = { 'scanNumber': this.form.scanNumber }
-        getChemicalFiberDeliveryDetailsList(params).then(res => {
-          this.detailLoading = false
-          this.detailList = res
-        })
-        this.detailLoading = true
-      },
-      handleNodeClick(data) {
-        this.tableForm.prodName = data.prodName
-        this.tableForm.prodModel = data.prodModel
-      },
-      getSelectMap() {
-        const params = {}
-        params['prodName'] = this.tableForm.searchName
-        getSelectMap(params).then(res => {
-          this.prods = res.content
-        })
-      },
-      addAll(data) {
-        if (this.form.customerId === null) {
-          this.$notify({
-            title: '请选择客户',
-            type: 'warning',
-            duration: 2500
-          })
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
           return
         }
-        this.$refs['form1'].validate((valid) => {
-          if (valid) {
-            this.loading = true
-            this.doEdit()
-          }
-        })
-      },
-      detail(data) {
-        this.form = {
-          id: data.id,
-          customerName: data.customerName,
-          customerAddress: data.customerAddress,
-          scanNumber: data.scanNumber,
-          contactPhone: data.contactPhone,
-          contacts: data.contacts,
-          createDate: data.createDate,
-          customerCode: data.custmerCode,
-          seller: data.seller,
-          storeKeeper: data.storeKeeper,
-          createUser: data.createUser,
-          carNumber: data.carNumber,
-          driverMain: data.driverMain,
-          driverDeputy: data.driverDeputy,
-          state: data.state,
-          loaderOne: data.loaderOne,
-          loaderTwo: data.loaderTwo,
-          totalPrice: data.totalPrice,
-          realPrice: data.realPrice,
-          customerId: data.customerId,
-          deliveryDate: data.deliveryDate,
-          noteStatus: data.noteStatus,
-          payment: data.payment,
-          balance: data.balance
+        const values = data.map(item => Number(item[column.property]))
+        if (index === 6) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
         }
-        var params = { 'scanNumber': data.scanNumber }
-        getChemicalFiberDeliveryDetailsList(params).then(res => {
-          this.detailLoading = false
-          this.detailList = res
-        })
-        this.detailLoading = true
-        this.dialogVisible = true
-      },
-      handleCurrentChange(val) {
-        this.currentChangeItem = val
-      },
-      sutmitDetail(data) {
-        this.detailLoading = true
-        data.totalPrice = data.totalNumber * data.sellingPrice
-        data.realPrice = data.realQuantity * data.sellingPrice
-        edit(data).then(res => {
-          this.detailLoading = false
-          this.$notify({
-            title: '编辑详情成功',
-            type: 'success',
-            duration: 2500
-          })
-          this.init()
-        })
-      },
-      getSummaries(param) {
-        const { columns, data } = param
-        const sums = []
-        columns.forEach((column, index) => {
-          if (index === 0) {
-            sums[index] = '合计'
-            return
-          }
-          const values = data.map(item => Number(item[column.property]))
-          if (index === 6) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!isNaN(value)) {
-                return prev + curr
-              } else {
-                return prev
-              }
-            }, 0).toFixed(2)
-            sums[index] += ' 元'
-          }
-          if (index === 7) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!isNaN(value)) {
-                return prev + curr
-              } else {
-                return prev
-              }
-            }, 0).toFixed(2)
-            sums[index] += ' 元'
-          }
-        })
-        return sums
-      },
-      exportDelivery() {
-        if (this.form.customerName === null) {
-          this.$notify({
-            title: '请返回填写客户信息',
-            type: 'warning',
-            duration: 2500
-          })
-          return
+        if (index === 7) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
         }
-        this.downloadLoading = true
-        downloadDeliveryNote(this.form.id).then(result => {
-          this.downloadLoading = false
-          downloadFile(result, '生产单导出', 'xls')
-        }).catch(() => {
-          this.downloadLoading = false
+      })
+      return sums
+    },
+    exportDelivery() {
+      if (this.form.customerName === null) {
+        this.$notify({
+          title: '请返回填写客户信息',
+          type: 'warning',
+          duration: 2500
         })
-      },
-      exportPoundExcel(data) {
-        if (this.form.customerName === null) {
-          this.$notify({
-            title: '请返回填写客户信息',
-            type: 'warning',
-            duration: 2500
-          })
-          return
-        }
-        this.detailLoading = true
-        var dto = {
-          scanNumber: this.form.scanNumber,
-          prodId: data.prodId,
-          prodName: data.prodName,
-          customerName: this.form.customerName,
-          createDate: this.form.createDate
-        }
-        exportPoundExcel(dto).then(result => {
-          this.detailLoading = false
-          downloadFile(result, '磅码单导出', 'xls')
-        }).catch(() => {
-          this.detailLoading = false
-        })
-      },
-      kgformatter(row, column, cellValue, index) {
-        return cellValue + ' KG'
-      },
-      setCustomerId(event) {
-        this.form.customerId = event
-      },
-      cleanUpOptions() {
-        this.userOptions = []
-      },
-      customerRemoteMethod(query) {
-        if (query !== '') {
-          this.customerLoading = true
-          this.customerQuery.name = query
-          getCustomerList(this.customerQuery).then(res => {
-            this.customerLoading = false
-            this.customerList = res
-            this.customerOptions = this.customerList.filter(item => {
-              return item.name.toLowerCase()
-                .indexOf(query.toLowerCase()) > -1
-            })
-          })
-        } else {
-          this.customerOptions = []
-        }
-      },
-      sellerRemoteMethod(query) {
-        // 业务员deptId为19
-        const params = { deptId: 19, username: query }
-        this.userLoading = true
-        getUserListByDeptId(params).then(res => {
-          this.userLoading = false
-          this.userList = res
-          this.userOptions = _this.userList.filter(item => {
-            return item.username.toLowerCase()
-              .indexOf(query.toLowerCase()) > -1
-          })
-        })
-      },
-      storeKeeperRemoteMethod(query) {
-        // 仓管员deptId为16
-        const params = { deptId: 16, username: query }
-        this.userLoading = true
-        getUserListByDeptId(params).then(res => {
-          this.userLoading = false
-          this.userList = res
-          this.userOptions = this.userList.filter(item => {
-            return item.username.toLowerCase()
-              .indexOf(query.toLowerCase()) > -1
-          })
-        })
-      },
-      transporterRemoteMethod(query) {
-        // 运输部deptId为18
-        const params = { deptId: 18, username: query }
-        this.userLoading = true
-        getUserListByDeptId(params).then(res => {
-          this.userLoading = false
-          this.userList = res
-          this.userOptions = this.userList.filter(item => {
-            return item.username.toLowerCase()
-              .indexOf(query.toLowerCase()) > -1
-          })
-        })
-      },
-      doEdit() {
-        editAll(this.form).then(res => {
-          // this.resetForm()
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            duration: 2500
-          })
-          this.init()
-          this.customerOptions = []
-          this.$parent.init()
-        }).catch(err => {
-          this.loading = false
-          console.log(err.response.data.message)
-        })
+        return
       }
+      this.downloadLoading = true
+      downloadDeliveryNote(this.form.id).then(result => {
+        this.downloadLoading = false
+        downloadFile(result, '生产单导出', 'xls')
+      }).catch(() => {
+        this.downloadLoading = false
+      })
+    },
+    exportPoundExcel(data) {
+      if (this.form.customerName === null) {
+        this.$notify({
+          title: '请返回填写客户信息',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.detailLoading = true
+      var dto = {
+        scanNumber: this.form.scanNumber,
+        prodId: data.prodId,
+        prodName: data.prodName,
+        customerName: this.form.customerName,
+        createDate: this.form.createDate
+      }
+      exportPoundExcel(dto).then(result => {
+        this.detailLoading = false
+        downloadFile(result, '磅码单导出', 'xls')
+      }).catch(() => {
+        this.detailLoading = false
+      })
+    },
+    kgformatter(row, column, cellValue, index) {
+      return cellValue + ' KG'
+    },
+    setCustomerId(event) {
+      this.form.customerId = event
+    },
+    cleanUpOptions() {
+      this.userOptions = []
+    },
+    customerRemoteMethod(query) {
+      if (query !== '') {
+        this.customerLoading = true
+        this.customerQuery.name = query
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerLoading = false
+          this.customerList = res
+          this.customerOptions = this.customerList.filter(item => {
+            return item.name.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
+    },
+    sellerRemoteMethod(query) {
+      // 业务员deptId为19
+      const params = { deptId: 19, username: query }
+      this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        this.userLoading = false
+        this.userList = res
+        this.userOptions = _this.userList.filter(item => {
+          return item.username.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
+    },
+    storeKeeperRemoteMethod(query) {
+      // 仓管员deptId为16
+      const params = { deptId: 16, username: query }
+      this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        this.userLoading = false
+        this.userList = res
+        this.userOptions = this.userList.filter(item => {
+          return item.username.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
+    },
+    transporterRemoteMethod(query) {
+      // 运输部deptId为18
+      const params = { deptId: 18, username: query }
+      this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        this.userLoading = false
+        this.userList = res
+        this.userOptions = this.userList.filter(item => {
+          return item.username.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
+    },
+    doEdit() {
+      editAll(this.form).then(res => {
+        // this.resetForm()
+        this.$notify({
+          title: '修改成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.init()
+        this.customerOptions = []
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
     }
   }
+}
 </script>
 
 <style>
