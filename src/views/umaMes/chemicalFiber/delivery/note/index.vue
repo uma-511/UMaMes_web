@@ -282,7 +282,7 @@
               <el-input v-model="form.contacts" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input  style="width: 200px;"/>
+              <el-input style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="交货日期" >
               <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
@@ -412,7 +412,7 @@
               <el-input v-model="scope.row.totalNumber" :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="realQuantity" label="数量" width="实收100px" align="center">
+          <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.realQuantity" :min="0" />
             </template>
@@ -422,7 +422,7 @@
               <el-input v-model="scope.row.sellingPrice" :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="totalPrice" label="金额" width="120px" align="center"/>
+          <el-table-column prop="totalPrice" label="金额" width="120px" align="center"></el-table-column>
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="150%" align="center">
             <template slot-scope="scope">
@@ -846,6 +846,7 @@ export default {
           duration: 2500
         })
         this.addTableFrom = false
+<<<<<<<<< Temporary merge branch 1
         this.$parent.init()
       }).catch(err => {
         this.addTableFrom = false
@@ -876,6 +877,124 @@ export default {
           title: '请选择客户',
           type: 'warning',
           duration: 2500
+
+        var params = { 'scanNumber': this.form.scanNumber }
+        getChemicalFiberDeliveryDetailsList(params).then(res => {
+          this.detailLoading = false
+          this.detailList = res
+        })
+        this.detailLoading = true
+      },
+      handleNodeClick(data) {
+        this.tableForm.prodName = data.prodName
+        this.tableForm.prodModel = data.prodModel
+      },
+      getSelectMap() {
+        const params = {}
+        params['prodName'] = this.tableForm.searchName
+        getSelectMap(params).then(res => {
+          this.prods = res.content
+        })
+      },
+      addAll(data) {
+        if (this.form.customerId === null) {
+          this.$notify({
+            title: '请选择客户',
+            type: 'warning',
+            duration: 2500
+          })
+          return
+        }
+        this.$refs['form1'].validate((valid) => {
+          if (valid) {
+            this.loading = true
+            this.doEdit()
+          }
+        })
+      },
+      detail(data) {
+        this.form = {
+          id: data.id,
+          customerName: data.customerName,
+          customerAddress: data.customerAddress,
+          scanNumber: data.scanNumber,
+          contactPhone: data.contactPhone,
+          contacts: data.contacts,
+          createDate: data.createDate,
+          customerCode: data.custmerCode,
+          seller: data.seller,
+          storeKeeper: data.storeKeeper,
+          createUser: data.createUser,
+          carNumber: data.carNumber,
+          driverMain: data.driverMain,
+          driverDeputy: data.driverDeputy,
+          state: data.state,
+          loaderOne: data.loaderOne,
+          loaderTwo: data.loaderTwo,
+          totalPrice: data.totalPrice,
+          realPrice: data.realPrice,
+          customerId: data.customerId,
+          deliveryDate: data.deliveryDate,
+          noteStatus: data.noteStatus,
+          payment: data.payment,
+          balance: data.balance
+        }
+        var params = { 'scanNumber': data.scanNumber }
+        getChemicalFiberDeliveryDetailsList(params).then(res => {
+          this.detailLoading = false
+          this.detailList = res
+        })
+        this.detailLoading = true
+        this.dialogVisible = true
+      },
+      handleCurrentChange(val) {
+        this.currentChangeItem = val
+      },
+      sutmitDetail(data) {
+        this.detailLoading = true
+        data.totalPrice = data.totalNumber * data.sellingPrice
+        data.realPrice = data.realQuantity * data.sellingPrice
+        edit(data).then(res => {
+          this.detailLoading = false
+          this.$notify({
+            title: '编辑详情成功',
+            type: 'success',
+            duration: 2500
+          })
+          this.init()
+        })
+      },
+      getSummaries(param) {
+        const { columns, data } = param
+        const sums = []
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '合计'
+            return
+          }
+          const values = data.map(item => Number(item[column.property]))
+          if (index === 6) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) {
+                return prev + curr
+              } else {
+                return prev
+              }
+            }, 0).toFixed(2)
+            sums[index] += ' 元'
+          }
+          if (index === 7) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) {
+                return prev + curr
+              } else {
+                return prev
+              }
+            }, 0).toFixed(2)
+            sums[index] += ' 元'
+          }
         })
         return
       }
@@ -948,17 +1067,6 @@ export default {
         }
         const values = data.map(item => Number(item[column.property]))
         if (index === 6) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr)
-            if (!isNaN(value)) {
-              return prev + curr
-            } else {
-              return prev
-            }
-          }, 0).toFixed(2)
-          sums[index] += ' 元'
-        }
-        if (index === 7) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
