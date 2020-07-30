@@ -188,7 +188,7 @@
         <el-form ref="form1" :model="form" :rules="rules" size="mini" label-width="80px" >
           <el-form :inline="true" size="mini">
             <el-form-item label="客户编号">
-              <el-input v-model="form.customerCode" style="width: 200px;"/>
+              <el-input v-model="form.customerCode" :disabled="true" style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="仓管员">
               <el-select
@@ -879,6 +879,7 @@ export default {
       })
     },
     detail(data) {
+      console.log(data)
       this.form = {
         id: data.id,
         customerName: data.customerName,
@@ -887,7 +888,7 @@ export default {
         contactPhone: data.contactPhone,
         contacts: data.contacts,
         createDate: data.createDate,
-        customerCode: data.custmerCode,
+        customerCode: data.customerCode,
         seller: data.seller,
         storeKeeper: data.storeKeeper,
         createUser: data.createUser,
@@ -917,6 +918,23 @@ export default {
       this.currentChangeItem = val
     },
     sutmitDetail(data) {
+      if (data.totalNumber == '') {
+        this.$notify({
+          title: '请填写计划数量',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      if (data.totalNumber == 0) {
+        this.$notify({
+          title: '请填写计划数量',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+
       this.detailLoading = true
       data.totalPrice = data.totalNumber * data.sellingPrice
       data.realPrice = data.realQuantity * data.sellingPrice
