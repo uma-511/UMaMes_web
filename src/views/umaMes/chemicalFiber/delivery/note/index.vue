@@ -188,7 +188,25 @@
         <el-form ref="form1" :model="form" :rules="rules" size="mini" label-width="80px" >
           <el-form :inline="true" size="mini">
             <el-form-item label="客户编号">
-              <el-input v-model="form.customerCode" :disabled="true" style="width: 200px;"/>
+              <el-select
+                v-model="form.customerCode"
+                :loading="customerCodeLoading"
+                :remote-method="customerCodeMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入客户编号关键词"
+                style="width: 200px;"
+                @change="setCustomerName($event)"
+              >
+                <el-option
+                  v-for="item in customerCodeOptions"
+                  :key="item.name"
+                  :label="item.code"
+                  :value="item.name"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="仓管员">
               <el-select
@@ -229,9 +247,9 @@
               >
                 <el-option
                   v-for="item in customerOptions"
-                  :key="item.id"
+                  :key="item.code"
                   :label="item.name"
-                  :value="item.id"
+                  :value="item.code"
                 />
               </el-select>
             </el-form-item>
@@ -253,9 +271,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.realname"
-                  :label="item.realname"
-                  :value="item.realname"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
                 />
               </el-select>
             </el-form-item>
@@ -304,9 +322,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.realname"
-                  :label="item.realname"
-                  :value="item.realname"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
                   @blur="userOptions"
                 />
               </el-select>
@@ -326,9 +344,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.realname"
-                  :label="item.realname"
-                  :value="item.realname"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
                   @blur="userOptions"
                 />
               </el-select>
@@ -348,9 +366,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.realname"
-                  :label="item.realname"
-                  :value="item.realname"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
                   @blur="userOptions"
                 />
               </el-select>
@@ -1041,6 +1059,22 @@ export default {
           this.customerList = res
           this.customerOptions = this.customerList.filter(item => {
             return item.name.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
+    },
+    customerCodeMethod (query) {
+      if (query !== '') {
+        this.customerCodeLoading = true
+        this.customerQuery.code = query
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerCodeLoading = false
+          this.customerList = res
+          this.customerCodeOptions = this.customerList.filter(item => {
+            return item.code.toLowerCase()
               .indexOf(query.toLowerCase()) > -1
           })
         })
