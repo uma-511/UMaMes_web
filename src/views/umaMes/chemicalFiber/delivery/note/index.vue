@@ -1091,6 +1091,7 @@
           this.form.contact = this.customerLists[0].contacts
           this.form.contactPhone = this.customerLists[0].contactPhone
           this.form.customerAddress = this.customerLists[0].address
+          this.customerQueryCode.code = ''
         })
       },
       setCustomerName(event) {
@@ -1101,6 +1102,7 @@
           this.form.contact = this.customerLists[0].contacts
           this.form.contactPhone = this.customerLists[0].contactPhone
           this.form.customerAddress = this.customerLists[0].address
+          this.customerQueryName.name = ''
         })
       },
       cleanUpOptions() {
@@ -1113,6 +1115,7 @@
           this.customerOptions = []
           getCustomerList(this.customerQuery).then(res => {
             this.customerLoading = false
+            this.customerQuery.name = ''
             this.customerList = res
             this.customerOptions = this.customerList.filter(item => {
               return item.name.toLowerCase()
@@ -1131,6 +1134,7 @@
           getCustomerList(this.customerQuery).then(res => {
             this.customerCodeLoading = false
             this.customerList = res
+            this.customerQuery.code = ''
             this.customerCodeOptions = this.customerList.filter(item => {
               return item.code.toLowerCase()
                 .indexOf(query.toLowerCase()) > -1
