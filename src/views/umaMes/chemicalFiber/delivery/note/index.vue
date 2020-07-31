@@ -205,9 +205,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                   @blur="userOptions"
                 />
               </el-select>
@@ -253,9 +253,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                 />
               </el-select>
             </el-form-item>
@@ -304,9 +304,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                   @blur="userOptions"
                 />
               </el-select>
@@ -326,9 +326,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                   @blur="userOptions"
                 />
               </el-select>
@@ -348,9 +348,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                   @blur="userOptions"
                 />
               </el-select>
@@ -370,9 +370,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                   @blur="userOptions"
                 />
               </el-select>
@@ -1050,39 +1050,38 @@ export default {
     },
     sellerRemoteMethod(query) {
       // 业务员deptId为19
-      const params = { deptId: 19, username: query }
-      this.userLoading = true
-      getUserListByDeptId(params).then(res => {
-        this.userLoading = false
-        this.userList = res
-        this.userOptions = _this.userList.filter(item => {
-          return item.username.toLowerCase()
-            .indexOf(query.toLowerCase()) > -1
-        })
-      })
-    },
-    storeKeeperRemoteMethod(query) {
-      // 仓管员deptId为16
-      const params = { deptId: 16, username: query }
+      const params = { deptId: 19, realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
         this.userList = res
         this.userOptions = this.userList.filter(item => {
-          return item.username.toLowerCase()
+          return item.realname.indexOf(query) > -1
+        })
+      })
+    },
+    storeKeeperRemoteMethod(query) {
+      // 仓管员deptId为16
+      const params = { deptId: 16, realname: query }
+      this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        this.userLoading = false
+        this.userList = res
+        this.userOptions = this.userList.filter(item => {
+          return item.realname.toLowerCase()
             .indexOf(query.toLowerCase()) > -1
         })
       })
     },
     transporterRemoteMethod(query) {
       // 运输部deptId为18
-      const params = { deptId: 18, username: query }
+      const params = { deptId: 18, realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
         this.userList = res
         this.userOptions = this.userList.filter(item => {
-          return item.username.toLowerCase()
+          return item.realname.toLowerCase()
             .indexOf(query.toLowerCase()) > -1
         })
       })
