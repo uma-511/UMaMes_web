@@ -188,7 +188,25 @@
         <el-form ref="form1" :model="form" :rules="rules" size="mini" label-width="80px" >
           <el-form :inline="true" size="mini">
             <el-form-item label="客户编号">
-              <el-input v-model="form.customerCode" :disabled="true" style="width: 200px;"/>
+              <el-select
+                v-model="form.customerCode"
+                :loading="customerCodeLoading"
+                :remote-method="customerCodeMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入客户编号关键词"
+                style="width: 200px;"
+                @change="setCustomerName($event)"
+              >
+                <el-option
+                  v-for="item in customerCodeOptions"
+                  :key="item.name"
+                  :label="item.code"
+                  :value="item.name"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="仓管员">
               <el-select
@@ -377,7 +395,6 @@
                 />
               </el-select>
             </el-form-item>
-            <el-button :loading="loading" type="success" icon="el-icon-check" size="mini" @click="addAll" >保存</el-button>
           </el-form>
         </el-form>
       </el-row>
@@ -409,12 +426,12 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" :min="0" />
+              <el-input v-model="scope.row.totalNumber" @input = "sum(scope.row)" :min="0"  />
             </template>
           </el-table-column>
-          <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
+          <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :min="0" />
+              <el-input v-model="scope.row.realQuantity" @input = "sum(scope.row)":min="0" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
@@ -424,36 +441,37 @@
           </el-table-column>
           <el-table-column prop="totalPrice" label="金额" width="120px" align="center"/>
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
-          <el-table-column prop="remark" label="备注" width="150%" align="center">
+          <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" placeholder="备注" maxlength="6"/>
             </template>
           </el-table-column>
-          <el-table-column
+          <!--<el-table-column
             v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])"
             label="操作"
             align="center"
             width="170%"
-          >
-            <template slot-scope="scope">
+          >-->
+          <!--  <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="success"
                 icon="el-icon-edit"
                 @click="sutmitDetail(scope.row)"
               >更新</el-button>
-              <!--<el-button
+              <el-button
                 size="mini"
                 type="primary"
                 icon="el-icon-download"
                 @click="exportPoundExcel(scope.row)"
-              >磅码单</el-button>-->
-            </template>
+              >磅码单</el-button>
+            </template>-->
           </el-table-column>
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button v-if="form.noteStatus == 1" @click="addTable" >插入数据</el-button>
+        <el-button :loading="loading" type="success" icon="el-icon-edit"  @click="addAll" >保存</el-button>
+        <el-button  v-if="form.noteStatus == 1" @click="addTable" >插入数据</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button v-if="form.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <div v-if="form.noteStatus == 2">
@@ -566,8 +584,10 @@ export default {
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
+      customerCodeLoading: false,
       addTableFrom: false,
       customerOptions: [],
+      customerCodeOptions: [],
       userOptions: [],
       prods: [],
       visible: false,
@@ -605,10 +625,13 @@ export default {
         sellingPrice: '',
         remark: '',
         totalNumber: '',
-        realQuantity: ''
+        realQuantity: '',
+        realPrice: '',
+        totalPrice: ''
       },
       customerQuery: {
-        name: ''
+        name: '',
+        code: ''
       },
       rules: {
         totalPrice: [
@@ -862,7 +885,7 @@ export default {
         this.prods = res.content
       })
     },
-    addAll(data) {
+    addAll() {
       if (this.form.customerId === null) {
         this.$notify({
           title: '请选择客户',
@@ -877,9 +900,15 @@ export default {
           this.doEdit()
         }
       })
+       for ( var i = 0; i < this.detailList.length; i++ ){
+         this.tableForm = this.detailList[i]
+          edit(this.tableForm).then(res => {
+           this.detailLoading = false
+           this.init()
+         })
+        }
     },
     detail(data) {
-      console.log(data)
       this.form = {
         id: data.id,
         customerName: data.customerName,
@@ -917,7 +946,7 @@ export default {
     handleCurrentChange(val) {
       this.currentChangeItem = val
     },
-    sutmitDetail(data) {
+    sum(data){
       if (data.totalNumber == '') {
         this.$notify({
           title: '请填写计划数量',
@@ -934,19 +963,10 @@ export default {
         })
         return
       }
-
       this.detailLoading = true
       data.totalPrice = data.totalNumber * data.sellingPrice
       data.realPrice = data.realQuantity * data.sellingPrice
-      edit(data).then(res => {
-        this.detailLoading = false
-        this.$notify({
-          title: '编辑详情成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.init()
-      })
+      this.detailLoading = false
     },
     getSummaries(param) {
       const { columns, data } = param
@@ -999,7 +1019,8 @@ export default {
         this.downloadLoading = false
       })
     },
-    exportPoundExcel(data) {
+    //磅码单导出
+    /*exportPoundExcel(data) {
       if (this.form.customerName === null) {
         this.$notify({
           title: '请返回填写客户信息',
@@ -1022,12 +1043,15 @@ export default {
       }).catch(() => {
         this.detailLoading = false
       })
-    },
+    },*/
     kgformatter(row, column, cellValue, index) {
       return cellValue + ' KG'
     },
     setCustomerId(event) {
       this.form.customerCode = event
+    },
+    setCustomerName(event) {
+      this.form.customerName = event
     },
     cleanUpOptions() {
       this.userOptions = []
@@ -1048,6 +1072,22 @@ export default {
         this.customerOptions = []
       }
     },
+    customerCodeMethod (query) {
+      if (query !== '') {
+        this.customerCodeLoading = true
+        this.customerQuery.code = query
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerCodeLoading = false
+          this.customerList = res
+          this.customerCodeOptions = this.customerList.filter(item => {
+            return item.code.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
+    },
     sellerRemoteMethod(query) {
       // 业务员deptId为19
       const params = { deptId: 19, username: query }
@@ -1055,7 +1095,7 @@ export default {
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
         this.userList = res
-        this.userOptions = _this.userList.filter(item => {
+        this.userOptions = this.userList.filter(item => {
           return item.username.toLowerCase()
             .indexOf(query.toLowerCase()) > -1
         })
@@ -1089,7 +1129,6 @@ export default {
     },
     doEdit() {
       editAll(this.form).then(res => {
-        // this.resetForm()
         this.$notify({
           title: '修改成功',
           type: 'success',
