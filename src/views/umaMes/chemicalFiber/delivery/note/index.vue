@@ -64,7 +64,13 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" stripe style="width: 100%;" @row-click="rowClicker">
+    <el-table v-loading="loading"
+              :data="data"
+              size="small"
+              show-summary
+              :summary-method="getDataSummaries"
+              style="width: 100%;"
+              @row-click="rowClicker">
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerCode" label="客户编号"/>
@@ -615,7 +621,8 @@ export default {
         loaderTwo: '',
         balance: '',
         payment: '',
-        realPrice: ''
+        realPrice: '',
+        noteStatus: ''
       },
       tableForm: {
         prodModel: '',
@@ -967,6 +974,30 @@ export default {
       data.totalPrice = data.totalNumber * data.sellingPrice
       data.realPrice = data.realQuantity * data.sellingPrice
       this.detailLoading = false
+    },
+    getDataSummaries(param) {
+      console.log(param)
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (index === 6) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index] += ' 元'
+        }
+      })
+      return sums
     },
     getSummaries(param) {
       const { columns, data } = param
