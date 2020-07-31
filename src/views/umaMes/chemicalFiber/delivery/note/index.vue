@@ -574,7 +574,7 @@
   import { parseTime, downloadFile } from '@/utils/index'
   import { getUserListByDeptId } from '@/api/user'
   import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
-  import { getCustomerList } from '@/api/customer'
+  import { getCustomerList, getCustomerLists } from '@/api/customer'
   import { getSelectMap } from '@/api/chemicalFiberStock'
   import eForm from './form'
   export default {
@@ -638,6 +638,12 @@
         },
         customerQuery: {
           name: '',
+          code: ''
+        },
+        customerQueryName: {
+          name: ''
+        },
+        customerQueryCode: {
           code: ''
         },
         rules: {
@@ -976,7 +982,6 @@
         this.detailLoading = false
       },
       getDataSummaries(param) {
-        console.log(param)
         const { columns, data } = param
         const sums = []
         columns.forEach((column, index) => {
@@ -1079,10 +1084,24 @@
         return cellValue + ' KG'
       },
       setCustomerId(event) {
-        this.form.customerCode = event
+        this.customerQueryCode.code = event
+        getCustomerList(this.customerQueryCode).then(res => {
+          this.customerLists = res
+          this.form.customerCode = event
+          this.form.contact = this.customerLists[0].contacts
+          this.form.contactPhone = this.customerLists[0].contactPhone
+          this.form.customerAddress = this.customerLists[0].address
+        })
       },
       setCustomerName(event) {
-        this.form.customerName = event
+        this.customerQueryName.name = event
+        getCustomerList(this.customerQueryName).then(res => {
+          this.customerLists = res
+          this.form.customerName = event
+          this.form.contact = this.customerLists[0].contacts
+          this.form.contactPhone = this.customerLists[0].contactPhone
+          this.form.customerAddress = this.customerLists[0].address
+        })
       },
       cleanUpOptions() {
         this.userOptions = []
@@ -1091,6 +1110,7 @@
         if (query !== '') {
           this.customerLoading = true
           this.customerQuery.name = query
+          this.customerOptions = []
           getCustomerList(this.customerQuery).then(res => {
             this.customerLoading = false
             this.customerList = res
@@ -1107,6 +1127,7 @@
         if (query !== '') {
           this.customerCodeLoading = true
           this.customerQuery.code = query
+          this.customerCodeOptions = []
           getCustomerList(this.customerQuery).then(res => {
             this.customerCodeLoading = false
             this.customerList = res
