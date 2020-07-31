@@ -229,9 +229,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                   @blur="userOptions"
                 />
               </el-select>
@@ -394,13 +394,14 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                   @blur="userOptions"
                 />
               </el-select>
             </el-form-item>
+            <el-button :loading="loading" type="success" icon="el-icon-check" size="mini" @click="addAll" >保存</el-button>
           </el-form>
         </el-form>
       </el-row>
@@ -432,12 +433,12 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" @input = "sum(scope.row)" :min="0"  />
+              <el-input v-model="scope.row.totalNumber" :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
+          <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" @input = "sum(scope.row)":min="0" />
+              <el-input v-model="scope.row.realQuantity" :min="0" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
@@ -447,37 +448,36 @@
           </el-table-column>
           <el-table-column prop="totalPrice" label="金额" width="120px" align="center"/>
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
-          <el-table-column prop="remark" label="备注" width="250px" align="center">
+          <el-table-column prop="remark" label="备注" width="150%" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" placeholder="备注" maxlength="6"/>
             </template>
           </el-table-column>
-          <!--<el-table-column
+          <el-table-column
             v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])"
             label="操作"
             align="center"
             width="170%"
-          >-->
-          <!--  <template slot-scope="scope">
+          >
+            <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="success"
                 icon="el-icon-edit"
                 @click="sutmitDetail(scope.row)"
               >更新</el-button>
-              <el-button
+              <!--<el-button
                 size="mini"
                 type="primary"
                 icon="el-icon-download"
                 @click="exportPoundExcel(scope.row)"
-              >磅码单</el-button>
-            </template>-->
+              >磅码单</el-button>-->
+            </template>
           </el-table-column>
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button :loading="loading" type="success" icon="el-icon-edit"  @click="addAll" >保存</el-button>
-        <el-button  v-if="form.noteStatus == 1" @click="addTable" >插入数据</el-button>
+        <el-button v-if="form.noteStatus == 1" @click="addTable" >插入数据</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button v-if="form.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <div v-if="form.noteStatus == 2">
@@ -590,10 +590,8 @@ export default {
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
-      customerCodeLoading: false,
       addTableFrom: false,
       customerOptions: [],
-      customerCodeOptions: [],
       userOptions: [],
       prods: [],
       visible: false,
@@ -632,13 +630,10 @@ export default {
         sellingPrice: '',
         remark: '',
         totalNumber: '',
-        realQuantity: '',
-        realPrice: '',
-        totalPrice: ''
+        realQuantity: ''
       },
       customerQuery: {
-        name: '',
-        code: ''
+        name: ''
       },
       rules: {
         totalPrice: [
@@ -892,7 +887,7 @@ export default {
         this.prods = res.content
       })
     },
-    addAll() {
+    addAll(data) {
       if (this.form.customerId === null) {
         this.$notify({
           title: '请选择客户',
@@ -907,15 +902,9 @@ export default {
           this.doEdit()
         }
       })
-       for ( var i = 0; i < this.detailList.length; i++ ){
-         this.tableForm = this.detailList[i]
-          edit(this.tableForm).then(res => {
-           this.detailLoading = false
-           this.init()
-         })
-        }
     },
     detail(data) {
+      console.log(data)
       this.form = {
         id: data.id,
         customerName: data.customerName,
@@ -953,7 +942,7 @@ export default {
     handleCurrentChange(val) {
       this.currentChangeItem = val
     },
-    sum(data){
+    sutmitDetail(data) {
       if (data.totalNumber == '') {
         this.$notify({
           title: '请填写计划数量',
@@ -970,10 +959,19 @@ export default {
         })
         return
       }
+
       this.detailLoading = true
       data.totalPrice = data.totalNumber * data.sellingPrice
       data.realPrice = data.realQuantity * data.sellingPrice
-      this.detailLoading = false
+      edit(data).then(res => {
+        this.detailLoading = false
+        this.$notify({
+          title: '编辑详情成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.init()
+      })
     },
     getDataSummaries(param) {
       console.log(param)
@@ -1050,8 +1048,7 @@ export default {
         this.downloadLoading = false
       })
     },
-    //磅码单导出
-    /*exportPoundExcel(data) {
+    exportPoundExcel(data) {
       if (this.form.customerName === null) {
         this.$notify({
           title: '请返回填写客户信息',
@@ -1074,15 +1071,12 @@ export default {
       }).catch(() => {
         this.detailLoading = false
       })
-    },*/
+    },
     kgformatter(row, column, cellValue, index) {
       return cellValue + ' KG'
     },
     setCustomerId(event) {
-      this.form.customerCode = event
-    },
-    setCustomerName(event) {
-      this.form.customerName = event
+      this.form.customerId = event
     },
     cleanUpOptions() {
       this.userOptions = []
@@ -1121,45 +1115,45 @@ export default {
     },
     sellerRemoteMethod(query) {
       // 业务员deptId为19
-      const params = { deptId: 19, username: query }
+      const params = { deptId: 19, realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
         this.userList = res
         this.userOptions = this.userList.filter(item => {
-          return item.username.toLowerCase()
-            .indexOf(query.toLowerCase()) > -1
+          return item.realname.indexOf(query) > -1
         })
       })
     },
     storeKeeperRemoteMethod(query) {
       // 仓管员deptId为16
-      const params = { deptId: 16, username: query }
+      const params = { deptId: 16, realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
         this.userList = res
         this.userOptions = this.userList.filter(item => {
-          return item.username.toLowerCase()
+          return item.realname.toLowerCase()
             .indexOf(query.toLowerCase()) > -1
         })
       })
     },
     transporterRemoteMethod(query) {
       // 运输部deptId为18
-      const params = { deptId: 18, username: query }
+      const params = { deptId: 18, realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
         this.userList = res
         this.userOptions = this.userList.filter(item => {
-          return item.username.toLowerCase()
+          return item.realname.toLowerCase()
             .indexOf(query.toLowerCase()) > -1
         })
       })
     },
     doEdit() {
       editAll(this.form).then(res => {
+        // this.resetForm()
         this.$notify({
           title: '修改成功',
           type: 'success',
