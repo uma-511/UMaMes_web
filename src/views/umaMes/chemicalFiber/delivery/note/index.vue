@@ -533,7 +533,7 @@
           <el-form-item label="产品名称" >
             <el-input v-model="tableForm.prodName" :disabled="true" style="width: 370px;"/>
           </el-form-item>
-          <el-form-item label="单位">
+        <!--  <el-form-item label="单位">
             <template >
               <el-select v-model="tableForm.unit" placeholder="请选择单位">
                 <el-option
@@ -554,7 +554,7 @@
           <el-form-item label="备注">
             <el-input v-model="tableForm.remark" style="width: 370px;" placeholder="请输入销售单价"/>
           </el-form-item>
-
+-->
         </el-form>
         <div style="text-align: right; margin: 0">
           <el-button size="mini" type="text" @click="addTableFrom = false">取消</el-button>
