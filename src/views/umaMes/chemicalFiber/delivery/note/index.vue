@@ -1002,7 +1002,8 @@ export default {
         this.detailList = data
         this.detailLoading = false
       })
-      //this.$set(this.$refs.myTable,id,this.detailList)
+      this.$set(this.$refs.myTable,id,this.detailList)
+      this.detailLoading = true
     },
     handleNodeClick(data) {
       this.tableForm.prodName = data.prodName
