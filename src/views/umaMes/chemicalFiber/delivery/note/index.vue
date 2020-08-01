@@ -443,7 +443,7 @@
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" :min="0" />
+              <el-input v-model="scope.row.sellingPrice" @input = "sum(scope.row)" :min="0" />
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="金额" width="120px" align="center"/>
@@ -625,6 +625,33 @@ export default {
       form: {
         id: '',
         searchName: '',
+        scanNumber: '',
+        customerId: '',
+        customerName: '',
+        customerCode: '',
+        customerAddress: '',
+        contacts: '',
+        contactPhone: '',
+        totalPrice: '',
+        remark: '',
+        seller: '',
+        storeKeeper: '',
+        createDate: '',
+        createUser: '',
+        carNumber: '',
+        deliveryDate: '',
+        driverMain: '',
+        driverDeputy: '',
+        state: '',
+        loaderOne: '',
+        loaderTwo: '',
+        balance: '',
+        payment: '',
+        realPrice: '',
+        noteStatus: ''
+      },
+      customerForm: {
+        id: '',
         scanNumber: '',
         customerId: '',
         customerName: '',
@@ -927,13 +954,50 @@ export default {
         })
         return
       }
-      this.$refs['form1'].validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.doEdit()
-        }
+      if( this.form.customerId != '') {
+        this.id = this.form.customerId
+      }
+      this.customerForm = {
+        id: this.form.id,
+        scanNumber: this.form.scanNumber,
+        customerId: this.id,
+        customerName: this.form.customerName,
+        customerCode: this.form.customerCode,
+        customerAddress: this.form.customerAddress,
+        contacts: this.form.contacts,
+        contactPhone: this.form.contactPhone,
+        totalPrice: this.form.totalPrice,
+        remark: this.form.remark,
+        seller: this.form.seller,
+        storeKeeper: this.form.storeKeeper,
+        createDate: this.form.createDate,
+        createUser: this.form.createUser,
+        carNumber: this.form.carNumber,
+        deliveryDate: this.form.deliveryDate,
+        driverMain: this.form.driverMain,
+        driverDeputy: this.form.driverDeputy,
+        state: this.form.state,
+        loaderOne: this.form.loaderOne,
+        loaderTwo: this.form.loaderTwo,
+        balance: this.form.balance,
+        payment: this.form.payment,
+        realPrice: this.form.realPrice,
+        noteStatus: this.form.noteStatus
+      }
+      editAll(this.customerForm).then(res => {
+        this.$notify({
+          title: '修改成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.init()
+        this.customerOptions = []
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
       })
-      for (var i = 0; i < this.detailList.length; i++) {
+      for ( var i = 0; i < this.detailList.length; i++ ){
         this.tableForm = this.detailList[i]
         edit(this.tableForm).then(res => {
           this.detailLoading = false
@@ -1109,8 +1173,11 @@ export default {
         this.customerLists = res
         this.form.customerCode = event
         this.form.contact = this.customerLists[0].contacts
+        this.form.customerName = this.customerLists[0].name
         this.form.contactPhone = this.customerLists[0].contactPhone
         this.form.customerAddress = this.customerLists[0].address
+        this.form.customerId = this.customerLists[0].id
+        this.id = this.customerLists[0].id
         this.customerQueryCode.code = ''
       })
     },
@@ -1119,9 +1186,12 @@ export default {
       getCustomerList(this.customerQueryName).then(res => {
         this.customerLists = res
         this.form.customerName = event
+        this.form.customerCode = this.customerLists[0].code
         this.form.contact = this.customerLists[0].contacts
         this.form.contactPhone = this.customerLists[0].contactPhone
         this.form.customerAddress = this.customerLists[0].address
+        this.form.customerId = this.customerLists[0].id
+        this.id = this.customerLists[0].id
         this.customerQueryName.name = ''
       })
     },
@@ -1220,21 +1290,6 @@ export default {
           return item.username.toLowerCase()
             .indexOf(query.toLowerCase()) > -1
         })
-      })
-    },
-    doEdit() {
-      editAll(this.form).then(res => {
-        this.$notify({
-          title: '修改成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.init()
-        this.customerOptions = []
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
       })
     }
   }
