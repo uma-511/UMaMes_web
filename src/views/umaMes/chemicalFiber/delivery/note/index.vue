@@ -480,7 +480,7 @@
         <el-button :loading="loading" type="success" icon="el-icon-edit" @click="addAll" >保存</el-button>
         <el-button v-if="form.noteStatus == 1" @click="addTable" >添加产品</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button v-if="form.noteStatus == 1" :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-button v-if="form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <div v-if="form.noteStatus == 2">
           <el-popover
             :ref="form.id"
