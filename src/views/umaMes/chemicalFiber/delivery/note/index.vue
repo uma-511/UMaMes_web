@@ -435,17 +435,17 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" @input = "sum(scope.row)" :min="0"  />
+              <el-input v-model="scope.row.totalNumber" type='number' @input = "sum(scope.row)" :min="0"  />
             </template>
           </el-table-column>
           <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :min="0" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" type='number' :min="0" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价"  width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" @input = "sum(scope.row)"  :min="0" />
+              <el-input v-model="scope.row.sellingPrice" type='number' @input = "sum(scope.row)"  :min="0" />
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="预计金额" width="120px" align="center"/>
@@ -984,10 +984,25 @@ export default {
       var params = { 'scanNumber': this.form.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         this.detailList = res
+        var data = []
+        for(var i = 0; i < res.length; i++ ) {
+            var obj = {}
+            prodModel: res[i].prodModel
+            prodName: res[i].prodName
+            scanNumber: res[i].scanNumber
+            unit: res[i].unit
+            sellingPrice: res[i].sellingPrice
+            remark: res[i].remark
+            totalNumber: res[i].totalNumber
+            realQuantity: tres[i].realQuantity
+            totalPrice: res[i].totalNumber * res[i].sellingPrice
+            realPrice: res[i].realQuantity * res[i].totalNumber
+            data[i] = obj
+        }
+        this.detailList = data
         this.detailLoading = false
       })
-      this.$set(this.$refs.myTable,id,this.detailList)
-      this.detailLoading = true
+      //this.$set(this.$refs.myTable,id,this.detailList)
     },
     handleNodeClick(data) {
       this.tableForm.prodName = data.prodName
@@ -1128,8 +1143,13 @@ export default {
         return
       }
       this.detailLoading = true
-      data.totalPrice = data.totalNumber * data.sellingPrice
-      data.realPrice = data.realQuantity * data.sellingPrice
+      if(data.realQuantity == '' || data.realQuantity == 0 || data.realQuantity == null) {
+        data.totalPrice = data.totalNumber * data.sellingPrice
+        data.realPrice = data.realQuantity * data.sellingPrice
+      }else{
+        data.totalPrice = data.realQuantity * data.sellingPrice
+        data.realPrice = data.realQuantity * data.sellingPrice
+      }
       this.detailLoading = false
     },
     getDataSummaries(param) {
