@@ -139,13 +139,13 @@
         align="center"
       >
         <template slot-scope="scope">
-          <el-button
+          <!--<el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             size="mini"
             type="primary"
             icon="el-icon-edit"
             @click="edit(scope.row)"
-          >编辑</el-button>
+          >编辑</el-button>-->
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             size="mini"
@@ -441,12 +441,12 @@
               <el-input v-model="scope.row.realQuantity" @input = "sum(scope.row)":min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="sellingPrice" label="单价" @input = "sum(scope.row)" width="130px" align="center">
+          <el-table-column prop="sellingPrice" label="单价"  width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" :min="0" />
+              <el-input v-model="scope.row.sellingPrice" @input = "sum(scope.row)"  :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="totalPrice" label="金额" width="120px" align="center"/>
+          <el-table-column prop="totalPrice" label="预计金额" width="120px" align="center"/>
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
@@ -845,6 +845,11 @@ export default {
     },
     add() {
       this.isAdd = true
+      /*this.resetForm()
+      this.form.noteStatus = 1
+      this.detailLoading = false
+      this.detailList = []
+      this.dialogVisible = true*/
       this.$refs.form.dialog = true
     },
     edit(data) {
@@ -1173,7 +1178,7 @@ export default {
       getCustomerList(this.customerQueryCode).then(res => {
         this.customerLists = res
         this.form.customerCode = event
-        this.form.contact = this.customerLists[0].contacts
+        this.form.contacts = this.customerLists[0].contacts
         this.form.customerName = this.customerLists[0].name
         this.form.contactPhone = this.customerLists[0].contactPhone
         this.form.customerAddress = this.customerLists[0].address
@@ -1188,7 +1193,7 @@ export default {
         this.customerLists = res
         this.form.customerName = event
         this.form.customerCode = this.customerLists[0].code
-        this.form.contact = this.customerLists[0].contacts
+        this.form.contacts = this.customerLists[0].contacts
         this.form.contactPhone = this.customerLists[0].contactPhone
         this.form.customerAddress = this.customerLists[0].address
         this.form.customerId = this.customerLists[0].id
@@ -1293,20 +1298,31 @@ export default {
         })
       })
     },
-    doEdit() {
-      editAll(this.form).then(res => {
-        this.$notify({
-          title: '修改成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.init()
-        this.customerOptions = []
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
-      })
+    resetForm() {
+      this.form = {
+        id: '',
+        scanNumber: '',
+        customerId: '',
+        customerName: '',
+        customerCode: '',
+        customerAddress: '',
+        contacts: '',
+        contactPhone: '',
+        totalCost: '',
+        totalPrice: '',
+        remark: '',
+        seller: '',
+        storeKeeper: '',
+        createDate: '',
+        createUser: '',
+        carNumber: '',
+        deliveryDate: '',
+        driverMain: '',
+        driverDeputy: '',
+        state: '',
+        loaderOne: '',
+        loaderTwo: ''
+      }
     }
   }
 }
