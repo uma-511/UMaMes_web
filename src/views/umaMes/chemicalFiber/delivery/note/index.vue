@@ -230,9 +230,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                   @blur="userOptions"
                 />
               </el-select>
@@ -1005,7 +1005,7 @@ export default {
         })
         return
       }
-      if( this.form.customerId != '') {
+      if (this.form.customerId != '') {
         this.id = this.form.customerId
       }
       this.customerForm = {
