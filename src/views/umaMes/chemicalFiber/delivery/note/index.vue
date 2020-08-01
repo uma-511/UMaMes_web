@@ -414,6 +414,8 @@
           show-summary
           height = "260px"
           highlight-current-row
+          row-key="id"
+          ref="myTable"
           @current-change="handleCurrentChange"
         >
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
@@ -945,6 +947,7 @@ export default {
         this.detailList = res
         this.detailLoading = false
       })
+      this.$set(this.$refs.myTable,id,this.detailList)
       this.detailLoading = true
     },
     handleNodeClick(data) {
@@ -990,15 +993,41 @@ export default {
         realPrice: this.form.realPrice,
         noteStatus: this.form.noteStatus
       }
-
+      console.log(this.detailList)
       if(this.isAdd) {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)
+      var j = 0
       for ( var i = 0; i < this.detailList.length; i++ ){
+        if(this.detailList[i].totalNumber == '') {
+            j++
+        }
+        if(this.detailList[i].totalNumber == 0) {
+            j++
+        }
+        if(this.detailList[i].totalNumber == null) {
+          j++
+        }
         this.tableForm = this.detailList[i]
-        edit(this.tableForm).then(res => {
-          this.detailLoading = false
-          this.init()
+        if(j == 0){
+          edit(this.tableForm).then(res => {
+            this.detailLoading = false
+            this.init()
+          })
+
+        }
+      }
+      if( j == 0){
+        this.$notify({
+          title: '修改成功',
+          type: 'success',
+          duration: 2500
+        })
+      } else {
+        this.$notify({
+          title: '请填写计划数量',
+          type: 'warning',
+          duration: 2500
         })
       }
     },
@@ -1291,11 +1320,6 @@ export default {
     },
     doEdit(customerForm) {
       editAll(customerForm).then(res => {
-        this.$notify({
-          title: '修改成功',
-          type: 'success',
-          duration: 2500
-        })
         this.init()
         this.customerOptions = []
         this.$parent.init()
