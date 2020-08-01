@@ -983,20 +983,20 @@ export default {
       this.addTableFrom = false
       var params = { 'scanNumber': this.form.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
-        this.detailList = res
+        //this.detailList = res
         var data = []
         for(var i = 0; i < res.length; i++ ) {
             var obj = {}
-            prodModel: res[i].prodModel
-            prodName: res[i].prodName
-            scanNumber: res[i].scanNumber
-            unit: res[i].unit
-            sellingPrice: res[i].sellingPrice
-            remark: res[i].remark
-            totalNumber: res[i].totalNumber
-            realQuantity: tres[i].realQuantity
-            totalPrice: res[i].totalNumber * res[i].sellingPrice
-            realPrice: res[i].realQuantity * res[i].totalNumber
+            obj.prodModel= res[i].prodModel
+            obj.prodName= res[i].prodName
+            obj.scanNumber=res[i].scanNumber
+            obj.unit=res[i].unit
+            obj.sellingPrice= res[i].sellingPrice
+            obj.remark=res[i].remark
+            obj.totalNumber= res[i].totalNumber
+            obj.realQuantity= res[i].realQuantity
+            obj.totalPrice= res[i].totalNumber * res[i].sellingPrice
+            obj.realPrice= res[i].realQuantity * res[i].totalNumber
             data[i] = obj
         }
         this.detailList = data
@@ -1118,6 +1118,21 @@ export default {
       var params = { 'scanNumber': data.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         this.detailLoading = false
+        var data = []
+        for(var i = 0; i < res.length; i++ ) {
+          var obj = {}
+          obj.prodModel= res[i].prodModel
+          obj.prodName= res[i].prodName
+          obj.scanNumber=res[i].scanNumber
+          obj.unit=res[i].unit
+          obj.sellingPrice= res[i].sellingPrice
+          obj.remark=res[i].remark
+          obj.totalNumber= res[i].totalNumber
+          obj.realQuantity= res[i].realQuantity
+          obj.totalPrice= res[i].totalNumber * res[i].sellingPrice
+          obj.realPrice= res[i].realQuantity * res[i].totalNumber
+          data[i] = obj
+        }
         this.detailList = res
       })
       this.detailLoading = true
