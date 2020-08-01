@@ -438,12 +438,12 @@
           </el-table-column>
           <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :min="0"@input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" :min="0" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" @input = "sum(scope.row)" :min="0" />
+              <el-input v-model="scope.row.sellingPrice" :min="0" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="金额" width="120px" align="center"/>
@@ -453,26 +453,37 @@
               <el-input v-model="scope.row.remark" placeholder="备注" maxlength="6"/>
             </template>
           </el-table-column>
-          <!--<el-table-column
-            v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])"
+          <el-table-column
+            v-if="checkPermission(['admin','chemicalFiberDeliveryDetail:edit','chemicalFiberDeliveryDetail:del'])
+            && (form.noteStatus == 1 || form.noteStatus == 2 )"
             label="操作"
             align="center"
             width="170%"
-          >-->
-          <!--  <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="success"
-                icon="el-icon-edit"
-                @click="sutmitDetail(scope.row)"
-              >更新</el-button>
-              <el-button
+          >
+            <template slot-scope="scope">
+              <el-popover
+                :ref="scope.row.id"
+                placement="top"
+              >
+                <p>是否删除</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="popoverClose(scope.row.id)">取消</el-button>
+                  <el-button
+                    :loading="sutmitDetailLoading"
+                    type="primary"
+                    size="mini"
+                    @click="delNoteDetail(scope.row.id)"
+                  >确定</el-button>
+                </div>
+                <el-button slot="reference" type="warning" icon="el-icon-delete" size="mini">删除</el-button>
+              </el-popover>
+              <!--<el-button
                 size="mini"
                 type="primary"
                 icon="el-icon-download"
                 @click="exportPoundExcel(scope.row)"
-              >磅码单</el-button>
-            </template>-->
+              >磅码单</el-button>-->
+            </template>
           </el-table-column>
         </el-table>
       </el-row>
@@ -488,7 +499,7 @@
           >
             <p>是否发货</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" >取消</el-button>
+              <el-button size="mini" type="text" @click="popoverClose(form.id)">取消</el-button>
               <el-button
                 :loading="sutmitDetailLoading"
                 type="primary"
@@ -501,11 +512,12 @@
         </div>
         <div v-if="form.noteStatus == 3">
           <el-popover
+            :ref="form.id"
             placement="top"
           >
             <p>确认签收前，请确认回填信息</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" >取消</el-button>
+              <el-button size="mini" type="text" @click="popoverClose(form.id)">取消</el-button>
               <el-button
                 :loading="sutmitDetailLoading"
                 type="primary"
@@ -594,7 +606,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
-import { edit, getChemicalFiberDeliveryDetailsList, addTableRow } from '@/api/chemicalFiberDeliveryDetail'
+import { edit, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
@@ -796,7 +808,7 @@ export default {
       this.sutmitDetailLoading = true
       sendOut(id).then(res => {
         this.sutmitDetailLoading = false
-        this.visible = false
+        this.$refs[this.form.id].doClose()
         this.dialogVisible = false
         this.init()
         this.$notify({
@@ -813,6 +825,8 @@ export default {
       this.sutmitDetailLoading = true
       recived(id).then(res => {
         this.sutmitDetailLoading = false
+        this.$refs[this.form.id].doClose()
+        this.dialogVisible = false
         this.init()
         this.$notify({
           title: '确认签收成功',
@@ -821,6 +835,31 @@ export default {
         })
       }).catch(err => {
         this.sutmitDetailLoading = false
+        console.log(err.response.data.message)
+      })
+    },
+    initDetail() {
+      var params = { 'scanNumber': this.form.scanNumber }
+      this.detailLoading = true
+      getChemicalFiberDeliveryDetailsList(params).then(res => {
+        this.detailList = res
+        this.detailLoading = false
+      })
+    },
+    delNoteDetail(id) {
+      this.sutmitDetailLoading = true
+      delDetail(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        this.initDetail()
+        this.$notify({
+          title: '删除成功',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
         console.log(err.response.data.message)
       })
     },
@@ -945,6 +984,9 @@ export default {
       this.tableForm.prodName = data.prodName
       this.tableForm.prodModel = data.prodModel
     },
+    popoverClose(id) {
+      this.$refs[id].doClose()
+    },
     addAll() {
       if (this.form.customerId === null) {
         this.$notify({
@@ -954,7 +996,7 @@ export default {
         })
         return
       }
-      if( this.form.customerId != '') {
+      if (this.form.customerId != '') {
         this.id = this.form.customerId
       }
       this.customerForm = {
@@ -997,7 +1039,7 @@ export default {
         this.loading = false
         console.log(err.response.data.message)
       })
-      for ( var i = 0; i < this.detailList.length; i++ ){
+      for (var i = 0; i < this.detailList.length; i++) {
         this.tableForm = this.detailList[i]
         edit(this.tableForm).then(res => {
           this.detailLoading = false
@@ -1131,6 +1173,8 @@ export default {
         })
         return
       }
+      this.dialogVisible = false
+      this.init()
       this.downloadLoading = true
       downloadDeliveryNote(this.form.id).then(result => {
         this.downloadLoading = false
