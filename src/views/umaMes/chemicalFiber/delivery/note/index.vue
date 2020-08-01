@@ -450,7 +450,7 @@
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" placeholder="备注" maxlength="6"/>
+              <el-input v-model="scope.row.remark" placeholder="备注" />
             </template>
           </el-table-column>
           <!--<el-table-column
@@ -764,7 +764,7 @@ export default {
     },
     rowClicker: function(row) {
       this.isAdd = false
-      const _this = this.$refs.form
+      const _this = this.$refs.formd
       _this.form = {
         id: row.id,
         scanNumber: row.scanNumber,
@@ -846,10 +846,10 @@ export default {
     add() {
       this.isAdd = true
       /*this.resetForm()
+      this.dialogVisible = true
       this.form.noteStatus = 1
       this.detailLoading = false
-      this.detailList = []
-      this.dialogVisible = true*/
+      this.detailList = []*/
       this.$refs.form.dialog = true
     },
     edit(data) {
@@ -942,8 +942,8 @@ export default {
       this.addTableFrom = false
       var params = { 'scanNumber': this.form.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
-        this.detailLoading = false
         this.detailList = res
+        this.detailLoading = false
       })
       this.detailLoading = true
     },
@@ -990,19 +990,10 @@ export default {
         realPrice: this.form.realPrice,
         noteStatus: this.form.noteStatus
       }
-      editAll(this.customerForm).then(res => {
-        this.$notify({
-          title: '修改成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.init()
-        this.customerOptions = []
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
-      })
+
+      if(this.isAdd) {
+        this.doAdd(this.customerForm)
+      } else this.doEdit(this.customerForm)
       for ( var i = 0; i < this.detailList.length; i++ ){
         this.tableForm = this.detailList[i]
         edit(this.tableForm).then(res => {
@@ -1296,6 +1287,35 @@ export default {
           return item.username.toLowerCase()
             .indexOf(query.toLowerCase()) > -1
         })
+      })
+    },
+    doEdit(customerForm) {
+      editAll(customerForm).then(res => {
+        this.$notify({
+          title: '修改成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.init()
+        this.customerOptions = []
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
+    },
+    doAdd(customerForm) {
+      customerForm.scanNumber = ''
+      add(customerForm).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.isAdd = false
+        this.init()
+      }).catch(err => {
+        console.log(err.response.data.message)
       })
     },
     resetForm() {
