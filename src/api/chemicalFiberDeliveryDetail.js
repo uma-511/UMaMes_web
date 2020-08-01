@@ -16,7 +16,7 @@ export function addTableRow(data) {
   })
 }
 
-export function del(id) {
+export function delDetail(id) {
   return request({
     url: 'api/chemicalFiberDeliveryDetail/' + id,
     method: 'delete'
