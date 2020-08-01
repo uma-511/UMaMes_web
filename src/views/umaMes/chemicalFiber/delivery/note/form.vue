@@ -11,6 +11,27 @@
       <el-form-item label="出库单号">
         <el-input v-model="form.scanNumber" :disabled="true" style="width: 370px;"/>
       </el-form-item>
+      <el-form-item label="客户编号">
+        <el-select
+          v-model="form.customerCode"
+          :loading="customerCodeLoading"
+          :remote-method="customerCodeMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入客户编号关键词"
+          style="width: 370px;"
+          @change="setCustomerName($event)"
+        >
+          <el-option
+            v-for="item in customerCodeOptions"
+            :key="item.name"
+            :label="item.code"
+            :value="item.name"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="客户名称">
         <el-select
           v-model="form.customerName"
@@ -26,9 +47,9 @@
         >
           <el-option
             v-for="item in customerOptions"
-            :key="item.id"
+            :key="item.code"
             :label="item.name"
-            :value="item.id"
+            :value="item.code"
           />
         </el-select>
       </el-form-item>
@@ -254,6 +275,30 @@ export default {
         loaderOne: '',
         loaderTwo: ''
       },
+      form1: {
+        id: '',
+        scanNumber: '',
+        customerId: '',
+        customerName: '',
+        customerCode: '',
+        customerAddress: '',
+        contacts: '',
+        contactPhone: '',
+        totalCost: '',
+        totalPrice: '',
+        remark: '',
+        seller: '',
+        storeKeeper: '',
+        createDate: '',
+        createUser: '',
+        carNumber: '',
+        deliveryDate: '',
+        driverMain: '',
+        driverDeputy: '',
+        state: '',
+        loaderOne: '',
+        loaderTwo: ''
+      },
       rules: {
         totalCost: [
           {
@@ -267,10 +312,18 @@ export default {
         ]
       },
       customerOptions: [],
+      customerCodeOptions: [],
       customerList: [],
       customerLoading: false,
       customerQuery: {
+        name: '',
+        code: ''
+      },
+      customerQueryName: {
         name: ''
+      },
+      customerQueryCode: {
+        code: ''
       },
       userOptions: [],
       userList: [],
@@ -279,7 +332,8 @@ export default {
         realname: ''
       },
       tempCustomerId: '',
-      tempCustomerName: ''
+      tempCustomerName: '',
+      id: ''
     }
   },
   methods: {
@@ -287,11 +341,6 @@ export default {
       this.resetForm()
     },
     doSubmit() {
-      if (this.tempCustomerName !== this.form.customerName) {
-        this.form.customerId = this.form.customerName
-      } else {
-        this.form.customerId = this.tempCustomerId
-      }
       if (this.form.customerId === null) {
         this.$notify({
           title: '请选择客户',
@@ -325,7 +374,31 @@ export default {
       })
     },
     doEdit() {
-      edit(this.form).then(res => {
+      this.form1 = {
+        id: this.form.id,
+        scanNumber: this.form.scanNumber,
+        customerId: this.form.customerId,
+        customerName: this.id,
+        customerCode: this.form.customerCode,
+        customerAddress: this.form.customerAddress,
+        contacts: this.form.contacts,
+        contactPhone: this.form.contactPhone,
+        totalCost: this.form.totalCost,
+        totalPrice: this.form.totalPrice,
+        remark: this.form.remark,
+        seller: this.form.seller,
+        storeKeeper: this.form.storeKeeper,
+        createDate: this.form.createDate,
+        createUser: this.form.createUser,
+        carNumber: this.form.carNumber,
+        deliveryDate: this.form.deliveryDate,
+        driverMain: this.form.driverMain,
+        driverDeputy: this.form.driverDeputy,
+        state: this.form.state,
+        loaderOne: this.form.loaderOne,
+        loaderTwo: this.form.loaderTwo
+      }
+      edit(this.form1).then(res => {
         this.resetForm()
         this.$notify({
           title: '修改成功',
@@ -368,20 +441,60 @@ export default {
         loaderTwo: ''
       }
     },
+    setCustomerName(event) {
+      this.customerQueryName.name = event
+      getCustomerList(this.customerQueryName).then(res => {
+        this.customerLists = res
+        this.form.customerName = event
+        this.form.customerCode = this.customerLists[0].code
+        this.form.customerId = this.customerLists[0].id
+        this.customerQueryName.name = ''
+        this.id = this.customerLists[0].id
+      })
+    },
     setCustomerId(event) {
-      this.form.customerId = event
+      this.customerQueryCode.code = event
+      getCustomerList(this.customerQueryCode).then(res => {
+        this.customerLists = res
+        this.form.customerCode = event
+        this.form.customerName = this.customerLists[0].name
+        this.form.customerId = this.customerLists[0].id
+        this.customerQueryCode.code = ''
+        this.id = this.customerLists[0].id
+      })
     },
     cleanUpOptions() {
       this.userOptions = []
+    },
+    customerCodeMethod (query) {
+      if (query !== '') {
+        this.customerCodeLoading = true
+        this.customerQuery.code = query
+        this.customerCodeOptions = []
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerCodeLoading = false
+          this.customerList = res
+          this.customerQuery.code = ''
+          this.customerCodeOptions = this.customerList.filter(item => {
+            return item.code.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
     },
     customerRemoteMethod(query) {
       var _this = this
       if (query !== '') {
         _this.customerLoading = true
         _this.customerQuery.name = query
+        _this.customerOptions = []
         getCustomerList(_this.customerQuery).then(res => {
           _this.customerLoading = false
           _this.customerList = res
+          _this.customerQuery.name = ''
+
           _this.customerOptions = _this.customerList.filter(item => {
             return item.name.toLowerCase()
               .indexOf(query.toLowerCase()) > -1
