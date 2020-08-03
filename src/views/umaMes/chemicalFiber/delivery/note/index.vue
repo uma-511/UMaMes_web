@@ -413,7 +413,6 @@
           :summary-method="getSummaries"
           style="width: 100%"
           show-summary
-          height = "260px"
           highlight-current-row
           row-key="id"
           @current-change="handleCurrentChange"
@@ -1396,6 +1395,9 @@ export default {
       })
     },
     doEdit(customerForm) {
+      if (this.detailList.length == 0) {
+        customerForm.totalPrice = 0
+      }
       editAll(customerForm).then(res => {
         this.init()
         this.customerOptions = []
