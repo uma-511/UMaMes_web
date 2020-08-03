@@ -408,13 +408,13 @@
       <el-row>
         <el-table
           v-loading="detailLoading"
+          ref="myTable"
           :data="detailList"
           :summary-method="getSummaries"
           style="width: 100%"
           show-summary
           highlight-current-row
           row-key="id"
-          ref="myTable"
           @current-change="handleCurrentChange"
         >
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
@@ -434,17 +434,17 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" type='number' @input = "sum(scope.row)" :min="0"  />
+              <el-input v-model="scope.row.totalNumber" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" type='number' :min="0" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="sellingPrice" label="单价"  width="130px" align="center">
+          <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" type='number' @input = "sum(scope.row)"  :min="0" />
+              <el-input v-model="scope.row.sellingPrice" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="预计金额" width="120px" align="center"/>
@@ -561,28 +561,6 @@
           <el-form-item label="产品名称" >
             <el-input v-model="tableForm.prodName" :disabled="true" style="width: 370px;"/>
           </el-form-item>
-        <!--  <el-form-item label="单位">
-            <template >
-              <el-select v-model="tableForm.unit" placeholder="请选择单位">
-                <el-option
-                  v-for="item in option"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </template>
-          </el-form-item>
-          <el-form-item label="数量">
-            <el-input v-model="tableForm.totalNumber" style="width: 370px;"/>
-          </el-form-item>
-          <el-form-item label="单价">
-            <el-input v-model="tableForm.sellingPrice" style="width: 370px;" placeholder="请输入销售单价"/>
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input v-model="tableForm.remark" style="width: 370px;" placeholder="请输入销售单价"/>
-          </el-form-item>
--->
         </el-form>
         <div style="text-align: right; margin: 0">
           <el-button size="mini" type="text" @click="addTableFrom = false">取消</el-button>
@@ -961,25 +939,33 @@ export default {
         totalPrice: this.tableForm.totalNumber * this.tableForm.sellingPrice,
         realPrice: this.tableForm.realQuantity * this.tableForm.totalNumber
       }
-      addTableRow(this.tableForm).then(res => {
+      if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '') {
+        addTableRow(this.tableForm).then(res => {
+          this.$notify({
+            title: '添加成功',
+            type: 'success',
+            duration: 2500
+          })
+          this.DataiList(this.form.scanNumber)
+          this.addTableFrom = false
+          this.$parent.init()
+        }).catch(err => {
+          this.addTableFrom = false
+          console.log(err.response.data.message)
+        })
+        this.addTableFrom = false
+      } else {
         this.$notify({
-          title: '添加成功',
-          type: 'success',
+          title: '请选择产品',
+          type: 'warning',
           duration: 2500
-      })
-        this.DataiList(this.form.scanNumber)
-        this.addTableFrom = false
-        this.$parent.init()
-      }).catch(err => {
-        this.addTableFrom = false
-        console.log(err.response.data.message)
-      })
-      this.addTableFrom = false
+        })
+      }
     },
     DataiList(scanNumber) {
       var params = { 'scanNumber': scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
-        //this.detailList = res
+        // this.detailList = res
         this.detailList = []
         var data = []
         for (var i = 0; i < res.length; i++) {
@@ -1000,7 +986,7 @@ export default {
         this.detailLoading = false
         this.detailList = data
       })
-      //this.$set(this.detailList,res[i].prodModel,this.detailList.prodModel)
+      // this.$set(this.detailList,res[i].prodModel,this.detailList.prodModel)
       this.detailLoading = true
     },
     handleNodeClick(data) {
@@ -1056,14 +1042,14 @@ export default {
       } else this.doEdit(this.customerForm)
       var j = 0
       var s = 0
-      for ( var i = 0; i < this.detailList.length; i++ ){
-        if(this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
+      for ( var i = 0; i < this.detailList.length; i++ ) {
+        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
           j++
         }
         if(this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
           s++
         }
-        if(this.detailList[i].realQuantity == '') {
+        if (this.detailList[i].realQuantity == '') {
           this.detailList[i].realQuantity = 0
         }
         this.tableForm = this.detailList[i]
