@@ -1055,15 +1055,13 @@ export default {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)
       var j = 0
+      var s = 0
       for ( var i = 0; i < this.detailList.length; i++ ){
-        if(this.detailList[i].totalNumber == '' ) {
+        if(this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
           j++
         }
-        if(this.detailList[i].totalNumber == 0) {
-          j++
-        }
-        if (this.detailList[i].totalNumber == null) {
-          j++
+        if(this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
+          s++
         }
         if(this.detailList[i].realQuantity == '') {
           this.detailList[i].realQuantity = 0
@@ -1076,13 +1074,19 @@ export default {
           })
         }
       }
-      if (j == 0) {
+      if (j == 0 && s == 0) {
         this.$notify({
-          title: '修改成功',
+          title: '保存成功',
           type: 'success',
           duration: 2500
         })
-      } else {
+      } else if (s > 0) {
+        this.$notify({
+          title: '请填写单价',
+          type: 'warning',
+          duration: 2500
+        })
+      }else if (j > 0) {
         this.$notify({
           title: '请填写计划数量',
           type: 'warning',
@@ -1416,11 +1420,6 @@ export default {
     doAdd(customerForm) {
       customerForm.scanNumber = ''
       add(customerForm).then(res => {
-        this.$notify({
-          title: '添加成功',
-          type: 'success',
-          duration: 2500
-        })
         this.isAdd = false
         this.init()
       }).catch(err => {
