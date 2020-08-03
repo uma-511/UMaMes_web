@@ -408,6 +408,7 @@
       <el-row>
         <el-table
           v-loading="detailLoading"
+          ref="myTable"
           :data="detailList"
           :summary-method="getSummaries"
           style="width: 100%"
@@ -415,7 +416,6 @@
           height = "260px"
           highlight-current-row
           row-key="id"
-          ref="myTable"
           @current-change="handleCurrentChange"
         >
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
@@ -435,17 +435,17 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" type='number' @input = "sum(scope.row)" :min="0"  />
+              <el-input v-model="scope.row.totalNumber" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
+          <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" type='number' :min="0" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="sellingPrice" label="单价"  width="130px" align="center">
+          <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" type='number' @input = "sum(scope.row)"  :min="0" />
+              <el-input v-model="scope.row.sellingPrice" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="预计金额" width="120px" align="center"/>
@@ -490,46 +490,42 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button :loading="loading" type="success" icon="el-icon-edit" @click="addAll" >保存</el-button>
+        <el-button :loading="loading" type="success" icon="el-icon-edit" @click="addAll">保存</el-button>
         <el-button v-if="form.noteStatus == 1" @click="addTable" >添加产品</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button v-if="form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
-        <div v-if="form.noteStatus == 2">
-          <el-popover
-            :ref="form.id"
-            placement="top"
-          >
-            <p>是否发货</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="popoverClose(form.id)">取消</el-button>
-              <el-button
-                :loading="sutmitDetailLoading"
-                type="primary"
-                size="mini"
-                @click="sendOut(form.id)"
-              >确定</el-button>
-            </div>
-            <el-button slot="reference" type="warning" icon="el-icon-s-promotion" size="mini">发货</el-button>
-          </el-popover>
-        </div>
-        <div v-if="form.noteStatus == 3">
-          <el-popover
-            :ref="form.id"
-            placement="top"
-          >
-            <p>确认签收前，请确认回填信息</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="popoverClose(form.id)">取消</el-button>
-              <el-button
-                :loading="sutmitDetailLoading"
-                type="primary"
-                size="mini"
-                @click="recived(form.id)"
-              >确定</el-button>
-            </div>
-            <el-button slot="reference" type="warning" icon="el-icon-s-promotion" size="mini">签收</el-button>
-          </el-popover>
-        </div>
+        <el-popover
+          :ref="form.id"
+          placement="top"
+        >
+          <p>是否发货</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="popoverClose(form.id)">取消</el-button>
+            <el-button
+              :loading="sutmitDetailLoading"
+              type="primary"
+              size="mini"
+              @click="sendOut(form.id)"
+            >确定</el-button>
+          </div>
+          <el-button slot="reference" :disabled="form.noteStatus != 2 ? true : false" :type="form.noteStatus != 2 ? 'info' : 'success'" icon="el-icon-truck">发货</el-button>
+        </el-popover>
+        <el-popover
+          :ref="tableForm.id"
+          placement="top"
+        >
+          <p>确认签收前，请确认回填信息</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="popoverClose(tableForm.id)">取消</el-button>
+            <el-button
+              :loading="sutmitDetailLoading"
+              type="primary"
+              size="mini"
+              @click="recived(form.id)"
+            >确定</el-button>
+          </div>
+          <el-button slot="reference" :disabled="form.noteStatus != 3 ? true : false" :type="form.noteStatus != 3 ? 'info' : 'warning'" icon="el-icon-suitcase">签收</el-button>
+        </el-popover>
+        <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
 
       <el-dialog
@@ -538,10 +534,6 @@
         width="40%"
         title="添加产品" >
         <el-form :model="tableForm" size="mini" label-width="80px" >
-          <!-- <el-form-item label="产品搜索" >
-            <el-input v-model="tableForm.searchName" clearable placeholder="输入产品名称进行搜索" prefix-icon="el-icon-search" style="width: 100%;" class="filter-item" @input="getSelectMap"/>
-            <el-tree :data="prods" :expand-on-click-node="false" default-expand-all style="width: 370px;" @node-click="handleNodeClick"/>
-          </el-form-item>-->
           <el-form-item label="产品搜索" >
             <el-select
               v-model="form.searchName"
@@ -558,7 +550,6 @@
             >
               <el-option
                 v-for="item in prodOptions"
-                :key="item.prodName"
                 :label="item.prodName"
                 :value="item.prodName"
                 @blur="prodOptions"
@@ -566,7 +557,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="产品型号" >
-            <el-input v-model="tableForm.prodModel" :disabled="true" style="width: 370px;" @input="getSelectMap"/>
+            <el-input v-model="tableForm.prodModel" :disabled="true" style="width: 370px;"/>
           </el-form-item>
           <el-form-item label="产品名称" >
             <el-input v-model="tableForm.prodName" :disabled="true" style="width: 370px;"/>
@@ -663,7 +654,8 @@ export default {
         balance: '',
         payment: '',
         realPrice: '',
-        noteStatus: ''
+        noteStatus: '',
+        sendOutFlag: ''
       },
       customerForm: {
         id: '',
@@ -829,7 +821,7 @@ export default {
       this.sutmitDetailLoading = true
       recived(id).then(res => {
         this.sutmitDetailLoading = false
-        this.$refs[this.form.id].doClose()
+        this.$refs[this.tableForm.id].doClose()
         this.dialogVisible = false
         this.init()
         this.$notify({
@@ -887,7 +879,7 @@ export default {
     },
     add() {
       this.isAdd = true
-      /*this.resetForm()
+      /* this.resetForm()
       this.dialogVisible = true
       this.form.noteStatus = 1
       this.detailLoading = false
@@ -953,6 +945,7 @@ export default {
         realPrice: '',
         realQuantity: ''
       }
+      this.form.searchName = ''
       this.prods = []
       this.addTableFrom = true
     },
@@ -974,7 +967,7 @@ export default {
           title: '添加成功',
           type: 'success',
           duration: 2500
-      })
+        })
         this.addTableFrom = false
         this.$parent.init()
       }).catch(err => {
@@ -987,27 +980,27 @@ export default {
     DataiList(scanNumber) {
       var params = { 'scanNumber': scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
-        //this.detailList = res
+        // this.detailList = res
         var data = []
-        for(var i = 0; i < res.length; i++ ) {
+        for (var i = 0; i < res.length; i++) {
           var obj = {}
-          obj.prodModel= res[i].prodModel
+          obj.prodModel = res[i].prodModel
           obj.id = res[i].id
-          obj.prodName= res[i].prodName
-          obj.scanNumber=res[i].scanNumber
-          obj.unit=res[i].unit
-          obj.sellingPrice= res[i].sellingPrice
-          obj.remark=res[i].remark
-          obj.totalNumber= res[i].totalNumber
-          obj.realQuantity= res[i].realQuantity
-          obj.totalPrice= res[i].totalNumber * res[i].sellingPrice
-          obj.realPrice= res[i].realQuantity * res[i].totalNumber
+          obj.prodName = res[i].prodName
+          obj.scanNumber = res[i].scanNumber
+          obj.unit = res[i].unit
+          obj.sellingPrice = res[i].sellingPrice
+          obj.remark = res[i].remark
+          obj.totalNumber = res[i].totalNumber
+          obj.realQuantity = res[i].realQuantity
+          obj.totalPrice = res[i].totalNumber * res[i].sellingPrice
+          obj.realPrice = res[i].realQuantity * res[i].totalNumber
           data[i] = obj
         }
         this.detailList = data
         this.detailLoading = false
       })
-      this.$set(this.$refs.myTable,id,this.detailList)
+      this.$set(this.$refs.myTable, id, this.detailList)
       this.detailLoading = true
     },
     handleNodeClick(data) {
@@ -1058,30 +1051,29 @@ export default {
         totalNumber: this.form.totalNumber,
         realQuantity: this.form.realQuantity
       }
-      if(this.isAdd) {
+      if (this.isAdd) {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)
       var j = 0
-      for ( var i = 0; i < this.detailList.length; i++ ){
-        if(this.detailList[i].totalNumber == '') {
-            j++
+      for (var i = 0; i < this.detailList.length; i++) {
+        if (this.detailList[i].totalNumber == '') {
+          j++
         }
-        if(this.detailList[i].totalNumber == 0) {
-            j++
+        if (this.detailList[i].totalNumber == 0) {
+          j++
         }
-        if(this.detailList[i].totalNumber == null) {
+        if (this.detailList[i].totalNumber == null) {
           j++
         }
         this.tableForm = this.detailList[i]
-        if(j == 0){
+        if (j == 0) {
           edit(this.tableForm).then(res => {
             this.detailLoading = false
             this.init()
           })
-
         }
       }
-      if( j == 0){
+      if (j == 0) {
         this.$notify({
           title: '修改成功',
           type: 'success',
@@ -1122,23 +1114,26 @@ export default {
         payment: data.payment,
         balance: data.balance
       }
+      if (data.noteStatus == 2) {
+        this.form.sendOutFlag = false
+      }
       var params = { 'scanNumber': data.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         this.detailLoading = false
         var data = []
-        for(var i = 0; i < res.length; i++ ) {
+        for (var i = 0; i < res.length; i++) {
           var obj = {}
-          obj.prodModel= res[i].prodModel
-          obj.prodName= res[i].prodName
-          obj.scanNumber=res[i].scanNumber
-          obj.unit=res[i].unit
+          obj.prodModel = res[i].prodModel
+          obj.prodName = res[i].prodName
+          obj.scanNumber = res[i].scanNumber
+          obj.unit = res[i].unit
           obj.id = res[i].id
-          obj.sellingPrice= res[i].sellingPrice
-          obj.remark=res[i].remark
-          obj.totalNumber= res[i].totalNumber
-          obj.realQuantity= res[i].realQuantity
-          obj.totalPrice= res[i].totalNumber * res[i].sellingPrice
-          obj.realPrice= res[i].realQuantity * res[i].totalNumber
+          obj.sellingPrice = res[i].sellingPrice
+          obj.remark = res[i].remark
+          obj.totalNumber = res[i].totalNumber
+          obj.realQuantity = res[i].realQuantity
+          obj.totalPrice = res[i].totalNumber * res[i].sellingPrice
+          obj.realPrice = res[i].realQuantity * res[i].totalNumber
           data[i] = obj
         }
         this.detailList = res
@@ -1167,10 +1162,10 @@ export default {
         return
       }
       this.detailLoading = true
-      if(data.realQuantity == '' || data.realQuantity == 0 || data.realQuantity == null) {
+      if (data.realQuantity == '' || data.realQuantity == 0 || data.realQuantity == null) {
         data.totalPrice = data.totalNumber * data.sellingPrice
         data.realPrice = data.realQuantity * data.sellingPrice
-      }else{
+      } else {
         data.totalPrice = data.realQuantity * data.sellingPrice
         data.realPrice = data.realQuantity * data.sellingPrice
       }
@@ -1242,11 +1237,11 @@ export default {
         })
         return
       }
-      this.dialogVisible = false
-      this.init()
       this.downloadLoading = true
       downloadDeliveryNote(this.form.id).then(result => {
         this.downloadLoading = false
+        this.dialogVisible = false
+        this.init()
         downloadFile(result, '生产单导出', 'xls')
       }).catch(() => {
         this.downloadLoading = false
