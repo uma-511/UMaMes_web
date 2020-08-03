@@ -1402,6 +1402,9 @@ export default {
       })
     },
     doEdit(customerForm) {
+      if (this.detailList.length == 0) {
+        customerForm.totalPrice = 0
+      }
       editAll(customerForm).then(res => {
         this.init()
         this.customerOptions = []
