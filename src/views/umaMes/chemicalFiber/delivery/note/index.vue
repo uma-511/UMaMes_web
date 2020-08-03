@@ -412,7 +412,6 @@
           :summary-method="getSummaries"
           style="width: 100%"
           show-summary
-          height = "260px"
           highlight-current-row
           row-key="id"
           ref="myTable"
