@@ -285,7 +285,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="出库单号" >
-              <el-input v-model="form.scanNumber" style="width: 200px;"/>
+              <el-input v-model="form.scanNumber" :disabled="true" style="width: 200px;"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -975,6 +975,7 @@ export default {
           type: 'success',
           duration: 2500
       })
+        this.DataiList(this.form.scanNumber)
         this.addTableFrom = false
         this.$parent.init()
       }).catch(err => {
@@ -982,12 +983,12 @@ export default {
         console.log(err.response.data.message)
       })
       this.addTableFrom = false
-      this.DataiList(this.form.scanNumber)
     },
     DataiList(scanNumber) {
       var params = { 'scanNumber': scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         //this.detailList = res
+        this.detailList = []
         var data = []
         for(var i = 0; i < res.length; i++ ) {
           var obj = {}
@@ -1004,10 +1005,10 @@ export default {
           obj.realPrice= res[i].realQuantity * res[i].totalNumber
           data[i] = obj
         }
-        this.detailList = data
         this.detailLoading = false
+        this.detailList = data
       })
-      this.$set(this.$refs.myTable,id,this.detailList)
+      //this.$set(this.detailList,res[i].prodModel,this.detailList.prodModel)
       this.detailLoading = true
     },
     handleNodeClick(data) {
