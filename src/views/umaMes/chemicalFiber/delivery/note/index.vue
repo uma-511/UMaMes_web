@@ -931,7 +931,7 @@ export default {
         prodModel: this.tableForm.prodModel,
         prodName: this.tableForm.prodName,
         scanNumber: this.form.scanNumber,
-        unit: this.tableForm.unit,
+        unit: '吨',
         sellingPrice: this.tableForm.sellingPrice,
         remark: this.tableForm.remark,
         totalNumber: this.tableForm.totalNumber,
