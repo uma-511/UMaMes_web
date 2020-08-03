@@ -1061,13 +1061,11 @@ export default {
       if(this.isAdd) {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)
+
       var j = 0
       for ( var i = 0; i < this.detailList.length; i++ ){
-        if(this.detailList[i].totalNumber == '') {
-            j++
-        }
-        if(this.detailList[i].totalNumber == 0) {
-            j++
+        if(this.detailList[i].totalNumber == '' ) {
+          j++
         }
         if(this.detailList[i].totalNumber == null) {
           j++
@@ -1075,7 +1073,6 @@ export default {
         if(this.detailList[i].realQuantity == '') {
           this.detailList[i].realQuantity = 0
         }
-        this.tableForm = this.detailList[i]
         if(j == 0){
           edit(this.tableForm).then(res => {
             this.detailLoading = false
@@ -1409,6 +1406,9 @@ export default {
       })
     },
     doEdit(customerForm) {
+      if(this.detailList.length == 0) {
+        customerForm.totalPrice = 0
+      }
       editAll(customerForm).then(res => {
         this.init()
         this.customerOptions = []
