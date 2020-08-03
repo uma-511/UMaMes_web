@@ -408,13 +408,13 @@
       <el-row>
         <el-table
           v-loading="detailLoading"
-          ref="myTable"
           :data="detailList"
           :summary-method="getSummaries"
           style="width: 100%"
           show-summary
           highlight-current-row
           row-key="id"
+          ref="myTable"
           @current-change="handleCurrentChange"
         >
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
@@ -434,17 +434,17 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.totalNumber" type='number' @input = "sum(scope.row)" :min="0"  />
             </template>
           </el-table-column>
           <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" type='number' :min="0" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
+          <el-table-column prop="sellingPrice" label="单价"  width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.sellingPrice" type='number' @input = "sum(scope.row)"  :min="0" />
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="预计金额" width="120px" align="center"/>
@@ -1040,42 +1040,41 @@ export default {
       if (this.isAdd) {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)
-      var j = 0
-      var s = 0
+      var ifNull = true
       for ( var i = 0; i < this.detailList.length; i++ ) {
-        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
-          j++
+        if(this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
+          ifNull = false
+          this.$notify({
+            title: '请填写计划数量',
+            type: 'warning',
+            duration: 2500
+          })
+          break
         }
         if(this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
-          s++
+          ifNull = false
+          this.$notify({
+            title: '请填写单价',
+            type: 'warning',
+            duration: 2500
+          })
+          break
         }
         if (this.detailList[i].realQuantity == '') {
           this.detailList[i].realQuantity = 0
         }
         this.tableForm = this.detailList[i]
-        if (j == 0) {
+        if (ifNull) {
           edit(this.tableForm).then(res => {
             this.detailLoading = false
             this.init()
           })
         }
       }
-      if (j == 0 && s == 0) {
+      if (ifNull) {
         this.$notify({
           title: '保存成功',
           type: 'success',
-          duration: 2500
-        })
-      } else if (s > 0) {
-        this.$notify({
-          title: '请填写单价',
-          type: 'warning',
-          duration: 2500
-        })
-      }else if (j > 0) {
-        this.$notify({
-          title: '请填写计划数量',
-          type: 'warning',
           duration: 2500
         })
       }

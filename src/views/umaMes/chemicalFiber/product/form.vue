@@ -1,7 +1,7 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="产品型号" prop="model">
+      <el-form-item label="产品编号" prop="model">
         <el-input v-model="form.model" style="width: 370px;" maxlength="10"/>
       </el-form-item>
       <el-form-item label="产品名称" prop="name">
@@ -56,7 +56,7 @@ export default {
       rules: {
         model: [
           {
-            required: true, message: '请输入产品型号', trigger: 'blur'
+            required: true, message: '请输入产品编号', trigger: 'blur'
           }
         ],
         name: [
