@@ -33,7 +33,7 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" stripe size="small" style="width: 100%;" @row-click="rowClicker">
-      <el-table-column prop="model" label="产品型号"/>
+      <el-table-column prop="model" label="产品编号"/>
       <el-table-column prop="name" label="产品名称"/>
       <!-- <el-table-column prop="color" label="色号"/>
       <el-table-column prop="fineness" label="纤度"/>-->
@@ -87,7 +87,7 @@ export default {
     return {
       delLoading: false,
       queryTypeOptions: [
-        { key: 'model', display_name: '产品型号' },
+        { key: 'model', display_name: '产品编号' },
         { key: 'name', display_name: '产品名称' },
         { key: 'color', display_name: '色号' },
         { key: 'fineness', display_name: '纤度' }
