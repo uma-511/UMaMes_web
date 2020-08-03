@@ -417,6 +417,12 @@
           ref="myTable"
           @current-change="handleCurrentChange"
         >
+          <el-table-column
+            label="序号"
+            align="center"
+            type="index"
+            width="50px">
+          </el-table-column>
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
           <el-table-column prop="unit" label="单位" width="100px" align="center">
@@ -662,6 +668,7 @@ export default {
         noteStatus: ''
       },
       tableForm: {
+        detailNumber: '',
         prodModel: '',
         prodName: '',
         scanNumber: '',
@@ -673,7 +680,8 @@ export default {
         realQuantity: '',
         realPrice: '',
         totalPrice: '',
-        id: ''
+        id: '',
+        customerName: '',
       },
       customerQuery: {
         name: '',
@@ -928,6 +936,7 @@ export default {
     },
     addTableRow() {
       this.tableForm = {
+        detailNumber: this.detailList.length + 1,
         prodModel: this.tableForm.prodModel,
         prodName: this.tableForm.prodName,
         scanNumber: this.form.scanNumber,
@@ -936,6 +945,7 @@ export default {
         remark: this.tableForm.remark,
         totalNumber: this.tableForm.totalNumber,
         realQuantity: this.tableForm.realQuantity,
+        customerName: this.form.customerName,
         totalPrice: this.tableForm.totalNumber * this.tableForm.sellingPrice,
         realPrice: this.tableForm.realQuantity * this.tableForm.totalNumber
       }
