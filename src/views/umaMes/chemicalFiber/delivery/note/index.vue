@@ -1061,7 +1061,6 @@ export default {
       if(this.isAdd) {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)
-
       var j = 0
       for ( var i = 0; i < this.detailList.length; i++ ){
         if(this.detailList[i].totalNumber == '' ) {
