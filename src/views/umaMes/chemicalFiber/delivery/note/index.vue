@@ -703,7 +703,8 @@ export default {
         totalNumber: '',
         realQuantity: '',
         realPrice: '',
-        totalPrice: ''
+        totalPrice: '',
+        id: ''
       },
       customerQuery: {
         name: '',
@@ -973,7 +974,7 @@ export default {
           title: '添加成功',
           type: 'success',
           duration: 2500
-        })
+      })
         this.addTableFrom = false
         this.$parent.init()
       }).catch(err => {
@@ -981,23 +982,27 @@ export default {
         console.log(err.response.data.message)
       })
       this.addTableFrom = false
+      this.DataiList()
+    },
+    DataiList() {
       var params = { 'scanNumber': this.form.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         //this.detailList = res
         var data = []
         for(var i = 0; i < res.length; i++ ) {
-            var obj = {}
-            obj.prodModel= res[i].prodModel
-            obj.prodName= res[i].prodName
-            obj.scanNumber=res[i].scanNumber
-            obj.unit=res[i].unit
-            obj.sellingPrice= res[i].sellingPrice
-            obj.remark=res[i].remark
-            obj.totalNumber= res[i].totalNumber
-            obj.realQuantity= res[i].realQuantity
-            obj.totalPrice= res[i].totalNumber * res[i].sellingPrice
-            obj.realPrice= res[i].realQuantity * res[i].totalNumber
-            data[i] = obj
+          var obj = {}
+          obj.prodModel= res[i].prodModel
+          obj.id = res[i].id
+          obj.prodName= res[i].prodName
+          obj.scanNumber=res[i].scanNumber
+          obj.unit=res[i].unit
+          obj.sellingPrice= res[i].sellingPrice
+          obj.remark=res[i].remark
+          obj.totalNumber= res[i].totalNumber
+          obj.realQuantity= res[i].realQuantity
+          obj.totalPrice= res[i].totalNumber * res[i].sellingPrice
+          obj.realPrice= res[i].realQuantity * res[i].totalNumber
+          data[i] = obj
         }
         this.detailList = data
         this.detailLoading = false
@@ -1049,7 +1054,8 @@ export default {
         balance: this.form.balance,
         payment: this.form.payment,
         realPrice: this.form.realPrice,
-        noteStatus: this.form.noteStatus
+        noteStatus: this.form.noteStatus,
+        totalNumber: this.form.totalNumber
       }
       if(this.isAdd) {
         this.doAdd(this.customerForm)
@@ -1125,6 +1131,7 @@ export default {
           obj.prodName= res[i].prodName
           obj.scanNumber=res[i].scanNumber
           obj.unit=res[i].unit
+          obj.id = res[i].id
           obj.sellingPrice= res[i].sellingPrice
           obj.remark=res[i].remark
           obj.totalNumber= res[i].totalNumber
