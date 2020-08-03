@@ -1054,42 +1054,41 @@ export default {
       if (this.isAdd) {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)
-      var j = 0
-      var s = 0
-      for ( var i = 0; i < this.detailList.length; i++ ){
+      var ifNull = true
+      for ( var i = 0; i < this.detailList.length; i++ ) {
         if(this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
-          j++
+          ifNull = false
+          this.$notify({
+            title: '请填写计划数量',
+            type: 'warning',
+            duration: 2500
+          })
+          break
         }
         if(this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
-          s++
+          ifNull = false
+          this.$notify({
+            title: '请填写单价',
+            type: 'warning',
+            duration: 2500
+          })
+          break
         }
-        if(this.detailList[i].realQuantity == '') {
+        if (this.detailList[i].realQuantity == '') {
           this.detailList[i].realQuantity = 0
         }
         this.tableForm = this.detailList[i]
-        if (j == 0) {
+        if (ifNull) {
           edit(this.tableForm).then(res => {
             this.detailLoading = false
             this.init()
           })
         }
       }
-      if (j == 0 && s == 0) {
+      if (ifNull) {
         this.$notify({
           title: '保存成功',
           type: 'success',
-          duration: 2500
-        })
-      } else if (s > 0) {
-        this.$notify({
-          title: '请填写单价',
-          type: 'warning',
-          duration: 2500
-        })
-      }else if (j > 0) {
-        this.$notify({
-          title: '请填写计划数量',
-          type: 'warning',
           duration: 2500
         })
       }
