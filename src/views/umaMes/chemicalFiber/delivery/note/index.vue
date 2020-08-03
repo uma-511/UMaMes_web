@@ -1072,6 +1072,9 @@ export default {
         if(this.detailList[i].totalNumber == null) {
           j++
         }
+        if(this.detailList[i].realQuantity == '') {
+          this.detailList[i].realQuantity = 0
+        }
         this.tableForm = this.detailList[i]
         if(j == 0){
           edit(this.tableForm).then(res => {
