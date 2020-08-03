@@ -285,7 +285,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="出库单号" >
-              <el-input v-model="form.scanNumber" style="width: 200px;"/>
+              <el-input v-model="form.scanNumber" :disabled="true" style="width: 200px;"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -408,7 +408,6 @@
       <el-row>
         <el-table
           v-loading="detailLoading"
-          ref="myTable"
           :data="detailList"
           :summary-method="getSummaries"
           style="width: 100%"
@@ -416,6 +415,7 @@
           height = "260px"
           highlight-current-row
           row-key="id"
+          ref="myTable"
           @current-change="handleCurrentChange"
         >
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
@@ -435,17 +435,17 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.totalNumber" type='number' @input = "sum(scope.row)" :min="0"  />
             </template>
           </el-table-column>
-          <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
+          <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" type='number' :min="0" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
+          <el-table-column prop="sellingPrice" label="单价"  width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.sellingPrice" type='number' @input = "sum(scope.row)"  :min="0" />
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="预计金额" width="120px" align="center"/>
@@ -967,7 +967,8 @@ export default {
           title: '添加成功',
           type: 'success',
           duration: 2500
-        })
+      })
+        this.DataiList(this.form.scanNumber)
         this.addTableFrom = false
         this.$parent.init()
       }).catch(err => {
@@ -975,12 +976,12 @@ export default {
         console.log(err.response.data.message)
       })
       this.addTableFrom = false
-      this.DataiList(this.form.scanNumber)
     },
     DataiList(scanNumber) {
       var params = { 'scanNumber': scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
-        // this.detailList = res
+        //this.detailList = res
+        this.detailList = []
         var data = []
         for (var i = 0; i < res.length; i++) {
           var obj = {}
@@ -997,10 +998,10 @@ export default {
           obj.realPrice = res[i].realQuantity * res[i].totalNumber
           data[i] = obj
         }
-        this.detailList = data
         this.detailLoading = false
+        this.detailList = data
       })
-      this.$set(this.$refs.myTable, id, this.detailList)
+      //this.$set(this.detailList,res[i].prodModel,this.detailList.prodModel)
       this.detailLoading = true
     },
     handleNodeClick(data) {
@@ -1055,15 +1056,18 @@ export default {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)
       var j = 0
-      for (var i = 0; i < this.detailList.length; i++) {
-        if (this.detailList[i].totalNumber == '') {
+      for ( var i = 0; i < this.detailList.length; i++ ){
+        if(this.detailList[i].totalNumber == '' ) {
           j++
         }
-        if (this.detailList[i].totalNumber == 0) {
+        if(this.detailList[i].totalNumber == 0) {
           j++
         }
         if (this.detailList[i].totalNumber == null) {
           j++
+        }
+        if(this.detailList[i].realQuantity == '') {
+          this.detailList[i].realQuantity = 0
         }
         this.tableForm = this.detailList[i]
         if (j == 0) {
@@ -1113,9 +1117,6 @@ export default {
         noteStatus: data.noteStatus,
         payment: data.payment,
         balance: data.balance
-      }
-      if (data.noteStatus == 2) {
-        this.form.sendOutFlag = false
       }
       var params = { 'scanNumber': data.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
