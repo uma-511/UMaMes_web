@@ -982,10 +982,10 @@ export default {
         console.log(err.response.data.message)
       })
       this.addTableFrom = false
-      this.DataiList()
+      this.DataiList(this.form.scanNumber)
     },
-    DataiList() {
-      var params = { 'scanNumber': this.form.scanNumber }
+    DataiList(scanNumber) {
+      var params = { 'scanNumber': scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         //this.detailList = res
         var data = []
@@ -1055,7 +1055,8 @@ export default {
         payment: this.form.payment,
         realPrice: this.form.realPrice,
         noteStatus: this.form.noteStatus,
-        totalNumber: this.form.totalNumber
+        totalNumber: this.form.totalNumber,
+        realQuantity: this.form.realQuantity
       }
       if(this.isAdd) {
         this.doAdd(this.customerForm)
