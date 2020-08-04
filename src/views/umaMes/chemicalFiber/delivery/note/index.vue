@@ -870,11 +870,11 @@ export default {
     //新增按钮的弹出事件
     add() {
       this.isAdd = true
-      this.resetForm()
+      t/*his.resetForm()
       this.dialogVisible = true
       this.detailLoading = false
-      this.detailList = []
-      //this.$refs.form.dialog = true
+      this.detailList = []*/
+      this.$refs.form.dialog = true
     },
     // 导出
     download() {
@@ -1025,13 +1025,13 @@ export default {
         totalNumber: this.form.totalNumber,
         realQuantity: this.form.realQuantity
       }
-      if (this.isAdd) {
+      /*if (this.isAdd) {
         this.doAdd(this.customerForm)
       } else {
         this.doEdit(this.customerForm)
-      }
+      }*/
       //form表单保存
-      //this.doEdit(this.customerForm)
+      this.doEdit(this.customerForm)
       var ifNull = true
       //循环列表里面的数据判断
       for ( var i = 0; i < this.detailList.length; i++ ) {
