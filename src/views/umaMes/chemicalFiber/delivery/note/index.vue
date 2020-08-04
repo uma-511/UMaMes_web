@@ -583,7 +583,7 @@ import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
 import { edit, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
-import { parseTime, downloadFile } from '@/utils/index'
+import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerLists } from '@/api/customer'
@@ -681,7 +681,7 @@ export default {
         realPrice: '',
         totalPrice: '',
         id: '',
-        customerName: '',
+        customerName: ''
       },
       customerQuery: {
         name: '',
@@ -796,10 +796,6 @@ export default {
           notNullFalg = false
           break
         }
-        if (this.detailList[i].realQuantity == '') {
-          notNullFalg = false
-          break
-        }
       }
       if (!notNullFalg) {
         // 有空值，不允许打印
@@ -827,6 +823,30 @@ export default {
       })
     },
     recived(id) {
+      var notNullFalg = true
+      for (var i = 0; i < this.detailList.length; i++) {
+        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
+          notNullFalg = false
+          break
+        }
+        if (this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
+          notNullFalg = false
+          break
+        }
+        if (this.detailList[i].realQuantity == '') {
+          notNullFalg = false
+          break
+        }
+      }
+      if (!notNullFalg) {
+        // 有空值，不允许打印
+        this.$notify({
+          title: '请补充产品相关信息',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.sutmitDetailLoading = true
       recived(id).then(res => {
         this.sutmitDetailLoading = false
@@ -1075,8 +1095,8 @@ export default {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)
       var ifNull = true
-      for ( var i = 0; i < this.detailList.length; i++ ) {
-        if(this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
+      for (var i = 0; i < this.detailList.length; i++) {
+        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
           ifNull = false
           this.$notify({
             title: '请填写计划数量',
@@ -1085,7 +1105,7 @@ export default {
           })
           break
         }
-        if(this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
+        if (this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
           ifNull = false
           this.$notify({
             title: '请填写单价',
@@ -1278,10 +1298,6 @@ export default {
           notNullFalg = false
           break
         }
-        if (this.detailList[i].realQuantity == '') {
-          notNullFalg = false
-          break
-        }
       }
       if (!notNullFalg) {
         // 有空值，不允许打印
@@ -1297,7 +1313,7 @@ export default {
         this.downloadLoading = false
         this.dialogVisible = false
         this.init()
-        downloadFile(result, '生产单导出', 'xls')
+        downloadFileWhithScanNumber(result, this.form.scanNumber + '送货单导出', 'xls')
       }).catch(() => {
         this.downloadLoading = false
       })
