@@ -582,7 +582,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
-import { edit, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
+import { edit, editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
@@ -946,9 +946,10 @@ export default {
         totalNumber: this.tableForm.totalNumber,
         realQuantity: this.tableForm.realQuantity,
         customerName: this.form.customerName,
-        totalPrice: this.tableForm.totalNumber * this.tableForm.sellingPrice,
-        realPrice: this.tableForm.realQuantity * this.tableForm.totalNumber
+        totalPrice: this.tableForm.totalPrice,
+        realPrice: this.tableForm.realPrice
       }
+      console.log(this.tableForm)
       if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '') {
         addTableRow(this.tableForm).then(res => {
           this.$notify({
@@ -989,8 +990,8 @@ export default {
           obj.remark = res[i].remark
           obj.totalNumber = res[i].totalNumber
           obj.realQuantity = res[i].realQuantity
-          obj.totalPrice = res[i].totalNumber * res[i].sellingPrice
-          obj.realPrice = res[i].realQuantity * res[i].totalNumber
+          obj.totalPrice = res[i].totalPrice
+          obj.realPrice = res[i].realPrice
           data[i] = obj
         }
         this.detailLoading = false
@@ -1047,9 +1048,10 @@ export default {
         totalNumber: this.form.totalNumber,
         realQuantity: this.form.realQuantity
       }
-      if (this.isAdd) {
+      /*if (this.isAdd) {
         this.doAdd(this.customerForm)
-      } else this.doEdit(this.customerForm)
+      } else this.doEdit(this.customerForm)*/
+      this.doEdit(this.customerForm)
       var ifNull = true
       for ( var i = 0; i < this.detailList.length; i++ ) {
         if(this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
@@ -1070,23 +1072,20 @@ export default {
           })
           break
         }
-        if (this.detailList[i].realQuantity == '') {
+        if (this.detailList[i].realQuantity == '' || this.detailList[i].realQuantity == null) {
           this.detailList[i].realQuantity = 0
         }
-        this.tableForm = this.detailList[i]
-        if (ifNull) {
-          edit(this.tableForm).then(res => {
-            this.detailLoading = false
+        if (i < this.detailList.length && ifNull == true) {
+          editList(this.detailList).then(res => {
+            this.$notify({
+              title: '保存成功',
+              type: 'success',
+              duration: 2500
+            })
             this.init()
+            this.detailLoading = false
           })
         }
-      }
-      if (ifNull) {
-        this.$notify({
-          title: '保存成功',
-          type: 'success',
-          duration: 2500
-        })
       }
     },
     detail(data) {
@@ -1131,8 +1130,8 @@ export default {
           obj.remark = res[i].remark
           obj.totalNumber = res[i].totalNumber
           obj.realQuantity = res[i].realQuantity
-          obj.totalPrice = res[i].totalNumber * res[i].sellingPrice
-          obj.realPrice = res[i].realQuantity * res[i].totalNumber
+          obj.totalPrice = res[i].totalPrice
+          obj.realPrice = res[i].realPrice
           data[i] = obj
         }
         this.detailList = res
@@ -1202,7 +1201,7 @@ export default {
           return
         }
         const values = data.map(item => Number(item[column.property]))
-        if (index === 6) {
+        if (index === 7) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
@@ -1213,7 +1212,7 @@ export default {
           }, 0).toFixed(2)
           sums[index] += ' 元'
         }
-        if (index === 7) {
+        if (index === 8) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {

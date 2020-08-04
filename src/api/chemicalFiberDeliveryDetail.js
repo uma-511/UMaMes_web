@@ -31,6 +31,15 @@ export function edit(data) {
   })
 }
 
+export function editList(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryDetail/setChemicalFiberDeliveryDetailsList',
+    method: 'put',
+    contentType: "application/json",
+    data
+  })
+}
+
 export function downloadChemicalFiberDeliveryDetail(params) {
   return request({
     url: 'api/chemicalFiberDeliveryDetail/download',
