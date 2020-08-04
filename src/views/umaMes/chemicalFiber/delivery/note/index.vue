@@ -1118,7 +1118,7 @@ export default {
         if (this.detailList[i].realQuantity == '' || this.detailList[i].realQuantity == null) {
           this.detailList[i].realQuantity = 0
         }
-        if (i < this.detailList.length && ifNull == true) {
+        if (i = this.detailList.length && ifNull == true ) {
           editList(this.detailList).then(res => {
             this.$notify({
               title: '保存成功',
