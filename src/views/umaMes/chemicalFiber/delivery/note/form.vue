@@ -130,7 +130,7 @@
         <el-input v-model="form.carNumber" style="width: 370px;" maxlength="15"/>
       </el-form-item>
       <el-form-item label="交货日期" prop="deliveryDate">
-        <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 370px;" maxlength="15"/>
+        <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 370px;" maxlength="15"/>
       </el-form-item>
       <el-form-item label="主司机">
         <el-select
