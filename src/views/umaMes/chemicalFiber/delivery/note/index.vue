@@ -79,7 +79,6 @@
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
       <el-table-column prop="totalPrice" label="总价"/>
-      <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="seller" label="业务员"/>
       <el-table-column prop="storeKeeper" label="仓管员"/>
       <el-table-column prop="createDate" label="制单日期">
@@ -310,7 +309,7 @@
               <el-input style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="交货日期" >
-              <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
+              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
