@@ -824,15 +824,11 @@ export default {
     recived(id) {
       var notNullFalg = true
       for (var i = 0; i < this.detailList.length; i++) {
-        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
+        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == null) {
           notNullFalg = false
           break
         }
         if (this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
-          notNullFalg = false
-          break
-        }
-        if (this.detailList[i].realQuantity == '') {
           notNullFalg = false
           break
         }
