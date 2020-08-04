@@ -583,7 +583,7 @@ import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
 import { edit, editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
-import { parseTime, downloadFile } from '@/utils/index'
+import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerLists } from '@/api/customer'
@@ -681,7 +681,7 @@ export default {
         realPrice: '',
         totalPrice: '',
         id: '',
-        customerName: '',
+        customerName: ''
       },
       customerQuery: {
         name: '',
@@ -711,7 +711,7 @@ export default {
       statusValue: {
         0: '已失效',
         1: '待打印',
-        2: '待出库',
+        2: '待发货',
         3: '待签收',
         4: '待结款',
         5: '已完结'
@@ -786,6 +786,26 @@ export default {
       _this.dialog = true
     },
     sendOut(id) {
+      var notNullFalg = true
+      for (var i = 0; i < this.detailList.length; i++) {
+        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
+          notNullFalg = false
+          break
+        }
+        if (this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
+          notNullFalg = false
+          break
+        }
+      }
+      if (!notNullFalg) {
+        // 有空值，不允许打印
+        this.$notify({
+          title: '请补充产品相关信息',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.sutmitDetailLoading = true
       sendOut(id).then(res => {
         this.sutmitDetailLoading = false
@@ -803,6 +823,30 @@ export default {
       })
     },
     recived(id) {
+      var notNullFalg = true
+      for (var i = 0; i < this.detailList.length; i++) {
+        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
+          notNullFalg = false
+          break
+        }
+        if (this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
+          notNullFalg = false
+          break
+        }
+        if (this.detailList[i].realQuantity == '') {
+          notNullFalg = false
+          break
+        }
+      }
+      if (!notNullFalg) {
+        // 有空值，不允许打印
+        this.$notify({
+          title: '请补充产品相关信息',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.sutmitDetailLoading = true
       recived(id).then(res => {
         this.sutmitDetailLoading = false
@@ -940,7 +984,7 @@ export default {
         prodModel: this.tableForm.prodModel,
         prodName: this.tableForm.prodName,
         scanNumber: this.form.scanNumber,
-        unit: this.tableForm.unit,
+        unit: '吨',
         sellingPrice: this.tableForm.sellingPrice,
         remark: this.tableForm.remark,
         totalNumber: this.tableForm.totalNumber,
@@ -949,7 +993,6 @@ export default {
         totalPrice: this.tableForm.totalPrice,
         realPrice: this.tableForm.realPrice
       }
-      console.log(this.tableForm)
       if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '') {
         addTableRow(this.tableForm).then(res => {
           this.$notify({
@@ -1235,12 +1278,40 @@ export default {
         })
         return
       }
+      if (this.detailList.length < 1) {
+        this.$notify({
+          title: '请添加产品',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      var notNullFalg = true
+      for (var i = 0; i < this.detailList.length; i++) {
+        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
+          notNullFalg = false
+          break
+        }
+        if (this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
+          notNullFalg = false
+          break
+        }
+      }
+      if (!notNullFalg) {
+        // 有空值，不允许打印
+        this.$notify({
+          title: '请补充产品相关信息',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.downloadLoading = true
       downloadDeliveryNote(this.form.id).then(result => {
         this.downloadLoading = false
         this.dialogVisible = false
         this.init()
-        downloadFile(result, '生产单导出', 'xls')
+        downloadFileWhithScanNumber(result, this.form.scanNumber + '送货单导出', 'xls')
       }).catch(() => {
         this.downloadLoading = false
       })
