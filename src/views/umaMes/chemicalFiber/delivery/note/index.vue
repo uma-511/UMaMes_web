@@ -310,7 +310,7 @@
               <el-input style="width: 200px;"/>
             </el-form-item>
             <el-form-item label="交货日期" >
-              <el-date-picker v-model="form.deliveryDate" type="datetime" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
+              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
