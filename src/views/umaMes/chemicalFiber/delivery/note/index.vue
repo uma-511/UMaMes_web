@@ -79,7 +79,6 @@
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
       <el-table-column prop="totalPrice" label="总价"/>
-      <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="seller" label="业务员"/>
       <el-table-column prop="storeKeeper" label="仓管员"/>
       <el-table-column prop="createDate" label="制单日期">
