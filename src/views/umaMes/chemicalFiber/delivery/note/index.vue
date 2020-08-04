@@ -71,7 +71,7 @@
       size="small"
       show-summary
       style="width: 100%;"
-      >
+    >
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerCode" label="客户编号"/>
@@ -407,21 +407,20 @@
       <el-row>
         <el-table
           v-loading="detailLoading"
+          ref="myTable"
           :data="detailList"
           :summary-method="getSummaries"
           style="width: 100%"
           show-summary
           highlight-current-row
           row-key="id"
-          ref="myTable"
           @current-change="handleCurrentChange"
         >
           <el-table-column
             label="序号"
             align="center"
             type="index"
-            width="50px">
-          </el-table-column>
+            width="50px"/>
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
           <el-table-column prop="unit" label="单位" width="100px" align="center">
@@ -439,20 +438,20 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" type='number' @input = "sum(scope.row)" :min="0"  />
+              <el-input v-model="scope.row.totalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
+          <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" type='number' :min="0" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" type='number' @input = "sum(scope.row)"  :min="0" />
+              <el-input v-model="scope.row.sellingPrice" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column  prop="totalPrice" label="预计金额" width="120px" align="center"/>
+          <el-table-column prop="totalPrice" label="预计金额" width="120px" align="center"/>
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
@@ -784,26 +783,6 @@ export default {
       })
     },
     recived(id) {
-      var notNullFalg = true
-      for (var i = 0; i < this.detailList.length; i++) {
-        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == null) {
-          notNullFalg = false
-          break
-        }
-        if (this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
-          notNullFalg = false
-          break
-        }
-      }
-      if (!notNullFalg) {
-        // 有空值，不允许打印
-        this.$notify({
-          title: '请补充产品相关信息',
-          type: 'warning',
-          duration: 2500
-        })
-        return
-      }
       this.sutmitDetailLoading = true
       recived(id).then(res => {
         this.sutmitDetailLoading = false
@@ -863,7 +842,7 @@ export default {
         console.log(err.response.data.message)
       })
     },
-    //新增按钮的弹出事件
+    // 新增按钮的弹出事件
     add() {
       this.isAdd = true
       /* this.resetForm()
@@ -887,7 +866,7 @@ export default {
         })
       })
     },
-    //点击添加产品的弹出框并清空里面的数据
+    // 点击添加产品的弹出框并清空里面的数据
     addTable() {
       this.tableForm = {
         prodModel: '',
@@ -903,7 +882,7 @@ export default {
       this.prods = []
       this.addTableFrom = true
     },
-    //传添加产品数据给后端
+    // 传添加产品数据给后端
     addTableRow() {
       this.tableForm = {
         detailNumber: this.detailList.length + 1,
@@ -942,7 +921,7 @@ export default {
         })
       }
     },
-    //添加成功后关联产品数据到送货单
+    // 添加成功后关联产品数据到送货单
     DataiList(scanNumber) {
       var params = { 'scanNumber': scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
@@ -977,9 +956,9 @@ export default {
     popoverClose(id) {
       this.$refs[id].doClose()
     },
-    //把详情的数据传给后端
+    // 把详情的数据传给后端
     addAll() {
-      //判断客户Id不为空才进行下一步
+      // 判断客户Id不为空才进行下一步
       if (this.form.customerId === null) {
         this.$notify({
           title: '请选择客户',
@@ -988,7 +967,7 @@ export default {
         })
         return
       }
-      //后期可能要修改上面已经有判断了
+      // 后期可能要修改上面已经有判断了
       if (this.form.customerId != '') {
         this.id = this.form.customerId
       }
@@ -1021,16 +1000,16 @@ export default {
         totalNumber: this.form.totalNumber,
         realQuantity: this.form.realQuantity
       }
-      /*if (this.isAdd) {
+      /* if (this.isAdd) {
         this.doAdd(this.customerForm)
       } else this.doEdit(this.customerForm)*/
-      //form表单保存
+      // form表单保存
       this.doEdit(this.customerForm)
       var ifNull = true
-      //循环列表里面的数据判断
-      for ( var i = 0; i < this.detailList.length; i++ ) {
-        //判断是否有写计划数量
-        if(this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
+      // 循环列表里面的数据判断
+      for (var i = 0; i < this.detailList.length; i++) {
+        // 判断是否有写计划数量
+        if (this.detailList[i].totalNumber == '' || this.detailList[i].totalNumber == 0 || this.detailList[i].totalNumber == null) {
           ifNull = false
           this.$notify({
             title: '请填写计划数量',
@@ -1039,8 +1018,8 @@ export default {
           })
           break
         }
-        //判断是否有写单价
-        if(this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
+        // 判断是否有写单价
+        if (this.detailList[i].sellingPrice == '' || this.detailList[i].sellingPrice == 0 || this.detailList[i].sellingPrice == null) {
           ifNull = false
           this.$notify({
             title: '请填写单价',
@@ -1049,19 +1028,19 @@ export default {
           })
           break
         }
-        //判断实际数量是否为空，为空赋值0
+        // 判断实际数量是否为空，为空赋值0
         if (this.detailList[i].realQuantity == '' || this.detailList[i].realQuantity == null) {
           this.detailList[i].realQuantity = 0
         }
-        //判断最后一次并没有空值才进行修改
-        if (i < this.detailList.length && ifNull == true ) {
+        // 判断最后一次并没有空值才进行修改
+        if (i < this.detailList.length && ifNull == true) {
           editList(this.detailList).then(res => {
             this.init()
             this.detailLoading = false
           })
         }
       }
-      //可能要改因为修改错误肯也很显示保存成功
+      // 可能要改因为修改错误肯也很显示保存成功
       if (ifNull) {
         this.$notify({
           title: '保存成功',
@@ -1070,7 +1049,7 @@ export default {
         })
       }
     },
-    //显示详情列表的数据
+    // 显示详情列表的数据
     detail(data) {
       this.form = {
         id: data.id,
@@ -1098,7 +1077,7 @@ export default {
         payment: data.payment,
         balance: data.balance
       }
-      //查询详情列表数据
+      // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         this.detailLoading = false
@@ -1126,7 +1105,7 @@ export default {
     handleCurrentChange(val) {
       this.currentChangeItem = val
     },
-    //触发输入框后自动计算预计金额和实际金额
+    // 触发输入框后自动计算预计金额和实际金额
     sum(data) {
       if (data.totalNumber == '' || data.totalNumber == 0) {
         this.$notify({
@@ -1137,8 +1116,8 @@ export default {
         return
       }
       this.detailLoading = true
-      //判断实际数量不为空时预计金额也是实际金额
-      /*if (data.realQuantity == '' || data.realQuantity == 0 || data.realQuantity == null) {
+      // 判断实际数量不为空时预计金额也是实际金额
+      /* if (data.realQuantity == '' || data.realQuantity == 0 || data.realQuantity == null) {
         data.totalPrice = data.totalNumber * data.sellingPrice
         data.realPrice = data.realQuantity * data.sellingPrice
       } else {
@@ -1149,7 +1128,7 @@ export default {
       data.realPrice = data.realQuantity * data.sellingPrice
       this.detailLoading = false
     },
-    //单号列表的合计显示
+    // 单号列表的合计显示
     getDataSummaries(param) {
       const { columns, data } = param
       const sums = []
@@ -1173,7 +1152,7 @@ export default {
       })
       return sums
     },
-    //详情列表的合计
+    // 详情列表的合计
     getSummaries(param) {
       const { columns, data } = param
       const sums = []
@@ -1253,12 +1232,17 @@ export default {
         downloadFileWhithScanNumber(result, this.form.scanNumber + '送货单导出', 'xls')
       }).catch(() => {
         this.downloadLoading = false
+        this.$notify({
+          title: '请补充产品信息',
+          type: 'warning',
+          duration: 2500
+        })
       })
     },
     kgformatter(row, column, cellValue, index) {
       return cellValue + ' KG'
     },
-    //输入客户名称自动填入客户编号
+    // 输入客户名称自动填入客户编号
     setCustomerId(event) {
       this.customerQueryCode.code = event
       getCustomerList(this.customerQueryCode).then(res => {
@@ -1273,7 +1257,7 @@ export default {
         this.customerQueryCode.code = ''
       })
     },
-    //输入客户编号自动填入客户名称
+    // 输入客户编号自动填入客户名称
     setCustomerName(event) {
       this.customerQueryName.name = event
       getCustomerList(this.customerQueryName).then(res => {
@@ -1292,7 +1276,7 @@ export default {
       this.userOptions = []
       this.prodOptions = []
     },
-    //查询客户名称的下拉列表
+    // 查询客户名称的下拉列表
     customerRemoteMethod(query) {
       if (query !== '') {
         this.customerLoading = true
@@ -1311,7 +1295,7 @@ export default {
         this.customerOptions = []
       }
     },
-    //查询客户编号的下拉列表
+    // 查询客户编号的下拉列表
     customerCodeMethod(query) {
       if (query !== '') {
         this.customerCodeLoading = true
@@ -1330,7 +1314,7 @@ export default {
         this.customerOptions = []
       }
     },
-    //查询业务员的下拉列表
+    // 查询业务员的下拉列表
     sellerRemoteMethod(query) {
       // 业务员deptId为19
       const params = { deptId: 19, realname: query }
@@ -1344,7 +1328,7 @@ export default {
         })
       })
     },
-    //查询仓管员的下拉列表
+    // 查询仓管员的下拉列表
     storeKeeperRemoteMethod(query) {
       // 仓管员deptId为16
       const params = { deptId: 16, realname: query }
@@ -1376,7 +1360,7 @@ export default {
         })
       })
     },
-    //查询运输的下拉列表
+    // 查询运输的下拉列表
     transporterRemoteMethod(query) {
       // 运输部deptId为18
       const params = { deptId: 18, realname: query }
@@ -1390,7 +1374,7 @@ export default {
         })
       })
     },
-    //保存按钮，保存form表单数据
+    // 保存按钮，保存form表单数据
     doEdit(customerForm) {
       if (this.detailList.length == 0) {
         customerForm.totalPrice = 0
@@ -1404,7 +1388,7 @@ export default {
         console.log(err.response.data.message)
       })
     },
-    //保存按钮，新增数据
+    // 保存按钮，新增数据
     doAdd(customerForm) {
       customerForm.scanNumber = ''
       add(customerForm).then(res => {
@@ -1414,7 +1398,7 @@ export default {
         console.log(err.response.data.message)
       })
     },
-    //清空form表单的数据
+    // 清空form表单的数据
     resetForm() {
       this.form = {
         id: '',
