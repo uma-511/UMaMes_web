@@ -78,6 +78,7 @@
       <el-table-column prop="customerAddress" label="客户地址"/>
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
+      <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="totalPrice" label="总价"/>
       <el-table-column prop="seller" label="业务员"/>
       <el-table-column prop="storeKeeper" label="仓管员"/>
@@ -400,6 +401,9 @@
                   @blur="userOptions"
                 />
               </el-select>
+            </el-form-item>
+            <el-form-item label="备 注" >
+              <el-input v-model="form.remark" style="width: 430px;"/>
             </el-form-item>
           </el-form>
         </el-form>
@@ -1078,7 +1082,8 @@ export default {
         deliveryDate: data.deliveryDate,
         noteStatus: data.noteStatus,
         payment: data.payment,
-        balance: data.balance
+        balance: data.balance,
+        remark: data.remark
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1141,7 +1146,7 @@ export default {
           return
         }
         const values = data.map(item => Number(item[column.property]))
-        if (index === 6) {
+        if (index === 7) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
