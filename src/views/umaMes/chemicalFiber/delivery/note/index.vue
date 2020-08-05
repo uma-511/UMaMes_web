@@ -1260,7 +1260,7 @@ export default {
       }).catch(() => {
         this.downloadLoading = false
         this.$notify({
-          title: '请补充产品信息',
+          title: '请保存产品信息',
           type: 'warning',
           duration: 2500
         })
