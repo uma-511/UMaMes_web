@@ -783,6 +783,14 @@ export default {
         })
         return
       }
+      if (this.$refs.button11.type == 'danger') {
+        this.$notify({
+          title: '请先保存',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.sutmitDetailLoading = true
       sendOut(id).then(res => {
         this.sutmitDetailLoading = false
@@ -800,6 +808,14 @@ export default {
       })
     },
     recived(id) {
+      if (this.$refs.button11.type == 'danger') {
+        this.$notify({
+          title: '请先保存',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.sutmitDetailLoading = true
       recived(id).then(res => {
         this.sutmitDetailLoading = false
@@ -1215,6 +1231,14 @@ export default {
       return sums
     },
     exportDelivery() {
+      if (this.$refs.button11.type == 'danger') {
+        this.$notify({
+          title: '请先保存',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       if (this.form.customerName === null) {
         this.$notify({
           title: '请返回填写客户信息',
