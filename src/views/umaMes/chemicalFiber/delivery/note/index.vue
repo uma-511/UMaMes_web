@@ -62,7 +62,7 @@
       </div>-->
     </div>
     <!--表单组件-->
-    <eForm ref="form" :is-add="isAdd"/>
+    <eForm ref="form" />
     <!--表格渲染-->
     <el-table
       v-loading="loading"
@@ -79,7 +79,7 @@
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
       <el-table-column prop="remark" label="备注"/>
-      <el-table-column prop="totalPrice" label="总价"/>
+      <el-table-column prop="totalPrice" label="总金额"/>
       <el-table-column prop="seller" label="业务员"/>
       <el-table-column prop="storeKeeper" label="仓管员"/>
       <el-table-column prop="createDate" label="制单日期">
@@ -877,12 +877,12 @@ export default {
     },
     // 新增按钮的弹出事件
     add() {
-      this.isAdd = true
-      /* this.resetForm()
+      this.isAdd = 1
+      this.resetForm()
       this.dialogVisible = true
       this.detailLoading = false
-      this.detailList = []*/
-      this.$refs.form.dialog = true
+      this.detailList = []
+      //this.$refs.form.dialog = true
     },
     // 导出
     download() {
@@ -902,14 +902,7 @@ export default {
     // 点击添加产品的弹出框并清空里面的数据
     addTable() {
       this.tableForm = {
-        prodModel: '',
-        prodName: '',
-        unit: '',
-        sellingPrice: '',
-        remark: '',
-        totalNumber: '',
-        realPrice: '',
-        realQuantity: ''
+        prodName: ''
       }
       this.form.searchName = ''
       this.prods = []
@@ -938,6 +931,7 @@ export default {
             type: 'success',
             duration: 2500
           })
+          this.addTableFrom = true
           this.ButtonType()
           this.DataiList(this.form.scanNumber)
           this.addTableFrom = false
@@ -1034,13 +1028,11 @@ export default {
         totalNumber: this.form.totalNumber,
         realQuantity: this.form.realQuantity
       }
-      /*if (this.isAdd) {
+      if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
-      } else {
-        this.doEdit(this.customerForm)
-      }*/
+      }
       //form表单保存
-      this.doEdit(this.customerForm)
+      //this.doEdit(this.customerForm)
       var ifNull = true
       // 循环列表里面的数据判断
       for (var i = 0; i < this.detailList.length; i++) {
@@ -1071,6 +1063,9 @@ export default {
         // 判断最后一次并没有空值才进行修改
         if (i < this.detailList.length && ifNull == true) {
           editList(this.detailList).then(res => {
+            if (this.isAdd == 2) {
+              this.doEdit(this.customerForm)
+            }
             this.init()
             this.detailLoading = false
           })
@@ -1164,8 +1159,8 @@ export default {
         data.totalPrice = data.realQuantity * data.sellingPrice
         data.realPrice = data.realQuantity * data.sellingPrice
       }*/
-      data.totalPrice = data.totalNumber * data.sellingPrice
-      data.realPrice = data.realQuantity * data.sellingPrice
+      data.totalPrice = (data.totalNumber * data.sellingPrice).toFixed(2)
+      data.realPrice = (data.realQuantity * data.sellingPrice).toFixed(2)
       this.detailLoading = false
     },
     ButtonType(){
@@ -1189,7 +1184,7 @@ export default {
             } else {
               return prev
             }
-          }, 0)
+          }, 0).toFixed(2)
           sums[index] += ' 元'
         }
       })
@@ -1446,8 +1441,12 @@ export default {
     doAdd(customerForm) {
       customerForm.scanNumber = ''
       add(customerForm).then(res => {
-        this.isAdd = false
+        this.isAdd = 2
         this.init()
+        this.form.scanNumber = res.scanNumber
+        this.form.id = res.id
+        this.form.noteStatus = 1
+        this.form.customerId = res.customerId
       }).catch(err => {
         console.log(err.response.data.message)
       })
