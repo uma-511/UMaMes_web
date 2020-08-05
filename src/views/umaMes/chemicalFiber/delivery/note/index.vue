@@ -1084,6 +1084,7 @@ export default {
     },
     // 显示详情列表的数据
     detail(data) {
+      this.isAdd = 2
       this.$refs.button11.type = 'success'
       this.form = {
         id: data.id,
