@@ -625,6 +625,7 @@ export default {
       prods: [],
       visible: false,
       isClass: false,
+      sumRealQuantity: '',
       id: '',
       form: {
         id: '',
@@ -1008,7 +1009,7 @@ export default {
         customerAddress: this.form.customerAddress,
         contacts: this.form.contacts,
         contactPhone: this.form.contactPhone,
-        totalPrice: this.form.totalPrice,
+        totalPrice: this.sumRealQuantity,
         remark: this.form.remark,
         seller: this.form.seller,
         storeKeeper: this.form.storeKeeper,
@@ -1222,6 +1223,7 @@ export default {
           }, 0).toFixed(2)
           sums[index] += ' 元'
         }
+        this.sumRealQuantity = sums[index]
       })
       return sums
     },
