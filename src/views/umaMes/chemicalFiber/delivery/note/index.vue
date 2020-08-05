@@ -71,13 +71,14 @@
       size="small"
       show-summary
       style="width: 100%;"
-    >
+      >
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerCode" label="客户编号"/>
       <el-table-column prop="customerAddress" label="客户地址"/>
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
+      <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="totalPrice" label="总价"/>
       <el-table-column prop="seller" label="业务员"/>
       <el-table-column prop="storeKeeper" label="仓管员"/>
@@ -191,7 +192,7 @@
       width="80%"
     >
       <el-row style="width: 100%">
-        <el-form ref="form1" :model="form" :rules="rules" size="mini" label-width="80px" >
+        <el-form ref="form1" :model="form" size="mini" label-width="80px" >
           <el-form :inline="true" size="mini">
             <el-form-item label="客户编号">
               <el-select
@@ -202,8 +203,8 @@
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请输入客户编号关键词"
-                style="width: 200px;"
+                placeholder="输入客户编号关键词"
+                style="width: 150px;"
                 @change="setCustomerName($event)"
               >
                 <el-option
@@ -214,30 +215,6 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="仓管员">
-              <el-select
-                v-model="form.storeKeeper"
-                :loading="userLoading"
-                :remote-method="storeKeeperRemoteMethod"
-                multiple:false
-                filterable
-                remote
-                reserve-keyword
-                placeholder="请输入仓管员名称关键词"
-                style="width: 200px;"
-                @focus="cleanUpOptions"
-              >
-                <el-option
-                  v-for="item in userOptions"
-                  :key="item.realname"
-                  :label="item.realname"
-                  :value="item.realname"
-                  @blur="userOptions"
-                />
-              </el-select>
-            </el-form-item>
-          </el-form>
-          <el-form :inline="true" size="mini">
             <el-form-item label="客户名称">
               <el-select
                 v-model="form.customerName"
@@ -247,8 +224,8 @@
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请输入客户名称关键词"
-                style="width: 200px;"
+                placeholder="输入客户关键词"
+                style="width: 150px;"
                 @change="setCustomerId($event)"
               >
                 <el-option
@@ -259,71 +236,31 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="车牌号" >
-              <el-input v-model="form.carNumber" style="width: 200px;"/>
+            <el-form-item label="联系人员" >
+              <el-input v-model="form.contacts" style="width: 150px;"/>
             </el-form-item>
-            <el-form-item label="业务员" >
-              <el-select
-                v-model="form.seller"
-                :loading="userLoading"
-                :remote-method="sellerRemoteMethod"
-                multiple:false
-                filterable
-                remote
-                reserve-keyword
-                placeholder="请输入业务员名称关键词"
-                style="width: 200px;"
-                @focus="cleanUpOptions"
-              >
-                <el-option
-                  v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
-                />
-              </el-select>
+            <el-form-item label="客户电话" >
+              <el-input v-model="form.contactPhone" style="width: 150px;"/>
             </el-form-item>
             <el-form-item label="出库单号" >
-              <el-input v-model="form.scanNumber" :disabled="true" style="width: 200px;"/>
+              <el-input v-model="form.scanNumber" :disabled="true" style="width: 180px;"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户地址" >
-              <el-input v-model="form.customerAddress" style="width: 470px;"/>
+              <el-input v-model="form.customerAddress" style="width: 382px;"/>
             </el-form-item>
-            <el-form-item label="付款方式" >
-              <el-input v-model="form.payment" style="width: 200px;"/>
-            </el-form-item>
-            <el-form-item label="最新欠款" >
-              <el-input v-model="form.balance" :disabled="true" style="width: 200px;"/>
-            </el-form-item>
-          </el-form>
-          <el-form :inline="true" size="mini">
-            <el-form-item label="客户电话" >
-              <el-input v-model="form.contactPhone" style="width: 200px;"/>
-            </el-form-item>
-            <el-form-item label="联系人" >
-              <el-input v-model="form.contacts" style="width: 200px;"/>
-            </el-form-item>
-            <el-form-item label="订单号码" >
-              <el-input style="width: 200px;"/>
-            </el-form-item>
-            <el-form-item label="交货日期" >
-              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 200px;" maxlength="15"/>
-            </el-form-item>
-          </el-form>
-          <el-form :inline="true" size="mini">
-            <el-form-item label="主司机" >
+            <el-form-item label="仓管人员">
               <el-select
-                v-model="form.driverMain"
+                v-model="form.storeKeeper"
                 :loading="userLoading"
-                :remote-method="transporterRemoteMethod"
+                :remote-method="storeKeeperRemoteMethod"
                 multiple:false
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请输入主司机名称关键词"
-                style="width: 200px;"
+                placeholder="输入仓管员关键词"
+                style="width: 150px;"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -335,17 +272,46 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="副司机" >
+            <el-form-item label="业务人员" >
               <el-select
-                v-model="form.driverDeputy"
+                v-model="form.seller"
+                :loading="userLoading"
+                :remote-method="sellerRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="输入业务员关键词"
+                style="width: 150px;"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in userOptions"
+                  :key="item.username"
+                  :label="item.username"
+                  :value="item.username"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="订单号码" >
+              <el-input style="width: 180px;"/>
+            </el-form-item>
+          </el-form>
+          <el-form :inline="true" size="mini">
+            <el-form-item label="交货日期" >
+              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15"/>
+            </el-form-item>
+            <el-form-item label="主 司 机" >
+              <el-select
+                v-model="form.driverMain"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请输入副司机名称关键词"
-                style="width: 200px;"
+                placeholder="输入主司机关键词"
+                style="width: 157px;"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -366,8 +332,43 @@
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请输入装卸员1名称关键词"
-                style="width: 200px;"
+                placeholder="输入装卸员1关键词"
+                style="width: 156px;"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in userOptions"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
+                  @blur="userOptions"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="付款方式" >
+              <el-input v-model="form.payment" style="width: 150px;"/>
+            </el-form-item>
+            <el-form-item label="最新欠款" >
+              <el-input v-model="form.balance" :disabled="true" style="width: 180px;"/>
+            </el-form-item>
+          </el-form>
+          <el-form :inline="true" size="mini">
+          </el-form>
+          <el-form :inline="true" size="mini">
+            <el-form-item label="车 牌 号" >
+              <el-input v-model="form.carNumber" style="width: 158px;"/>
+            </el-form-item>
+            <el-form-item label="副 司 机" >
+              <el-select
+                v-model="form.driverDeputy"
+                :loading="userLoading"
+                :remote-method="transporterRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="输入副司机关键词"
+                style="width: 158px;"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -388,8 +389,8 @@
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请输入装卸员2名称关键词"
-                style="width: 200px;"
+                placeholder="输入装卸员2关键词"
+                style="width: 156px;"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -401,26 +402,30 @@
                 />
               </el-select>
             </el-form-item>
+            <el-form-item label="备 注" >
+              <el-input v-model="form.remark" style="width: 430px;"/>
+            </el-form-item>
           </el-form>
         </el-form>
       </el-row>
       <el-row>
         <el-table
           v-loading="detailLoading"
-          ref="myTable"
           :data="detailList"
           :summary-method="getSummaries"
           style="width: 100%"
           show-summary
           highlight-current-row
           row-key="id"
+          ref="myTable"
           @current-change="handleCurrentChange"
         >
           <el-table-column
             label="序号"
             align="center"
             type="index"
-            width="50px"/>
+            width="50px">
+          </el-table-column>
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
           <el-table-column prop="unit" label="单位" width="100px" align="center">
@@ -438,20 +443,20 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.totalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" type='number' @input = "sum(scope.row)" :min="0"  />
             </template>
           </el-table-column>
-          <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
+          <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" type='number' :min="0" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.sellingPrice" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" type='number' @input = "sum(scope.row)"  :min="0" />
             </template>
           </el-table-column>
-          <el-table-column prop="totalPrice" label="预计金额" width="120px" align="center"/>
+          <el-table-column  prop="totalPrice" label="预计金额" width="120px" align="center"/>
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
@@ -1000,10 +1005,12 @@ export default {
         totalNumber: this.form.totalNumber,
         realQuantity: this.form.realQuantity
       }
-      /* if (this.isAdd) {
+      /*if (this.isAdd) {
         this.doAdd(this.customerForm)
-      } else this.doEdit(this.customerForm)*/
-      // form表单保存
+      } else {
+        this.doEdit(this.customerForm)
+      }*/
+      //form表单保存
       this.doEdit(this.customerForm)
       var ifNull = true
       // 循环列表里面的数据判断
@@ -1075,7 +1082,8 @@ export default {
         deliveryDate: data.deliveryDate,
         noteStatus: data.noteStatus,
         payment: data.payment,
-        balance: data.balance
+        balance: data.balance,
+        remark: data.remark
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1138,7 +1146,7 @@ export default {
           return
         }
         const values = data.map(item => Number(item[column.property]))
-        if (index === 6) {
+        if (index === 7) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
@@ -1297,6 +1305,7 @@ export default {
     },
     // 查询客户编号的下拉列表
     customerCodeMethod(query) {
+      this.customerCodeLoading = false
       if (query !== '') {
         this.customerCodeLoading = true
         this.customerQuery.code = query
