@@ -529,12 +529,12 @@
           <el-button slot="reference" :disabled="form.noteStatus != 2 ? true : false" :type="form.noteStatus != 2 ? 'info' : 'success'" icon="el-icon-truck">发货</el-button>
         </el-popover>
         <el-popover
-          :ref="tableForm.id"
+          :ref="tableForm.customerName"
           placement="top"
         >
           <p>确认签收前，请确认回填信息</p>
           <div style="text-align: right; margin: 0">
-            <el-button size="mini" type="text" @click="popoverClose(tableForm.id)">取消</el-button>
+            <el-button size="mini" type="text" @click="popoverClose(tableForm.customerName)">取消</el-button>
             <el-button
               :loading="sutmitDetailLoading"
               type="primary"
@@ -819,7 +819,7 @@ export default {
       this.sutmitDetailLoading = true
       recived(id).then(res => {
         this.sutmitDetailLoading = false
-        this.$refs[this.tableForm.id].doClose()
+        this.$refs[this.tableForm.customerName].doClose()
         this.dialogVisible = false
         this.init()
         this.$notify({
