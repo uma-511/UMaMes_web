@@ -529,9 +529,9 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button v-if="form.invalId == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
-        <el-button v-if="form.noteStatus == 0 && form.invalId == 1" @click="addTable" >添加产品</el-button>
-        <el-button v-if="form.invalId == 0 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-button v-if="form.invalid == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button v-if="form.noteStatus == 0 && form.invalid == 1" @click="addTable" >添加产品</el-button>
+        <el-button v-if="form.invalid == 0 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
           :ref="form.id"
           placement="top"
@@ -1138,7 +1138,7 @@ export default {
         payment: data.payment,
         balance: data.balance,
         remark: data.remark,
-        invalId: data.invalId
+        invalid: data.invalid
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1506,7 +1506,7 @@ export default {
         state: '',
         loaderOne: '',
         loaderTwo: '',
-        invalId: 0
+        invalid: 0
       }
     }
   }
