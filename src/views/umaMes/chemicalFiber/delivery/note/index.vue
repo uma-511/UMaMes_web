@@ -66,7 +66,6 @@
       </div>-->
     </div>
     <!--表单组件-->
-    <eForm ref="form" />
     <!--表格渲染-->
     <el-table
       v-loading="loading"
@@ -259,18 +258,18 @@
               </el-select>
             </el-form-item>
             <el-form-item label="联系人员" >
-              <el-input v-model="form.contacts" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.contacts" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="客户电话" >
-              <el-input v-model="form.contactPhone" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.contactPhone" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="出库单号" >
-              <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户地址" >
-              <el-input v-model="form.customerAddress" style="width: 382px;" @input="ButtonType"/>
+              <el-input v-model="form.customerAddress" style="width: 382px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="仓管人员">
               <el-select
@@ -283,7 +282,7 @@
                 reserve-keyword
                 placeholder="输入仓管员关键词"
                 style="width: 150px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -306,7 +305,7 @@
                 reserve-keyword
                 placeholder="输入业务员关键词"
                 style="width: 150px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -318,12 +317,12 @@
               </el-select>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input style="width: 150px;" @input="ButtonType"/>
+              <el-input style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="交货日期" >
-              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="ButtonType"/>
+              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
             </el-form-item>
             <el-form-item label="主 司 机" >
               <el-select
@@ -336,7 +335,7 @@
                 reserve-keyword
                 placeholder="输入主司机关键词"
                 style="width: 157px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -359,7 +358,7 @@
                 reserve-keyword
                 placeholder="输入装卸员1关键词"
                 style="width: 156px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -529,9 +528,9 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button v-if="form.invalId == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
-        <el-button v-if="form.noteStatus == 0 && form.invalId == 1" @click="addTable" >添加产品</el-button>
-        <el-button v-if="form.invalId == 0 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-button v-if="form.invalid == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button v-if="form.noteStatus == 1 && form.invalid == 0" @click="addTable" >添加产品</el-button>
+        <el-button v-if="form.invalid == 0 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
           :ref="form.id"
           placement="top"
@@ -1138,7 +1137,7 @@ export default {
         payment: data.payment,
         balance: data.balance,
         remark: data.remark,
-        invalId: data.invalId
+        invalid: data.invalid
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1543,7 +1542,7 @@ export default {
         state: '',
         loaderOne: '',
         loaderTwo: '',
-        invalId: 0
+        invalid: 0
       }
     }
   }
