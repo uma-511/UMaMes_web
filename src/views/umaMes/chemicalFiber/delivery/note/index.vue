@@ -66,7 +66,6 @@
       </div>-->
     </div>
     <!--表单组件-->
-    <eForm ref="form" />
     <!--表格渲染-->
     <el-table
       v-loading="loading"
@@ -259,18 +258,18 @@
               </el-select>
             </el-form-item>
             <el-form-item label="联系人员" >
-              <el-input v-model="form.contacts" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.contacts" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="客户电话" >
-              <el-input v-model="form.contactPhone" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.contactPhone" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="出库单号" >
-              <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户地址" >
-              <el-input v-model="form.customerAddress" style="width: 382px;" @input="ButtonType"/>
+              <el-input v-model="form.customerAddress" style="width: 382px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="仓管人员">
               <el-select
@@ -283,7 +282,7 @@
                 reserve-keyword
                 placeholder="输入仓管员关键词"
                 style="width: 150px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -306,7 +305,7 @@
                 reserve-keyword
                 placeholder="输入业务员关键词"
                 style="width: 150px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -318,12 +317,12 @@
               </el-select>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input style="width: 150px;" @input="ButtonType"/>
+              <el-input style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="交货日期" >
-              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="ButtonType"/>
+              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
             </el-form-item>
             <el-form-item label="主 司 机" >
               <el-select
@@ -336,7 +335,7 @@
                 reserve-keyword
                 placeholder="输入主司机关键词"
                 style="width: 157px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -359,7 +358,7 @@
                 reserve-keyword
                 placeholder="输入装卸员1关键词"
                 style="width: 156px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -450,7 +449,8 @@
             label="序号"
             align="center"
             type="index"
-            width="50px"/>
+            width="50px">
+          </el-table-column>
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
           <el-table-column prop="unit" label="单位" width="100px" align="center">
@@ -1165,37 +1165,6 @@ export default {
       this.detailLoading = true
       this.dialogVisible = true
     },
-    doInvalid(id) {
-      doInvalid(id).then(res => {
-        this.sutmitDetailLoading = false
-        this.$refs[this.form.id].doClose()
-        this.dialogVisible = false
-        this.init()
-        this.$notify({
-          title: '状态设置为失效',
-          type: 'success',
-          duration: 2500
-        })
-      }).catch(err => {
-        this.sutmitDetailLoading = false
-        console.log(err.response.data.message)
-      })
-    },
-    unInvalid(id) {
-      this.sutmitDetailLoading = true
-      unInvalid(id).then(res => {
-        this.sutmitDetailLoading = false
-        this.init()
-        this.$notify({
-          title: '状态设置为生效',
-          type: 'success',
-          duration: 2500
-        })
-      }).catch(err => {
-        this.sutmitDetailLoading = false
-        console.log(err.response.data.message)
-      })
-    },
     handleCurrentChange(val) {
       this.currentChangeItem = val
     },
@@ -1224,7 +1193,7 @@ export default {
       data.realPrice = (data.realQuantity * data.sellingPrice).toFixed(2)
       this.detailLoading = false
     },
-    // 改变保存按钮的状态方法
+    //改变保存按钮的状态方法
     buttonType(){
       this.typeButton = 'danger'
     },
@@ -1497,11 +1466,7 @@ export default {
       }
       editAll(customerForm).then(res => {
         this.customerOptions = []
-        this.customerOptions = []
         this.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
       })
     },
     // 保存按钮，新增数据
@@ -1514,8 +1479,6 @@ export default {
         this.form.noteStatus = 1
         this.form.customerId = res.customerId
         this.init()
-      }).catch(err => {
-        console.log(err.response.data.message)
       })
     },
     // 清空form表单的数据
