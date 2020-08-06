@@ -808,7 +808,7 @@ export default {
         })
         return
       }
-      if (this.$refs.button11.type == 'danger') {
+      if (this.typeButton == 'danger') {
         this.$notify({
           title: '请先保存',
           type: 'warning',
@@ -833,7 +833,7 @@ export default {
       })
     },
     recived(id) {
-      if (this.$refs.button11.type == 'danger') {
+      if (this.typeButton == 'danger') {
         this.$notify({
           title: '请先保存',
           type: 'warning',
@@ -907,7 +907,7 @@ export default {
       this.dialogVisible = true
       this.detailLoading = false
       this.detailList = []
-      // this.$refs.form.dialog = true
+      this.buttonType()
     },
     // 导出
     download() {
@@ -957,8 +957,8 @@ export default {
             duration: 2500
           })
           this.addTableFrom = true
-          this.ButtonType()
-          this.DataiList(this.form.scanNumber)
+          this.buttonType()
+          this.dataiList(this.form.scanNumber)
           this.addTableFrom = false
           this.$parent.init()
         }).catch(err => {
@@ -975,7 +975,7 @@ export default {
       }
     },
     // 添加成功后关联产品数据到送货单
-    DataiList(scanNumber) {
+    dataiList(scanNumber) {
       var params = { 'scanNumber': scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         // this.detailList = res
@@ -1006,6 +1006,7 @@ export default {
       this.tableForm.prodName = data.prodName
       this.tableForm.prodModel = data.prodModel
     },
+    // 取消按钮触发事件
     popoverClose(id) {
       this.$refs[id].doClose()
     },
@@ -1056,8 +1057,8 @@ export default {
       if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
       }
-      // form表单保存
-      // this.doEdit(this.customerForm)
+      //form表单保存
+      //this.doEdit(this.customerForm)
       var ifNull = true
       // 循环列表里面的数据判断
       for (var i = 0; i < this.detailList.length; i++) {
@@ -1096,6 +1097,9 @@ export default {
           })
         }
       }
+      if (this.isAdd == 2) {
+        this.doEdit(this.customerForm)
+      }
       // 可能要改因为修改错误肯也很显示保存成功
       if (ifNull) {
         this.$notify({
@@ -1103,13 +1107,13 @@ export default {
           type: 'success',
           duration: 2500
         })
-        this.$refs.button11.type = 'success'
+        this.typeButton = 'success'
       }
     },
     // 显示详情列表的数据
     detail(data) {
       this.isAdd = 2
-      this.$refs.button11.type = 'success'
+      this.typeButton = 'success'
       this.form = {
         id: data.id,
         customerName: data.customerName,
@@ -1135,7 +1139,8 @@ export default {
         noteStatus: data.noteStatus,
         payment: data.payment,
         balance: data.balance,
-        remark: data.remark
+        remark: data.remark,
+        invalId: data.invalId
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1198,7 +1203,8 @@ export default {
     },
     // 触发输入框后自动计算预计金额和实际金额
     sum(data) {
-      this.$refs.button11.type = 'danger'
+      //this.typeButton = 'danger'
+      this.buttonType()
       if (data.totalNumber == '' || data.totalNumber == 0) {
         this.$notify({
           title: '请填写计划数量',
@@ -1220,8 +1226,9 @@ export default {
       data.realPrice = (data.realQuantity * data.sellingPrice).toFixed(2)
       this.detailLoading = false
     },
-    ButtonType() {
-      this.$refs.button11.type = 'danger'
+    // 改变保存按钮的状态方法
+    buttonType(){
+      this.typeButton = 'danger'
     },
     // 单号列表的合计显示
     getDataSummaries(param) {
@@ -1283,8 +1290,9 @@ export default {
       })
       return sums
     },
+    // 导出送货单
     exportDelivery() {
-      if (this.$refs.button11.type == 'danger') {
+      if (this.typeButton == 'danger') {
         this.$notify({
           title: '请先保存',
           type: 'warning',
@@ -1360,7 +1368,7 @@ export default {
         this.id = this.customerLists[0].id
         this.customerQueryCode.code = ''
       })
-      this.ButtonType()
+      this.buttonType()
     },
     // 输入客户编号自动填入客户名称
     setCustomerName(event) {
@@ -1376,8 +1384,9 @@ export default {
         this.id = this.customerLists[0].id
         this.customerQueryName.name = ''
       })
-      this.ButtonType()
+      this.buttonType()
     },
+    // 清空下拉框
     cleanUpOptions() {
       this.userOptions = []
       this.prodOptions = []
@@ -1449,6 +1458,7 @@ export default {
         })
       })
     },
+    // 查询产品把产品信息填入框
     fullWithProd(event) {
       const params = { prodName: event }
       getByProdName(params).then(res => {
@@ -1457,6 +1467,7 @@ export default {
         this.tableForm.prodModel = this.prodList[0].prodModel
       })
     },
+    // 查询产品下拉框
     prodRemoteMethod(query) {
       const params = { prodName: query }
       getSelectMap(params).then(res => {
@@ -1487,9 +1498,9 @@ export default {
         customerForm.totalPrice = 0
       }
       editAll(customerForm).then(res => {
-        this.init()
         this.customerOptions = []
-        this.$parent.init()
+        this.customerOptions = []
+        this.init()
       }).catch(err => {
         this.loading = false
         console.log(err.response.data.message)
@@ -1500,11 +1511,11 @@ export default {
       customerForm.scanNumber = ''
       add(customerForm).then(res => {
         this.isAdd = 2
-        this.init()
         this.form.scanNumber = res.scanNumber
         this.form.id = res.id
         this.form.noteStatus = 1
         this.form.customerId = res.customerId
+        this.init()
       }).catch(err => {
         console.log(err.response.data.message)
       })
@@ -1533,7 +1544,8 @@ export default {
         driverDeputy: '',
         state: '',
         loaderOne: '',
-        loaderTwo: ''
+        loaderTwo: '',
+        invalId: 0
       }
     }
   }
