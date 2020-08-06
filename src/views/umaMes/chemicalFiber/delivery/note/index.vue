@@ -449,8 +449,7 @@
             label="序号"
             align="center"
             type="index"
-            width="50px">
-          </el-table-column>
+            width="50px"/>
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
           <el-table-column prop="unit" label="单位" width="100px" align="center">
@@ -530,7 +529,7 @@
       </el-row>
       <span slot="footer" class="dialog-footer">
         <el-button v-if="form.invalid == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
-        <el-button v-if="form.noteStatus == 0 && form.invalid == 1" @click="addTable" >添加产品</el-button>
+        <el-button v-if="form.noteStatus == 1 && form.invalid == 0" @click="addTable" >添加产品</el-button>
         <el-button v-if="form.invalid == 0 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
           :ref="form.id"
@@ -1165,6 +1164,37 @@ export default {
       this.detailLoading = true
       this.dialogVisible = true
     },
+    doInvalid(id) {
+      doInvalid(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[this.form.id].doClose()
+        this.dialogVisible = false
+        this.init()
+        this.$notify({
+          title: '状态设置为失效',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        console.log(err.response.data.message)
+      })
+    },
+    unInvalid(id) {
+      this.sutmitDetailLoading = true
+      unInvalid(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.init()
+        this.$notify({
+          title: '状态设置为生效',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        console.log(err.response.data.message)
+      })
+    },
     handleCurrentChange(val) {
       this.currentChangeItem = val
     },
@@ -1193,7 +1223,7 @@ export default {
       data.realPrice = (data.realQuantity * data.sellingPrice).toFixed(2)
       this.detailLoading = false
     },
-    //改变保存按钮的状态方法
+    // 改变保存按钮的状态方法
     buttonType(){
       this.typeButton = 'danger'
     },
@@ -1466,7 +1496,11 @@ export default {
       }
       editAll(customerForm).then(res => {
         this.customerOptions = []
+        this.customerOptions = []
         this.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
       })
     },
     // 保存按钮，新增数据
@@ -1479,6 +1513,8 @@ export default {
         this.form.noteStatus = 1
         this.form.customerId = res.customerId
         this.init()
+      }).catch(err => {
+        console.log(err.response.data.message)
       })
     },
     // 清空form表单的数据
