@@ -372,16 +372,16 @@
               </el-select>
             </el-form-item>
             <el-form-item label="付款方式" >
-              <el-input v-model="form.payment" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.payment" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="最新欠款" >
-              <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
             <el-form-item label="车 牌 号" >
-              <el-input v-model="form.carNumber" style="width: 158px;" @input="ButtonType"/>
+              <el-input v-model="form.carNumber" style="width: 158px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="副 司 机" >
               <el-select
@@ -394,7 +394,7 @@
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 158px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -417,7 +417,7 @@
                 reserve-keyword
                 placeholder="输入装卸员2关键词"
                 style="width: 156px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -430,7 +430,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="备 注" >
-              <el-input v-model="form.remark" style="width: 403px;" @input="ButtonType"/>
+              <el-input v-model="form.remark" style="width: 403px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
         </el-form>
@@ -438,7 +438,6 @@
       <el-row>
         <el-table
           v-loading="detailLoading"
-          ref="myTable"
           :data="detailList"
           :summary-method="getSummaries"
           style="width: 100%"
@@ -457,7 +456,7 @@
           <el-table-column prop="unit" label="单位" width="100px" align="center">
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
-              <el-select v-model="scope.row.unit" placeholder="请选择单位" @change="ButtonType">
+              <el-select v-model="scope.row.unit" placeholder="请选择单位" @change="buttonType">
                 <el-option
                   v-for="item in option"
                   :key="item.value"
@@ -492,7 +491,7 @@
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" placeholder="备注" @input="ButtonType"/>
+              <el-input v-model="scope.row.remark" placeholder="备注" @input="buttonType"/>
             </template>
           </el-table-column>
           <el-table-column
@@ -530,9 +529,9 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button ref="button11" :loading="loading" icon="el-icon-edit" @click="addAll">保存</el-button>
-        <el-button v-if="form.noteStatus == 1" @click="addTable" >添加产品</el-button>
-        <el-button v-if="form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-button v-if="form.invalId == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button v-if="form.noteStatus == 0 && form.invalId == 1" @click="addTable" >添加产品</el-button>
+        <el-button v-if="form.invalId == 0 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
           :ref="form.id"
           placement="top"
@@ -633,20 +632,20 @@ export default {
       checkInvalidQuery: false,
       delLoading: false,
       dialogVisible: false,
-      popVisible: false,
       detailLoading: false,
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
       customerCodeLoading: false,
       addTableFrom: false,
+      isAdd: '',
       customerOptions: [],
       customerCodeOptions: [],
       userOptions: [],
       prodOptions: [],
       prods: [],
+      typeButton: '',
       visible: false,
-      isClass: false,
       sumRealQuantity: '',
       id: '',
       form: {
