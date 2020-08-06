@@ -62,7 +62,6 @@
       </div>-->
     </div>
     <!--表单组件-->
-    <eForm ref="form" />
     <!--表格渲染-->
     <el-table
       v-loading="loading"
@@ -237,18 +236,18 @@
               </el-select>
             </el-form-item>
             <el-form-item label="联系人员" >
-              <el-input v-model="form.contacts" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.contacts" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="客户电话" >
-              <el-input v-model="form.contactPhone" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.contactPhone" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="出库单号" >
-              <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户地址" >
-              <el-input v-model="form.customerAddress" style="width: 382px;" @input="ButtonType"/>
+              <el-input v-model="form.customerAddress" style="width: 382px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="仓管人员">
               <el-select
@@ -261,7 +260,7 @@
                 reserve-keyword
                 placeholder="输入仓管员关键词"
                 style="width: 150px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -284,7 +283,7 @@
                 reserve-keyword
                 placeholder="输入业务员关键词"
                 style="width: 150px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -296,12 +295,12 @@
               </el-select>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input style="width: 150px;" @input="ButtonType"/>
+              <el-input style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="交货日期" >
-              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="ButtonType"/>
+              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
             </el-form-item>
             <el-form-item label="主 司 机" >
               <el-select
@@ -314,7 +313,7 @@
                 reserve-keyword
                 placeholder="输入主司机关键词"
                 style="width: 157px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -337,7 +336,7 @@
                 reserve-keyword
                 placeholder="输入装卸员1关键词"
                 style="width: 156px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -350,17 +349,17 @@
               </el-select>
             </el-form-item>
             <el-form-item label="付款方式" >
-              <el-input v-model="form.payment" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.payment" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="最新欠款" >
-              <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="车 牌 号" >
-              <el-input v-model="form.carNumber" style="width: 158px;" @input="ButtonType"/>
+              <el-input v-model="form.carNumber" style="width: 158px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="副 司 机" >
               <el-select
@@ -373,7 +372,7 @@
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 158px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -396,7 +395,7 @@
                 reserve-keyword
                 placeholder="输入装卸员2关键词"
                 style="width: 156px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -409,7 +408,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="备 注" >
-              <el-input v-model="form.remark" style="width: 403px;" @input="ButtonType"/>
+              <el-input v-model="form.remark" style="width: 403px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
         </el-form>
@@ -437,7 +436,7 @@
           <el-table-column prop="unit" label="单位" width="100px" align="center">
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
-              <el-select v-model="scope.row.unit" placeholder="请选择单位" @change="ButtonType">
+              <el-select v-model="scope.row.unit" placeholder="请选择单位" @change="buttonType">
                 <el-option
                   v-for="item in option"
                   :key="item.value"
@@ -471,7 +470,7 @@
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" placeholder="备注" @input="ButtonType"/>
+              <el-input v-model="scope.row.remark" placeholder="备注" @input="buttonType"/>
             </template>
           </el-table-column>
           <el-table-column
@@ -509,7 +508,7 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button :loading="loading" ref="button11" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
         <el-button v-if="form.noteStatus == 1" @click="addTable" >添加产品</el-button>
         <el-button v-if="form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
@@ -611,20 +610,20 @@ export default {
       dateQuery: '',
       delLoading: false,
       dialogVisible: false,
-      popVisible: false,
       detailLoading: false,
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
       customerCodeLoading: false,
       addTableFrom: false,
+      isAdd: '',
       customerOptions: [],
       customerCodeOptions: [],
       userOptions: [],
       prodOptions: [],
       prods: [],
+      typeButton: '',
       visible: false,
-      isClass: false,
       sumRealQuantity: '',
       id: '',
       form: {
@@ -784,7 +783,7 @@ export default {
         })
         return
       }
-      if (this.$refs.button11.type == 'danger') {
+      if (this.typeButton == 'danger') {
         this.$notify({
           title: '请先保存',
           type: 'warning',
@@ -809,7 +808,7 @@ export default {
       })
     },
     recived(id) {
-      if (this.$refs.button11.type == 'danger') {
+      if (this.typeButton == 'danger') {
         this.$notify({
           title: '请先保存',
           type: 'warning',
@@ -933,8 +932,8 @@ export default {
             duration: 2500
           })
           this.addTableFrom = true
-          this.ButtonType()
-          this.DataiList(this.form.scanNumber)
+          this.buttonType()
+          this.dataiList(this.form.scanNumber)
           this.addTableFrom = false
           this.$parent.init()
         }).catch(err => {
@@ -951,7 +950,7 @@ export default {
       }
     },
     // 添加成功后关联产品数据到送货单
-    DataiList(scanNumber) {
+    dataiList(scanNumber) {
       var params = { 'scanNumber': scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         // this.detailList = res
@@ -982,6 +981,7 @@ export default {
       this.tableForm.prodName = data.prodName
       this.tableForm.prodModel = data.prodModel
     },
+    // 取消按钮触发事件
     popoverClose(id) {
       this.$refs[id].doClose()
     },
@@ -1072,6 +1072,9 @@ export default {
           })
         }
       }
+      if (this.isAdd == 2) {
+        this.doEdit(this.customerForm)
+      }
       // 可能要改因为修改错误肯也很显示保存成功
       if (ifNull) {
         this.$notify({
@@ -1079,12 +1082,13 @@ export default {
           type: 'success',
           duration: 2500
         })
-        this.$refs.button11.type = 'success'
+        this.typeButton = 'success'
       }
     },
     // 显示详情列表的数据
     detail(data) {
-      this.$refs.button11.type = 'success'
+      this.isAdd = 2
+      this.typeButton = 'success'
       this.form = {
         id: data.id,
         customerName: data.customerName,
@@ -1142,7 +1146,8 @@ export default {
     },
     // 触发输入框后自动计算预计金额和实际金额
     sum(data) {
-      this.$refs.button11.type = 'danger'
+      //this.typeButton = 'danger'
+      this.buttonType()
       if (data.totalNumber == '' || data.totalNumber == 0) {
         this.$notify({
           title: '请填写计划数量',
@@ -1164,8 +1169,9 @@ export default {
       data.realPrice = (data.realQuantity * data.sellingPrice).toFixed(2)
       this.detailLoading = false
     },
-    ButtonType(){
-      this.$refs.button11.type = 'danger'
+    //改变保存按钮的状态方法
+    buttonType(){
+      this.typeButton = 'danger'
     },
     // 单号列表的合计显示
     getDataSummaries(param) {
@@ -1227,8 +1233,9 @@ export default {
       })
       return sums
     },
+    // 导出送货单
     exportDelivery() {
-      if (this.$refs.button11.type == 'danger') {
+      if (this.typeButton == 'danger') {
         this.$notify({
           title: '请先保存',
           type: 'warning',
@@ -1304,7 +1311,7 @@ export default {
         this.id = this.customerLists[0].id
         this.customerQueryCode.code = ''
       })
-      this.ButtonType()
+      this.buttonType()
     },
     // 输入客户编号自动填入客户名称
     setCustomerName(event) {
@@ -1320,8 +1327,9 @@ export default {
         this.id = this.customerLists[0].id
         this.customerQueryName.name = ''
       })
-      this.ButtonType()
+      this.buttonType()
     },
+    // 清空下拉框
     cleanUpOptions() {
       this.userOptions = []
       this.prodOptions = []
@@ -1393,6 +1401,7 @@ export default {
         })
       })
     },
+    // 查询产品把产品信息填入框
     fullWithProd(event) {
       const params = { prodName: event }
       getByProdName(params).then(res => {
@@ -1401,6 +1410,7 @@ export default {
         this.tableForm.prodModel = this.prodList[0].prodModel
       })
     },
+    // 查询产品下拉框
     prodRemoteMethod(query) {
       const params = { prodName: query }
       getSelectMap(params).then(res => {
@@ -1431,12 +1441,8 @@ export default {
         customerForm.totalPrice = 0
       }
       editAll(customerForm).then(res => {
-        this.init()
         this.customerOptions = []
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
+        this.init()
       })
     },
     // 保存按钮，新增数据
@@ -1444,13 +1450,11 @@ export default {
       customerForm.scanNumber = ''
       add(customerForm).then(res => {
         this.isAdd = 2
-        this.init()
         this.form.scanNumber = res.scanNumber
         this.form.id = res.id
         this.form.noteStatus = 1
         this.form.customerId = res.customerId
-      }).catch(err => {
-        console.log(err.response.data.message)
+        this.init()
       })
     },
     // 清空form表单的数据
