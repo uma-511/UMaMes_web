@@ -372,16 +372,16 @@
               </el-select>
             </el-form-item>
             <el-form-item label="付款方式" >
-              <el-input v-model="form.payment" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.payment" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="最新欠款" >
-              <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="ButtonType"/>
+              <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
             <el-form-item label="车 牌 号" >
-              <el-input v-model="form.carNumber" style="width: 158px;" @input="ButtonType"/>
+              <el-input v-model="form.carNumber" style="width: 158px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="副 司 机" >
               <el-select
@@ -394,7 +394,7 @@
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 158px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -417,7 +417,7 @@
                 reserve-keyword
                 placeholder="输入装卸员2关键词"
                 style="width: 156px;"
-                @change="ButtonType"
+                @change="buttonType"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -430,7 +430,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="备 注" >
-              <el-input v-model="form.remark" style="width: 403px;" @input="ButtonType"/>
+              <el-input v-model="form.remark" style="width: 403px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
         </el-form>
@@ -438,7 +438,6 @@
       <el-row>
         <el-table
           v-loading="detailLoading"
-          ref="myTable"
           :data="detailList"
           :summary-method="getSummaries"
           style="width: 100%"
@@ -457,7 +456,7 @@
           <el-table-column prop="unit" label="单位" width="100px" align="center">
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
-              <el-select v-model="scope.row.unit" placeholder="请选择单位" @change="ButtonType">
+              <el-select v-model="scope.row.unit" placeholder="请选择单位" @change="buttonType">
                 <el-option
                   v-for="item in option"
                   :key="item.value"
@@ -474,7 +473,7 @@
           </el-table-column>
           <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" type='number' :min="0" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
@@ -492,7 +491,7 @@
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" placeholder="备注" @input="ButtonType"/>
+              <el-input v-model="scope.row.remark" placeholder="备注" @input="buttonType"/>
             </template>
           </el-table-column>
           <el-table-column
@@ -530,9 +529,9 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button ref="button11" :loading="loading" icon="el-icon-edit" @click="addAll">保存</el-button>
-        <el-button v-if="form.noteStatus == 1" @click="addTable" >添加产品</el-button>
-        <el-button v-if="form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-button v-if="form.invalId == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button v-if="form.noteStatus == 0 && form.invalId == 1" @click="addTable" >添加产品</el-button>
+        <el-button v-if="form.invalId == 0 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
           :ref="form.id"
           placement="top"
@@ -633,20 +632,20 @@ export default {
       checkInvalidQuery: false,
       delLoading: false,
       dialogVisible: false,
-      popVisible: false,
       detailLoading: false,
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
       customerCodeLoading: false,
       addTableFrom: false,
+      isAdd: '',
       customerOptions: [],
       customerCodeOptions: [],
       userOptions: [],
       prodOptions: [],
       prods: [],
+      typeButton: '',
       visible: false,
-      isClass: false,
       sumRealQuantity: '',
       id: '',
       form: {
@@ -779,9 +778,7 @@ export default {
       const type = query.type
       const value = query.value
       const dateQuery = this.dateQuery
-      const checkInvalidQurey = this.checkInvalidQuery
       if (type && value) { this.params[type] = value }
-      this.params['queryWithInvalid'] = checkInvalidQurey
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
@@ -809,7 +806,7 @@ export default {
         })
         return
       }
-      if (this.$refs.button11.type == 'danger') {
+      if (this.typeButton == 'danger') {
         this.$notify({
           title: '请先保存',
           type: 'warning',
@@ -834,7 +831,7 @@ export default {
       })
     },
     recived(id) {
-      if (this.$refs.button11.type == 'danger') {
+      if (this.typeButton == 'danger') {
         this.$notify({
           title: '请先保存',
           type: 'warning',
@@ -908,7 +905,7 @@ export default {
       this.dialogVisible = true
       this.detailLoading = false
       this.detailList = []
-      // this.$refs.form.dialog = true
+      this.buttonType()
     },
     // 导出
     download() {
@@ -958,8 +955,8 @@ export default {
             duration: 2500
           })
           this.addTableFrom = true
-          this.ButtonType()
-          this.DataiList(this.form.scanNumber)
+          this.buttonType()
+          this.dataiList(this.form.scanNumber)
           this.addTableFrom = false
           this.$parent.init()
         }).catch(err => {
@@ -976,7 +973,7 @@ export default {
       }
     },
     // 添加成功后关联产品数据到送货单
-    DataiList(scanNumber) {
+    dataiList(scanNumber) {
       var params = { 'scanNumber': scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         // this.detailList = res
@@ -1007,6 +1004,7 @@ export default {
       this.tableForm.prodName = data.prodName
       this.tableForm.prodModel = data.prodModel
     },
+    // 取消按钮触发事件
     popoverClose(id) {
       this.$refs[id].doClose()
     },
@@ -1057,8 +1055,8 @@ export default {
       if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
       }
-      // form表单保存
-      // this.doEdit(this.customerForm)
+      //form表单保存
+      //this.doEdit(this.customerForm)
       var ifNull = true
       // 循环列表里面的数据判断
       for (var i = 0; i < this.detailList.length; i++) {
@@ -1097,6 +1095,9 @@ export default {
           })
         }
       }
+      if (this.isAdd == 2) {
+        this.doEdit(this.customerForm)
+      }
       // 可能要改因为修改错误肯也很显示保存成功
       if (ifNull) {
         this.$notify({
@@ -1104,13 +1105,13 @@ export default {
           type: 'success',
           duration: 2500
         })
-        this.$refs.button11.type = 'success'
+        this.typeButton = 'success'
       }
     },
     // 显示详情列表的数据
     detail(data) {
       this.isAdd = 2
-      this.$refs.button11.type = 'success'
+      this.typeButton = 'success'
       this.form = {
         id: data.id,
         customerName: data.customerName,
@@ -1136,7 +1137,8 @@ export default {
         noteStatus: data.noteStatus,
         payment: data.payment,
         balance: data.balance,
-        remark: data.remark
+        remark: data.remark,
+        invalId: data.invalId
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1199,7 +1201,8 @@ export default {
     },
     // 触发输入框后自动计算预计金额和实际金额
     sum(data) {
-      this.$refs.button11.type = 'danger'
+      //this.typeButton = 'danger'
+      this.buttonType()
       if (data.totalNumber == '' || data.totalNumber == 0) {
         this.$notify({
           title: '请填写计划数量',
@@ -1221,8 +1224,9 @@ export default {
       data.realPrice = (data.realQuantity * data.sellingPrice).toFixed(2)
       this.detailLoading = false
     },
-    ButtonType() {
-      this.$refs.button11.type = 'danger'
+    // 改变保存按钮的状态方法
+    buttonType(){
+      this.typeButton = 'danger'
     },
     // 单号列表的合计显示
     getDataSummaries(param) {
@@ -1284,8 +1288,9 @@ export default {
       })
       return sums
     },
+    // 导出送货单
     exportDelivery() {
-      if (this.$refs.button11.type == 'danger') {
+      if (this.typeButton == 'danger') {
         this.$notify({
           title: '请先保存',
           type: 'warning',
@@ -1361,7 +1366,7 @@ export default {
         this.id = this.customerLists[0].id
         this.customerQueryCode.code = ''
       })
-      this.ButtonType()
+      this.buttonType()
     },
     // 输入客户编号自动填入客户名称
     setCustomerName(event) {
@@ -1377,8 +1382,9 @@ export default {
         this.id = this.customerLists[0].id
         this.customerQueryName.name = ''
       })
-      this.ButtonType()
+      this.buttonType()
     },
+    // 清空下拉框
     cleanUpOptions() {
       this.userOptions = []
       this.prodOptions = []
@@ -1450,6 +1456,7 @@ export default {
         })
       })
     },
+    // 查询产品把产品信息填入框
     fullWithProd(event) {
       const params = { prodName: event }
       getByProdName(params).then(res => {
@@ -1458,6 +1465,7 @@ export default {
         this.tableForm.prodModel = this.prodList[0].prodModel
       })
     },
+    // 查询产品下拉框
     prodRemoteMethod(query) {
       const params = { prodName: query }
       getSelectMap(params).then(res => {
@@ -1488,9 +1496,9 @@ export default {
         customerForm.totalPrice = 0
       }
       editAll(customerForm).then(res => {
-        this.init()
         this.customerOptions = []
-        this.$parent.init()
+        this.customerOptions = []
+        this.init()
       }).catch(err => {
         this.loading = false
         console.log(err.response.data.message)
@@ -1501,11 +1509,11 @@ export default {
       customerForm.scanNumber = ''
       add(customerForm).then(res => {
         this.isAdd = 2
-        this.init()
         this.form.scanNumber = res.scanNumber
         this.form.id = res.id
         this.form.noteStatus = 1
         this.form.customerId = res.customerId
+        this.init()
       }).catch(err => {
         console.log(err.response.data.message)
       })
@@ -1534,7 +1542,8 @@ export default {
         driverDeputy: '',
         state: '',
         loaderOne: '',
-        loaderTwo: ''
+        loaderTwo: '',
+        invalId: 0
       }
     }
   }
