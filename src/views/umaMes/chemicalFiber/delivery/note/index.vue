@@ -472,7 +472,7 @@
           </el-table-column>
           <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" type='number' :min="0" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
@@ -777,7 +777,9 @@ export default {
       const type = query.type
       const value = query.value
       const dateQuery = this.dateQuery
+      const checkInvalidQurey = this.checkInvalidQuery
       if (type && value) { this.params[type] = value }
+      this.params['queryWithInvalid'] = checkInvalidQurey
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
