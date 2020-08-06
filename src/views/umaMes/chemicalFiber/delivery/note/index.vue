@@ -127,7 +127,7 @@
               size="medium"
             >{{ statusValue[5] }}</el-tag>
           </div>
-          <!--销毁状态-->
+          <!--失效状态-->
           <div v-if="scope.row.noteStatus <= 0 || scope.row.noteStatus >5 ">
             <el-tag
               type="info"
@@ -151,17 +151,17 @@
             @click="edit(scope.row)"
           >编辑</el-button>-->
           <el-button
-            v-if="scope.row.invalid == 1"
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            v-if="scope.row.invalid == 1"
             size="mini"
-            type="info"
+            type="primary"
             icon="el-icon-tickets"
             @click="unInvalid(scope.row.id)"
             @click.stop
           >设为生效</el-button>
           <el-button
-            v-if="scope.row.invalid == 0"
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            v-if="scope.row.invalid == 0"
             size="mini"
             type="warning"
             icon="el-icon-tickets"
