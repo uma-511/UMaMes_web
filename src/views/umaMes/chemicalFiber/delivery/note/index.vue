@@ -33,6 +33,10 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
       />
+      <el-checkbox
+        v-model="checkInvalidQuery"
+        @change="toQuery"
+      >查询失效单</el-checkbox>
       <el-button
         class="filter-item"
         size="mini"
@@ -71,7 +75,7 @@
       size="small"
       show-summary
       style="width: 100%;"
-      >
+    >
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerCode" label="客户编号"/>
@@ -146,6 +150,24 @@
             icon="el-icon-edit"
             @click="edit(scope.row)"
           >编辑</el-button>-->
+          <el-button
+            v-if="scope.row.invalid == 1"
+            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            size="mini"
+            type="info"
+            icon="el-icon-tickets"
+            @click="unInvalid(scope.row.id)"
+            @click.stop
+          >设为生效</el-button>
+          <el-button
+            v-if="scope.row.invalid == 0"
+            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            size="mini"
+            type="warning"
+            icon="el-icon-tickets"
+            @click="doInvalid(scope.row.id)"
+            @click.stop
+          >设为失效</el-button>
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             size="mini"
@@ -356,8 +378,7 @@
               <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="ButtonType"/>
             </el-form-item>
           </el-form>
-          <el-form :inline="true" size="mini">
-          </el-form>
+          <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
             <el-form-item label="车 牌 号" >
               <el-input v-model="form.carNumber" style="width: 158px;" @input="ButtonType"/>
@@ -417,21 +438,20 @@
       <el-row>
         <el-table
           v-loading="detailLoading"
+          ref="myTable"
           :data="detailList"
           :summary-method="getSummaries"
           style="width: 100%"
           show-summary
           highlight-current-row
           row-key="id"
-          ref="myTable"
           @current-change="handleCurrentChange"
         >
           <el-table-column
             label="序号"
             align="center"
             type="index"
-            width="50px">
-          </el-table-column>
+            width="50px"/>
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
           <el-table-column prop="unit" label="单位" width="100px" align="center">
@@ -449,25 +469,26 @@
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.totalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" type='number' @input = "sum(scope.row)" :min="0"  />
+              <el-input v-model="scope.row.totalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="realQuantity"  label="实收数量" width="100px" align="center">
+          <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" type='number' :min="0" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sellingPrice"
-                        :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
-                        type='number'
-                        class = "login-form-input"
-                        @input = "sum(scope.row)"
-                        :min="0" />
+              <el-input
+                v-model="scope.row.sellingPrice"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                :min="0"
+                type="number"
+                class = "login-form-input"
+                @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column  prop="totalPrice" label="预计金额" width="120px" align="center"/>
+          <el-table-column prop="totalPrice" label="预计金额" width="120px" align="center"/>
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
@@ -509,7 +530,7 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button :loading="loading" ref="button11" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button ref="button11" :loading="loading" icon="el-icon-edit" @click="addAll">保存</el-button>
         <el-button v-if="form.noteStatus == 1" @click="addTable" >添加产品</el-button>
         <el-button v-if="form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
@@ -599,7 +620,7 @@ import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPou
 import { edit, editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
-import { add, editAll } from '@/api/chemicalFiberDeliveryNote'
+import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerLists } from '@/api/customer'
 import { getSelectMap, getByProdName } from '@/api/chemicalFiberStock'
 import eForm from './form'
@@ -609,6 +630,7 @@ export default {
   data() {
     return {
       dateQuery: '',
+      checkInvalidQuery: false,
       delLoading: false,
       dialogVisible: false,
       popVisible: false,
@@ -654,7 +676,8 @@ export default {
         payment: '',
         realPrice: '',
         noteStatus: '',
-        sendOutFlag: ''
+        sendOutFlag: '',
+        invalid: ''
       },
       customerForm: {
         id: '',
@@ -756,7 +779,9 @@ export default {
       const type = query.type
       const value = query.value
       const dateQuery = this.dateQuery
+      const checkInvalidQurey = this.checkInvalidQuery
       if (type && value) { this.params[type] = value }
+      this.params['queryWithInvalid'] = checkInvalidQurey
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
@@ -883,7 +908,7 @@ export default {
       this.dialogVisible = true
       this.detailLoading = false
       this.detailList = []
-      //this.$refs.form.dialog = true
+      // this.$refs.form.dialog = true
     },
     // 导出
     download() {
@@ -1032,8 +1057,8 @@ export default {
       if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
       }
-      //form表单保存
-      //this.doEdit(this.customerForm)
+      // form表单保存
+      // this.doEdit(this.customerForm)
       var ifNull = true
       // 循环列表里面的数据判断
       for (var i = 0; i < this.detailList.length; i++) {
@@ -1138,6 +1163,37 @@ export default {
       this.detailLoading = true
       this.dialogVisible = true
     },
+    doInvalid(id) {
+      doInvalid(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[this.form.id].doClose()
+        this.dialogVisible = false
+        this.init()
+        this.$notify({
+          title: '状态设置为失效',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        console.log(err.response.data.message)
+      })
+    },
+    unInvalid(id) {
+      this.sutmitDetailLoading = true
+      unInvalid(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.init()
+        this.$notify({
+          title: '状态设置为生效',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        console.log(err.response.data.message)
+      })
+    },
     handleCurrentChange(val) {
       this.currentChangeItem = val
     },
@@ -1165,7 +1221,7 @@ export default {
       data.realPrice = (data.realQuantity * data.sellingPrice).toFixed(2)
       this.detailLoading = false
     },
-    ButtonType(){
+    ButtonType() {
       this.$refs.button11.type = 'danger'
     },
     // 单号列表的合计显示

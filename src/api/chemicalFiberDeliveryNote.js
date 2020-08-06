@@ -56,6 +56,22 @@ export function sendOut(id) {
   })
 }
 
+export function doInvalid(id) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/doInvalid/' + id,
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
+export function unInvalid(id) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/unInvalid/' + id,
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
 export function recived(id) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/recived/' + id,
