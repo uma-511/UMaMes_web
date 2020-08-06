@@ -508,9 +508,9 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
-        <el-button v-if="form.noteStatus == 1" @click="addTable" >添加产品</el-button>
-        <el-button v-if="form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-button v-if="form.invalId == 1" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button v-if="form.noteStatus == 1 && form.invalId == 1" @click="addTable" >添加产品</el-button>
+        <el-button v-if="form.invalId == 1 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
           :ref="form.id"
           placement="top"
@@ -525,7 +525,7 @@
               @click="sendOut(form.id)"
             >确定</el-button>
           </div>
-          <el-button slot="reference" :disabled="form.noteStatus != 2 ? true : false" :type="form.noteStatus != 2 ? 'info' : 'success'" icon="el-icon-truck">发货</el-button>
+          <el-button slot="reference" v-if="form.invalId == 1" :disabled="form.noteStatus != 2 ? true : false" :type="form.noteStatus != 2 ? 'info' : 'success'" icon="el-icon-truck">发货</el-button>
         </el-popover>
         <el-popover
           :ref="tableForm.customerName"
@@ -541,7 +541,7 @@
               @click="recived(form.id)"
             >确定</el-button>
           </div>
-          <el-button slot="reference" :disabled="form.noteStatus != 3 ? true : false" :type="form.noteStatus != 3 ? 'info' : 'warning'" icon="el-icon-suitcase">签收</el-button>
+          <el-button slot="reference" v-if="form.invalId == 1" :disabled="form.noteStatus != 3 ? true : false" :type="form.noteStatus != 3 ? 'info' : 'warning'" icon="el-icon-suitcase">签收</el-button>
         </el-popover>
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
@@ -653,7 +653,8 @@ export default {
         payment: '',
         realPrice: '',
         noteStatus: '',
-        sendOutFlag: ''
+        sendOutFlag: '',
+        invalId: ''
       },
       customerForm: {
         id: '',
@@ -882,7 +883,7 @@ export default {
       this.dialogVisible = true
       this.detailLoading = false
       this.detailList = []
-      //this.$refs.form.dialog = true
+      this.buttonType()
     },
     // 导出
     download() {
@@ -1114,7 +1115,8 @@ export default {
         noteStatus: data.noteStatus,
         payment: data.payment,
         balance: data.balance,
-        remark: data.remark
+        remark: data.remark,
+        invalId: data.invalId
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1481,7 +1483,8 @@ export default {
         driverDeputy: '',
         state: '',
         loaderOne: '',
-        loaderTwo: ''
+        loaderTwo: '',
+        invalId: 1
       }
     }
   }
