@@ -1057,8 +1057,8 @@ export default {
       if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
       }
-      //form表单保存
-      //this.doEdit(this.customerForm)
+      // form表单保存
+      // this.doEdit(this.customerForm)
       var ifNull = true
       // 循环列表里面的数据判断
       for (var i = 0; i < this.detailList.length; i++) {
@@ -1203,7 +1203,7 @@ export default {
     },
     // 触发输入框后自动计算预计金额和实际金额
     sum(data) {
-      //this.typeButton = 'danger'
+      // this.typeButton = 'danger'
       this.buttonType()
       if (data.totalNumber == '' || data.totalNumber == 0) {
         this.$notify({
@@ -1227,7 +1227,7 @@ export default {
       this.detailLoading = false
     },
     // 改变保存按钮的状态方法
-    buttonType(){
+    buttonType() {
       this.typeButton = 'danger'
     },
     // 单号列表的合计显示
