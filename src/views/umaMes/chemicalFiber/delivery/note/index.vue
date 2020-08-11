@@ -383,9 +383,6 @@
             <el-form-item label="最新欠款" >
               <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
-            <el-form-item label="余数" >
-              <el-input v-model="form.remainder" :disabled="true" style="width: 150px;" @input="buttonType"/>
-            </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
@@ -541,6 +538,7 @@
         <el-table
           v-loading="payDetailLoading"
           :data="payDetailList"
+          :summary-method="getPaySummaries"
           style="width: 100%"
           show-summary
           highlight-current-row
@@ -556,7 +554,7 @@
             width="500px"
           />
           <el-table-column prop="amount" label="结款金额" width="300px" align="center"/>
-          <el-table-column prop="inputUser" label="操作人" width="300px" align="center"/>
+          <el-table-column prop="inputUser" label="操作人" width="400px" align="center"/>
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
@@ -653,6 +651,9 @@
           <el-form-item label="当前欠款" >
             <el-input v-model="form.balance" :disabled="true" style="width: 370px;"/>
           </el-form-item>
+          <el-form-item label="客户余额" >
+            <el-input v-model="customerForm.account" :disabled="true" style="width: 370px;"/>
+          </el-form-item>
           <el-form-item label="支付日期" >
             <el-date-picker v-model="payForm.payDate" type="datetime" style="width: 370px;"/>
           </el-form-item>
@@ -660,9 +661,9 @@
             <el-input v-model="payForm.amount" style="width: 370px;"/>
           </el-form-item>
           <div style="text-align: right; margin: 0">
+            <el-button :loading="delLoading" type="error" size="mini" @click="finalPay" >完结结款</el-button>
             <el-button size="mini" type="text" @click="payDialog = false">取消</el-button>
             <el-button :loading="delLoading" type="primary" size="mini" @click="doPay">结款</el-button>
-            <el-button :loading="delLoading" type="error" size="mini" @click="finalPay">完结结款</el-button>
           </div>
         </el-form>
       </el-dialog>
@@ -679,7 +680,7 @@ import { edit, editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDe
 import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
-import { getCustomerList, getCustomerLists } from '@/api/customer'
+import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/customer'
 import { getSelectMap, getByProdName } from '@/api/chemicalFiberStock'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
 import eForm from './form'
@@ -767,7 +768,8 @@ export default {
         balance: '',
         payment: '',
         realPrice: '',
-        noteStatus: ''
+        noteStatus: '',
+        account: ''
       },
       payForm: {
         id: '',
@@ -1019,7 +1021,7 @@ export default {
         customerName: '',
         payment: '',
         createDate: '',
-        payDate: '',
+        payDate: new Date(),
         inputUser: '',
         scanNumber: '',
         amount: ''
@@ -1194,7 +1196,8 @@ export default {
         realPrice: this.form.realPrice,
         noteStatus: this.form.noteStatus,
         totalNumber: this.form.totalNumber,
-        realQuantity: this.form.realQuantity
+        realQuantity: this.form.realQuantity,
+        account: this.form.account
       }
       if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
@@ -1283,7 +1286,8 @@ export default {
         balance: data.balance,
         remark: data.remark,
         invalid: data.invalid,
-        remainder: data.remainder
+        remainder: data.remainder,
+        account: data.account
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1306,6 +1310,10 @@ export default {
           data[i] = obj
         }
         this.detailList = res
+      })
+      const paramCustomer = { id: this.form.customerId }
+      getCustomerById(paramCustomer).then(res => {
+        this.customerForm.account = res.account
       })
       const paramPay = { scanNumber: this.form.scanNumber }
       getPayDetailList(paramPay).then(res => {
@@ -1416,6 +1424,29 @@ export default {
             }
           }, 0).toFixed(2)
           sums[index] += ' 元'
+        }
+      })
+      return sums
+    },
+    getPaySummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      sums[0] = '客户账户余额：' + this.customerForm.account
+      columns.forEach((column, index) => {
+        const values = data.map(item => Number(item[column.property]))
+        if (index === 1) {
+          sums[index] = '总结款金额：' + values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 2) {
+          sums[index] = '余数：' + this.form.remainder + '元'
         }
       })
       return sums

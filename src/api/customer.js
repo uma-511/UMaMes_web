@@ -39,3 +39,13 @@ export function getCustomerList(data) {
     data
   })
 }
+
+export function getCustomerById(data) {
+  return request({
+    url: 'api/customer/getCustomerById',
+    method: 'post',
+    data
+  })
+}
+
+
