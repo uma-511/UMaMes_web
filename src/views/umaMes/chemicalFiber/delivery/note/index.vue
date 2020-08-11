@@ -119,15 +119,22 @@
               size="medium"
             >{{ statusValue[4] }}</el-tag>
           </div>
-          <!--完结-->
+          <!--结款中-->
           <div v-if="scope.row.noteStatus == 5">
             <el-tag
-              type="success"
+              type="danger"
               size="medium"
             >{{ statusValue[5] }}</el-tag>
           </div>
+          <!--完结-->
+          <div v-if="scope.row.noteStatus == 6">
+            <el-tag
+              type="success"
+              size="medium"
+            >{{ statusValue[6] }}</el-tag>
+          </div>
           <!--失效状态-->
-          <div v-if="scope.row.noteStatus <= 0 || scope.row.noteStatus >5 ">
+          <div v-if="scope.row.noteStatus <= 0 || scope.row.noteStatus >6 ">
             <el-tag
               type="info"
               size="medium"
@@ -376,6 +383,9 @@
             <el-form-item label="最新欠款" >
               <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
+            <el-form-item label="余数" >
+              <el-input v-model="form.remainder" :disabled="true" style="width: 150px;" @input="buttonType"/>
+            </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
@@ -527,6 +537,28 @@
           </el-table-column>
         </el-table>
       </el-row>
+      <el-row>
+        <el-table
+          v-loading="payDetailLoading"
+          :data="payDetailList"
+          style="width: 100%"
+          show-summary
+          highlight-current-row
+        >
+          <!--<el-form-item label="交货日期" >
+            <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
+          </el-form-item>-->
+          <el-table-column
+            :formatter="formatDate"
+            prop="payDate"
+            label="结款日期"
+            align="center"
+            width="500px"
+          />
+          <el-table-column prop="amount" label="结款金额" width="300px" align="center"/>
+          <el-table-column prop="inputUser" label="操作人" width="300px" align="center"/>
+        </el-table>
+      </el-row>
       <span slot="footer" class="dialog-footer">
         <el-button v-if="form.invalid == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
         <el-button v-if="form.noteStatus == 1 && form.invalid == 0" @click="addTable" >添加产品</el-button>
@@ -563,6 +595,12 @@
           </div>
           <el-button slot="reference" :disabled="form.noteStatus != 3 ? true : false" :type="form.noteStatus != 3 ? 'info' : 'warning'" icon="el-icon-suitcase">签收</el-button>
         </el-popover>
+        <template v-if="form.noteStatus == 5">
+          <el-button :disabled="form.noteStatus != 5 ? true : false" :type="form.noteStatus != 5 ? 'info' : 'warning'" icon="el-icon-s-finance" @click="showPayDialog">继续结款</el-button>
+        </template>
+        <template v-else>
+          <el-button :disabled="form.noteStatus != 4 ? true : false" :type="form.noteStatus != 4 ? 'info' : 'warning'" icon="el-icon-s-finance" @click="showPayDialog">结款</el-button>
+        </template>
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
 
@@ -606,6 +644,28 @@
           <el-button :loading="delLoading" type="primary" size="mini" @click="addTableRow">确定</el-button>
         </div>
       </el-dialog>
+      <el-dialog
+        :visible.sync="payDialog"
+        :append-to-body = "true"
+        width="40%"
+        title="结款" >
+        <el-form ref="form" :model="payForm" size="small" label-width="80px">
+          <el-form-item label="当前欠款" >
+            <el-input v-model="form.balance" :disabled="true" style="width: 370px;"/>
+          </el-form-item>
+          <el-form-item label="支付日期" >
+            <el-date-picker v-model="payForm.payDate" type="datetime" style="width: 370px;"/>
+          </el-form-item>
+          <el-form-item label="支付金额" >
+            <el-input v-model="payForm.amount" style="width: 370px;"/>
+          </el-form-item>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="payDialog = false">取消</el-button>
+            <el-button :loading="delLoading" type="primary" size="mini" @click="doPay">结款</el-button>
+            <el-button :loading="delLoading" type="error" size="mini" @click="finalPay">完结结款</el-button>
+          </div>
+        </el-form>
+      </el-dialog>
     </el-dialog>
   </div>
 
@@ -621,6 +681,7 @@ import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerLists } from '@/api/customer'
 import { getSelectMap, getByProdName } from '@/api/chemicalFiberStock'
+import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -630,13 +691,16 @@ export default {
       dateQuery: '',
       checkInvalidQuery: false,
       delLoading: false,
+      payLoading: false,
       dialogVisible: false,
       detailLoading: false,
+      payDetailLoading: false,
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
       customerCodeLoading: false,
       addTableFrom: false,
+      payDialog: false,
       isAdd: '',
       customerOptions: [],
       customerCodeOptions: [],
@@ -675,7 +739,8 @@ export default {
         realPrice: '',
         noteStatus: '',
         sendOutFlag: '',
-        invalid: ''
+        invalid: '',
+        remainder: ''
       },
       customerForm: {
         id: '',
@@ -703,6 +768,17 @@ export default {
         payment: '',
         realPrice: '',
         noteStatus: ''
+      },
+      payForm: {
+        id: '',
+        customerId: '',
+        customerName: '',
+        payment: '',
+        createDate: '',
+        payDate: '',
+        inputUser: '',
+        scanNumber: '',
+        amount: ''
       },
       tableForm: {
         detailNumber: '',
@@ -744,9 +820,11 @@ export default {
         2: '待发货',
         3: '待签收',
         4: '待结款',
-        5: '已完结'
+        5: '结款中',
+        6: '完结'
       },
       detailList: [],
+      payDetailList: [],
       option: [
         {
           value: '吨',
@@ -906,6 +984,7 @@ export default {
       this.dialogVisible = true
       this.detailLoading = false
       this.detailList = []
+      this.payDetailList = []
       this.buttonType()
     },
     // 导出
@@ -931,6 +1010,70 @@ export default {
       this.form.searchName = ''
       this.prods = []
       this.addTableFrom = true
+    },
+    showPayDialog() {
+      this.payDialog = true
+      this.payForm = {
+        id: '',
+        customerId: '',
+        customerName: '',
+        payment: '',
+        createDate: '',
+        payDate: '',
+        inputUser: '',
+        scanNumber: '',
+        amount: ''
+      }
+    },
+    doPay() {
+      this.payForm = {
+        customerId: this.form.customerId,
+        customerName: this.form.customerName,
+        scanNumber: this.form.scanNumber,
+        payDate: this.payForm.payDate,
+        amount: this.payForm.amount
+      }
+      this.payLoading = true
+      doPay(this.payForm).then(res => {
+        this.$notify({
+          title: '付款成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.payDialog = false
+        this.init()
+      }).catch(err => {
+        this.payDialog = false
+        console.log(err.response.data.message)
+      })
+      this.payLoading = false
+      this.payDialog = false
+      this.dialogVisible = false
+    },
+    finalPay() {
+      this.payForm = {
+        customerId: this.form.customerId,
+        customerName: this.form.customerName,
+        scanNumber: this.form.scanNumber,
+        payDate: this.payForm.payDate,
+        amount: this.payForm.amount
+      }
+      this.payLoading = true
+      finalPay(this.payForm).then(res => {
+        this.$notify({
+          title: '付款成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.payDialog = false
+        this.init()
+      }).catch(err => {
+        this.payDialog = false
+        console.log(err.response.data.message)
+      })
+      this.payLoading = false
+      this.payDialog = false
+      this.dialogVisible = false
     },
     // 传添加产品数据给后端
     addTableRow() {
@@ -1139,7 +1282,8 @@ export default {
         payment: data.payment,
         balance: data.balance,
         remark: data.remark,
-        invalid: data.invalid
+        invalid: data.invalid,
+        remainder: data.remainder
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1163,8 +1307,31 @@ export default {
         }
         this.detailList = res
       })
+      const paramPay = { scanNumber: this.form.scanNumber }
+      getPayDetailList(paramPay).then(res => {
+        this.payDetailLoading = false
+        var data = []
+        for (var i = 0; i < res.length; i++) {
+          var obj = {}
+          obj.payDate = res[i].payDate
+          obj.amount = res[i].amount
+          obj.inputUser = res[i].amount
+          data[i] = obj
+        }
+        this.payDetailList = res
+      })
+      this.payDetailLoading = true
       this.detailLoading = true
       this.dialogVisible = true
+    },
+    formatDate(row, column) {
+      // 获取单元格数据
+      const data = row[column.property]
+      if (data == null) {
+        return null
+      }
+      const dt = new Date(data)
+      return dt.getFullYear() + '-' + (dt.getMonth() + 1) + '-' + dt.getDate() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds()
     },
     doInvalid(id) {
       doInvalid(id).then(res => {

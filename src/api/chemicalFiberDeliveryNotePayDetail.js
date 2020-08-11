@@ -23,6 +23,30 @@ export function edit(data) {
   })
 }
 
+export function doPay(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNotePayDetail/doPay',
+    method: 'post',
+    data
+  })
+}
+
+export function finalPay(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNotePayDetail/finalPay',
+    method: 'post',
+    data
+  })
+}
+
+export function getPayDetailList(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNotePayDetail/getPayDetailList',
+    method: 'post',
+    data
+  })
+}
+
 export function downloadChemicalFiberDeliveryNotePayDetail(params) {
   return request({
     url: 'api/chemicalFiberDeliveryNotePayDetail/download',
