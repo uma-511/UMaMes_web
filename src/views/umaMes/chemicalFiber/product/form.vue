@@ -7,6 +7,25 @@
       <el-form-item label="产品名称" prop="name">
         <el-input v-model="form.name" style="width: 370px;" maxlength="25"/>
       </el-form-item>
+      <el-form-item label="产品目录">
+        <el-select
+          v-model="form.menus"
+          :loading="menusLoading"
+          :remote-method="menusMethod"
+          multiple:false
+          filterable
+          reserve-keyword
+          style="width: 150px;"
+          @change="menusName($event)"
+        >
+          <el-option
+            v-for="item in menusOptions"
+            :key="item.productMenusName"
+            :label="item.productMenusName"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
     <!--  <el-form-item label="色号" prop="color">
         <el-input v-model="form.color" style="width: 370px;" maxlength="10"/>
       </el-form-item>
@@ -32,6 +51,7 @@
 
 <script>
 import { add, edit } from '@/api/chemicalFiberProduct'
+import { getMenu } from '@/api/chemicalFiberProductMenu'
 export default {
   props: {
     isAdd: {
@@ -41,7 +61,11 @@ export default {
   },
   data() {
     return {
-      loading: false, dialog: false,
+      loading: false, dialog: false,menusOptions: [],menusLoading: false,
+      menusQuery: {
+        productMenusName: '',
+        id: ''
+      },
       form: {
         id: '',
         model: '',
@@ -51,7 +75,9 @@ export default {
         createDate: '',
         createUser: '',
         unit: '',
-        delFlag: ''
+        delFlag: '',
+        menusId: '',
+        menus: ''
       },
       rules: {
         model: [
@@ -81,6 +107,9 @@ export default {
         ]
       }
     }
+  },
+  created() {
+    this.menusMethod()
   },
   methods: {
     cancel() {
@@ -125,6 +154,28 @@ export default {
         this.loading = false
         console.log(err.response.data.message)
       })
+    },
+    menusMethod(query) {
+      this.menusLoading = false
+        this.menusLoading = true
+        this.menusQuery.id = query
+        this.menusOptions = []
+        getMenu(this.menusQuery).then(res => {
+          this.menusLoading = false
+          this.menusList = res
+          this.menusQuery.id = ''
+          this.menusOptions = this.menusList
+        })
+    },
+    menusName(e) {
+      this.menusOptions.id = e
+      this.form.menusId = this.menusOptions.id
+      for (var i = 0; i < this.menusOptions.length; i++) {
+        if (e == this.menusOptions[i].id) {
+          this.form.menus = this.menusOptions[i].productMenusName
+        }
+      }
+      //this.form.menus = this.menusOptions[0].productMenusName
     },
     resetForm() {
       this.dialog = false

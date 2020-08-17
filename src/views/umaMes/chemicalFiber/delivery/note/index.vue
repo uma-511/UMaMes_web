@@ -456,7 +456,7 @@
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
               <el-select v-model="scope.row.unit" placeholder="请选择单位" @change="buttonType">
-                <el-option
+                <el-
                   v-for="item in option"
                   :key="item.value"
                   :label="item.label"
@@ -620,7 +620,7 @@ import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/in
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerLists } from '@/api/customer'
-import { getSelectMap, getByProdName } from '@/api/chemicalFiberStock'
+import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -1469,7 +1469,7 @@ export default {
     // 查询产品下拉框
     prodRemoteMethod(query) {
       const params = { prodName: query }
-      getSelectMap(params).then(res => {
+      getSelectMaps(params).then(res => {
         this.userLoading = false
         this.prodList = res
         this.prodOptions = this.prodList.filter(item => {
