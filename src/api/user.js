@@ -55,7 +55,7 @@ export function updateEmail(code, data) {
 export function getUserListByDeptId(params) {
   return request({
     url: 'api/users/getUserListByDeptId',
-    method: 'get',
+    method: 'post',
     params
   })
 }

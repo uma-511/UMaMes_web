@@ -37,6 +37,7 @@
         v-model="checkInvalidQuery"
         @change="toQuery"
       >查询失效单</el-checkbox>
+      <el-button @click="doAlert()">测试</el-button>
       <el-button
         class="filter-item"
         size="mini"
@@ -317,9 +318,9 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                 />
               </el-select>
             </el-form-item>
@@ -374,6 +375,19 @@
                   :label="item.realname"
                   :value="item.realname"
                   @blur="userOptions"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发票类型" >
+              <el-select
+                v-model="form.invoiceType"
+                placeholder="选择发票类型"
+                style="width: 156px;"
+              >
+                <el-option
+                  v-for="item in localInvoiceOption"
+                  :label="item.label"
+                  :value="item.value"
                 />
               </el-select>
             </el-form-item>
@@ -706,6 +720,8 @@ export default {
       customerOptions: [],
       customerCodeOptions: [],
       userOptions: [],
+      invoiceOption: [],
+      invoiceList: '',
       prodOptions: [],
       prods: [],
       typeButton: '',
@@ -741,7 +757,8 @@ export default {
         noteStatus: '',
         sendOutFlag: '',
         invalid: '',
-        remainder: ''
+        remainder: '',
+        invoiceType: ''
       },
       customerForm: {
         id: '',
@@ -826,7 +843,21 @@ export default {
         6: '完结'
       },
       detailList: [],
-      payDetailList: [],
+      localInvoiceOption: [
+        {
+          label: '不开发票',
+          value: '不开发票'
+        },{
+          label: '增值税普通发票',
+          value: '增值税普通发票'
+        },{
+          label: '增值税专用发票',
+          value: '增值税专用发票'
+        },{
+          label: '增值税电子普通发票',
+          value: '增值税电子普通发票'
+        }
+      ],
       option: [
         {
           value: '吨',
@@ -1060,6 +1091,14 @@ export default {
         payDate: this.payForm.payDate,
         amount: this.payForm.amount
       }
+      if (!this.amount || this.amount === '') {
+        this.$notify({
+          title: '请填写金额',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.payLoading = true
       finalPay(this.payForm).then(res => {
         this.$notify({
@@ -1197,7 +1236,8 @@ export default {
         noteStatus: this.form.noteStatus,
         totalNumber: this.form.totalNumber,
         realQuantity: this.form.realQuantity,
-        account: this.form.account
+        account: this.form.account,
+        invoiceType: this.form.invoiceType
       }
       if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
@@ -1287,7 +1327,8 @@ export default {
         remark: data.remark,
         invalid: data.invalid,
         remainder: data.remainder,
-        account: data.account
+        account: data.account,
+        invoiceType: data.invoiceType
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1630,7 +1671,8 @@ export default {
     // 查询业务员的下拉列表
     sellerRemoteMethod(query) {
       // 业务员deptId为19
-      const params = { deptId: 19, realname: query }
+      const idList = [19]
+      const params = { deptIdList: idList + '', realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
@@ -1644,7 +1686,8 @@ export default {
     // 查询仓管员的下拉列表
     storeKeeperRemoteMethod(query) {
       // 仓管员deptId为16
-      const params = { deptId: 16, realname: query }
+      const idList = [16]
+      const params = { deptIdList: idList + '', realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
@@ -1675,10 +1718,21 @@ export default {
         })
       })
     },
+    invoiceRemoteMethod() {
+      /*this.userLoading = true
+      getInvoiceList().then(res => {
+        this.userLoading = false
+        this.invoiceList = res
+        this.invoiceOption = this.invoiceList.filter(item => {
+          return item
+        })
+      })*/
+    },
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
       // 运输部deptId为18
-      const params = { deptId: 18, realname: query }
+      const idList = [18]
+      const params = { deptIdList: idList + '', realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
@@ -1716,6 +1770,9 @@ export default {
       }).catch(err => {
         console.log(err.response.data.message)
       })
+    },
+    doAlert() {
+      console.log(this.dicts)
     },
     // 清空form表单的数据
     resetForm() {
