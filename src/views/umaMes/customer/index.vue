@@ -61,6 +61,7 @@
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="name" label="客户名称"/>
       <el-table-column prop="code" label="客户编号"/>
+      <el-table-column prop="fullName" label="客户全称"/>
       <el-table-column prop="address" label="客户地址"/>
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
@@ -196,7 +197,8 @@ export default {
         remark: data.remark,
         createDate: data.createDate,
         createUser: data.createUser,
-        delFlag: data.delFlag
+        delFlag: data.delFlag,
+        fullName: data.fullName
       }
       _this.dialog = true
     },

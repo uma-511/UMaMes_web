@@ -7,6 +7,9 @@
       <el-form-item label="客户名称" prop="name">
         <el-input v-model="form.name" style="width: 370px;" maxlength="50"/>
       </el-form-item>
+      <el-form-item label="客户全称" prop="name">
+        <el-input v-model="form.fullName" style="width: 370px;" maxlength="50"/>
+      </el-form-item>
       <el-form-item label="客户地址" prop="address">
         <el-input v-model="form.address" style="width: 370px;" maxlength="100"/>
       </el-form-item>
@@ -58,7 +61,8 @@ export default {
         remark: '',
         createDate: '',
         createUser: '',
-        delFlag: ''
+        delFlag: '',
+        fullName: ''
       },
       rules: {
         name: [
@@ -153,7 +157,8 @@ export default {
         state: '',
         loaderOne: '',
         loaderTwo: '',
-        delFlag: ''
+        delFlag: '',
+        fullName: ''
       }
     }
   }
