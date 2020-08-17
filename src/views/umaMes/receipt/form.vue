@@ -109,7 +109,6 @@
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">更新</el-button>
-      <el-button :loading="loading" type="primary" @click="doAlert1">测试</el-button>
     </div>
   </el-dialog>
 </template>

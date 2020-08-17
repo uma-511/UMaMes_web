@@ -34,14 +34,14 @@
       >搜索</el-button>
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
-        <el-button
+        <!--<el-button
           v-permission="['admin','chemicalFiberStock:add']"
           class="filter-item"
           size="mini"
           type="primary"
           icon="el-icon-plus"
           @click="add"
-        >新增</el-button>
+        >新增</el-button>-->
       </div>
       <!-- 导出 -->
       <!-- <div style="display: inline-block;">
@@ -62,23 +62,20 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" stripe style="width: 100%;">
-      <el-table-column prop="prodModel" label="产品型号"/>
+      <el-table-column prop="prodModel" label="产品编号"/>
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodUnit" label="计量单位"/>
       <el-table-column prop="totalNumber" label="数量"/>
-      <!--<el-table-column prop="totalBag" label="总包数"/>-->
-      <!--<el-table-column :formatter="maxformatter" prop="max" label="最大值" />
-      <el-table-column :formatter="maxformatter" prop="min" label="最小值"/>-->
-      <!-- <el-table-column prop="flag" label="库存指标"/> -->
-      <el-table-column prop="status" label="状态">
+      <!--<el-table-column prop="tonNumber" label="吨数量"/>-->
+      <!--<el-table-column prop="status" label="吨状态">
         <template slot-scope="scope">
-          <div v-if="scope.row.totalNumber <= scope.row.min">
+          <div v-if="scope.row.tonNumber <= scope.row.min">
             <el-tag
               :type="stockMapping[2]"
               size="medium"
             >{{ stockValue[2] }}</el-tag>
           </div>
-          <div v-else-if=" scope.row.totalNumber >= scope.row.max">
+          <div v-else-if=" scope.row.tonNumber >= scope.row.max">
             <el-tag
               :type="stockMapping[1]"
               size="medium"
@@ -91,7 +88,34 @@
             >{{ stockValue[0] }}</el-tag>
           </div>
         </template>
-      </el-table-column>
+      </el-table-column>-->
+      <!--<el-table-column prop="branchNumber" label="支数量"/>-->
+      <!--<el-table-column prop="totalBag" label="总包数"/>-->
+      <!--<el-table-column :formatter="maxformatter" prop="max" label="最大值" />
+      <el-table-column :formatter="maxformatter" prop="min" label="最小值"/>-->
+      <!-- <el-table-column prop="flag" label="库存指标"/> -->
+      <!--<el-table-column prop="status" label="支状态">
+        <template slot-scope="scope">
+          <div v-if="scope.row.branchNumber <= scope.row.min">
+            <el-tag
+              :type="stockMapping[2]"
+              size="medium"
+            >{{ stockValue[2] }}</el-tag>
+          </div>
+          <div v-else-if=" scope.row.branchNumber >= scope.row.max">
+            <el-tag
+              :type="stockMapping[1]"
+              size="medium"
+            >{{ stockValue[1] }}</el-tag>
+          </div>
+          <div v-else>
+            <el-tag
+              :type="stockMapping[0]"
+              size="medium"
+            >{{ stockValue[0] }}</el-tag>
+          </div>
+        </template>
+      </el-table-column>-->
       <el-table-column
         v-if="checkPermission(['admin','chemicalFiberStock:edit','chemicalFiberStock:del'])"
         label="操作"

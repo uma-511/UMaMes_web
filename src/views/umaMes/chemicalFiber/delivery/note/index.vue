@@ -37,7 +37,6 @@
         v-model="checkInvalidQuery"
         @change="toQuery"
       >查询失效单</el-checkbox>
-      <el-button @click="doAlert()">测试</el-button>
       <el-button
         class="filter-item"
         size="mini"
@@ -1718,16 +1717,6 @@ export default {
         })
       })
     },
-    invoiceRemoteMethod() {
-      /*this.userLoading = true
-      getInvoiceList().then(res => {
-        this.userLoading = false
-        this.invoiceList = res
-        this.invoiceOption = this.invoiceList.filter(item => {
-          return item
-        })
-      })*/
-    },
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
       // 运输部deptId为18
@@ -1770,9 +1759,6 @@ export default {
       }).catch(err => {
         console.log(err.response.data.message)
       })
-    },
-    doAlert() {
-      console.log(this.dicts)
     },
     // 清空form表单的数据
     resetForm() {

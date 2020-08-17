@@ -11,17 +11,17 @@
       <!--<el-form-item label="产品id" >
         <el-input v-model="form.prodId" style="width: 370px;"/>
       </el-form-item>-->
-      <el-form-item label="产品搜索" >
+      <!--<el-form-item label="产品搜索" >
         <el-input v-model="searchName" clearable placeholder="输入产品名称进行搜索" prefix-icon="el-icon-search" style="width: 100%;" class="filter-item" @input="getSelectMap"/>
         <el-tree :data="prods" :expand-on-click-node="false" default-expand-all style="width: 370px;" @node-click="handleNodeClick"/>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item label="产品型号" >
         <el-input v-model="form.prodModel" :disabled="true" style="width: 370px;" @input="getSelectMap"/>
       </el-form-item>
       <el-form-item label="产品名称" >
         <el-input v-model="form.prodName" :disabled="true" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="计量单位" >
+      <!--<el-form-item label="计量单位" >
         <el-select
           v-model="form.prodUnit"
           clearable
@@ -36,7 +36,7 @@
             :value="item.key"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <!--<el-form-item label="产品色号" >
         <el-input v-model="form.prodColor" style="width: 370px;"/>
       </el-form-item>
@@ -52,9 +52,9 @@
       <el-form-item label="总毛重" >
         <el-input v-model="form.totalGrossWeight" style="width: 370px;"/>
       </el-form-item>-->
-      <el-form-item label="数量" >
+      <!--<el-form-item label="数量" >
         <el-input v-model="form.totalNumber" style="width: 370px;" @input="validateNumberIncludDot" />
-      </el-form-item>
+      </el-form-item>-->
       <!--<el-form-item label="总包数" >
         <el-input v-model="form.totalBag" style="width: 370px;"/>
       </el-form-item>-->
@@ -160,6 +160,7 @@ export default {
       })
     },
     handleNodeClick(data) {
+      this.form.prodId = data.prodId
       this.form.prodName = data.prodName
       this.form.prodModel = data.prodModel
     },

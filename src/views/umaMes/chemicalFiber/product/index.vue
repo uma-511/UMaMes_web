@@ -1,76 +1,98 @@
 <template>
   <div class="app-container">
     <!--工具栏-->
-    <div class="head-container">
-      <!-- 搜索 -->
-      <el-input v-model="query.value" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
-      <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
-        <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
-      </el-select>
-      <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
-      <!-- 新增 -->
-      <div style="display: inline-block;margin: 0px 2px;">
-        <el-button
-          v-permission="['admin','chemicalFiberProduct:add']"
-          class="filter-item"
-          size="mini"
-          type="primary"
-          icon="el-icon-plus"
-          @click="add">新增</el-button>
-      </div>
-      <!-- 导出 -->
-      <!-- <div style="display: inline-block;">
-        <el-button
-          :loading="downloadLoading"
-          size="mini"
-          class="filter-item"
-          type="warning"
-          icon="el-icon-download"
-          @click="download">导出</el-button>
-      </div> -->
-    </div>
-    <!--表单组件-->
-    <eForm ref="form" :is-add="isAdd"/>
-    <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" stripe size="small" style="width: 100%;" @row-click="rowClicker">
-      <el-table-column prop="model" label="产品编号"/>
-      <el-table-column prop="name" label="产品名称"/>
-      <!-- <el-table-column prop="color" label="色号"/>
-      <el-table-column prop="fineness" label="纤度"/>-->
-      <el-table-column prop="createDate" label="创建日期">
-        <template slot-scope="scope">
-          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createUser" label="创建人"/>
-      <!-- <el-table-column prop="delFlag" label="删除标识"/> -->
-      <el-table-column v-if="checkPermission(['admin','chemicalFiberProduct:edit','chemicalFiberProduct:del'])" label="操作" width="150px" align="center">
-        <template slot-scope="scope">
-          <!--<el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
-         -->
-          <el-popover
-            v-permission="['admin','chemicalFiberProduct:del']"
-            :ref="scope.row.id"
-            placement="top"
-            width="180">
-            <p>确定删除本条数据吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-              <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
-            </div>
-            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" @click.stop/>
-          </el-popover>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!--分页组件-->
-    <el-pagination
-      :total="total"
-      :current-page="page + 1"
-      style="margin-top: 8px;"
-      layout="total, prev, pager, next, sizes"
-      @size-change="sizeChange"
-      @current-change="pageChange"/>
+    <el-row :gutter="20">
+      <el-col :xs="9" :sm="6" :md="4" :lg="4" :xl="4">
+        <el-form ref="form1" :model="form" size="mini" label-width="80px" >
+          <el-input v-model="form.productMenusName" size="mini" style="width: 120px;" />
+          <el-button size="mini" type="primary" icon="el-icon-plus" @click="addDepts">新增</el-button>
+        </el-form>
+        <!--<el-button size="mini" type="danger" icon="el-icon-delete" @click="editDepts">删除</el-button>-->
+        <div style="width:50px; height:30px;"></div>
+        <el-tree :data="depts" :props="defaultProps" :expand-on-click-node="false" default-expand-all @node-click="handleNodeClick"/>
+      </el-col>
+      <el-col :xs="15" :sm="18" :md="20" :lg="20" :xl="20">
+        <div class="head-container">
+          <!-- 搜索 -->
+          <el-input v-model="query.value" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
+          <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
+            <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
+          </el-select>
+          <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
+          <!-- 新增 -->
+          <div style="display: inline-block;margin: 0px 2px;">
+            <el-button
+              v-permission="['admin','chemicalFiberProduct:add']"
+              class="filter-item"
+              size="mini"
+              type="primary"
+              icon="el-icon-plus"
+              @click="add">新增</el-button>
+          </div>
+          <!-- 导出 -->
+          <!-- <div style="display: inline-block;">
+            <el-button
+              :loading="downloadLoading"
+              size="mini"
+              class="filter-item"
+              type="warning"
+              icon="el-icon-download"
+              @click="download">导出</el-button>
+          </div> -->
+        </div>
+        <!--表单组件-->
+        <eForm ref="form" :is-add="isAdd"/>
+        <!--表格渲染-->
+        <el-table v-loading="loading" :data="data" stripe size="small" style="width: 100%;" @row-click="rowClicker">
+          <el-table-column prop="model" label="产品编号"/>
+          <el-table-column prop="name" label="产品名称"/>
+          <el-table-column prop="createDate" label="创建日期">
+            <template slot-scope="scope">
+              <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createUser" label="创建人"/>
+          <!-- <el-table-column prop="delFlag" label="删除标识"/> -->
+          <el-table-column v-if="checkPermission(['admin','chemicalFiberProduct:edit','chemicalFiberProduct:del'])" label="操作" width="150px" align="center">
+            <template slot-scope="scope">
+              <!--<el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+             -->
+              <el-popover
+                v-permission="['admin','chemicalFiberProduct:del']"
+                :ref="scope.row.id"
+                placement="top"
+                width="180">
+                <p>确定删除本条数据吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
+                  <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
+                </div>
+                <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" @click.stop/>
+              </el-popover>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!--分页组件-->
+        <el-pagination
+          :total="total"
+          :current-page="page + 1"
+          style="margin-top: 8px;"
+          layout="total, prev, pager, next, sizes"
+          @size-change="sizeChange"
+          @current-change="pageChange"/>
+      </el-col>
+    </el-row>
+    <!--<el-dialog-->
+      <!--:visible.sync="addDeptsLoading"-->
+      <!--:append-to-body = "true"-->
+      <!--width="20%"-->
+      <!--title="新增目录" >-->
+      <!--<el-form ref="form1" :model="form" size="mini" label-width="80px" >-->
+        <!--<el-input v-model="form.productMenusName" style="width: 150px;" />-->
+        <!--<el-button size="mini" type="primary" icon="el-icon-plus" @click="addFormDepts">添加</el-button>-->
+      <!--</el-form>-->
+
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -79,22 +101,33 @@ import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberProduct } from '@/api/chemicalFiberProduct'
 import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
+import { getMenu, addMenu } from '@/api/chemicalFiberProductMenu'
 import eForm from './form'
 export default {
   components: { eForm },
   mixins: [initData],
   data() {
     return {
-      delLoading: false,
+      delLoading: false, deptId: null,addDeptsLoading: false,
       queryTypeOptions: [
         { key: 'model', display_name: '产品编号' },
         { key: 'name', display_name: '产品名称' },
         { key: 'color', display_name: '色号' },
         { key: 'fineness', display_name: '纤度' }
-      ]
+      ],
+      depts: [],
+      defaultProps: {
+        id: 'id',
+        label: 'productMenusName'
+      },
+      deptName:'',
+      form: {
+        productMenusName: ''
+      }
     }
   },
   created() {
+    this.getMenutDatas()
     this.$nextTick(() => {
       this.init()
     })
@@ -106,12 +139,28 @@ export default {
     beforeInit() {
       this.url = 'api/chemicalFiberProduct'
       const sort = 'id,desc'
-      this.params = { page: this.page, size: this.size, sort: sort }
+      this.params = { page: this.page, size: this.size, sort: sort, menusId: this.deptId }
       const query = this.query
       const type = query.type
       const value = query.value
       if (type && value) { this.params[type] = value }
       return true
+    },
+    getMenutDatas() {
+      //const sort = 'id,desc'
+      const params = {}
+      //if (this.deptName) { params['name'] = this.deptName }
+      getMenu(params).then(res => {
+        this.depts = res
+      })
+    },
+    handleNodeClick(data) {
+      if (data.id === 0) {
+        this.deptId = null
+      } else {
+        this.deptId = data.id
+      }
+      this.init()
     },
     rowClicker: function(row) {
       this.isAdd = false
@@ -124,7 +173,9 @@ export default {
         fineness: row.fineness,
         createDate: row.createDate,
         createUser: row.createUser,
-        delFlag: row.delFlag
+        delFlag: row.delFlag,
+        menusId: row.menusId,
+        menus: row.menus
       }
       _this.dialog = true
     },
@@ -164,6 +215,25 @@ export default {
         delFlag: data.delFlag
       }
       _this.dialog = true
+    },
+    addDepts() {
+
+      if (this.form.productMenusName == '') {
+        this.$notify({
+          title: '请填写目录名称',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      addMenu(this.form).then(res => {
+        this.$notify({
+          title: '新增成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.getMenutDatas()
+      })
     },
     // 导出
     download() {

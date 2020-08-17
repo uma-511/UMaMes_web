@@ -16,6 +16,14 @@ export function getSelectMap(params) {
   })
 }
 
+export function getSelectMaps(params) {
+  return request({
+    url: 'api/chemicalFiberStock/getSelectMaps',
+    method: 'get',
+    params
+  })
+}
+
 export function getByProdName(params) {
   return request({
     url: 'api/chemicalFiberStock/getByProdName',

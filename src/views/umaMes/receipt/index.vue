@@ -12,7 +12,6 @@
           icon="el-icon-plus"
           @click="add">新增</el-button>
       </div>
-      <button @click="doAlert()">测试</button>
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
