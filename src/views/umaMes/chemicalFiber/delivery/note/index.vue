@@ -1070,7 +1070,6 @@ export default {
         payDate: this.payForm.payDate,
         amount: this.payForm.amount
       }
-      alert(this.payForm.amount)
       if (!this.payForm.amount || this.payForm.amount === '') {
         this.$notify({
           title: '请填写金额',
