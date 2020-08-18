@@ -1070,6 +1070,15 @@ export default {
         payDate: this.payForm.payDate,
         amount: this.payForm.amount
       }
+      alert(this.payForm.amount)
+      if (!this.payForm.amount || this.payForm.amount === '') {
+        this.$notify({
+          title: '请填写金额',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.payLoading = true
       doPay(this.payForm).then(res => {
         this.$notify({
@@ -1095,7 +1104,7 @@ export default {
         payDate: this.payForm.payDate,
         amount: this.payForm.amount
       }
-      if (!this.amount || this.amount === '') {
+      if (!this.payForm.amount || this.payForm.amount === '') {
         this.$notify({
           title: '请填写金额',
           type: 'warning',
