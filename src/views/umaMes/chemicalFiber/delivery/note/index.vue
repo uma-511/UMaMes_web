@@ -861,6 +861,7 @@ export default {
       this.detailLoading = true
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         this.detailList = res
+        this.addAll()
         this.detailLoading = false
       })
     },

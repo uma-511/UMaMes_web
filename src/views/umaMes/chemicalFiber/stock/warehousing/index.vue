@@ -42,7 +42,6 @@
     >搜索</el-button>
     <div style="display: inline-block;margin: 0px 2px;">
       <el-button
-        v-permission="['admin','chemicalFiberDeliveryNote:add']"
         class="filter-item"
         size="mini"
         type="primary"
@@ -86,7 +85,6 @@
               @click="edit(scope.row)"
             >编辑</el-button>-->
             <el-button
-              v-permission="['admin','chemicalFiberDeliveryNote:edit']"
               size="mini"
               type="success"
               icon="el-icon-tickets"
@@ -153,13 +151,13 @@
               <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="供应商" >
-              <el-input v-model="form.supplierName" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.supplierName" :disabled="form.warehousingStatus == 2?true:false" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="批号" >
-              <el-input v-model="form.batchNumber" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.batchNumber" type="number" :disabled="form.warehousingStatus == 2?true:false" maxlength="17" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="入库日期" >
-              <el-date-picker v-model="form.warehousingDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
+              <el-date-picker v-model="form.warehousingDate" :disabled="form.warehousingStatus == 2?true:false"s type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -168,9 +166,12 @@
                 v-model="form.driverMain"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
+                :disabled="form.warehousingStatus == 2?true:false"
                 multiple:false
+                clearable
                 filterable
                 remote
+                clearable
                 reserve-keyword
                 placeholder="输入主司机关键词"
                 style="width: 157px;"
@@ -189,9 +190,11 @@
                 v-model="form.driverDeputy"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
+                :disabled="form.warehousingStatus == 2?true:false"
                 multiple:false
                 filterable
                 remote
+                clearable
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 157px;"
@@ -216,8 +219,10 @@
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
+                :disabled="form.warehousingStatus == 2?true:false"
                 filterable
                 remote
+                clearable
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 157px;"
@@ -236,9 +241,11 @@
                 v-model="form.escortTwo"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
+                :disabled="form.warehousingStatus == 2?true:false"
                 multiple:false
                 filterable
                 remote
+                clearable
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 157px;"
@@ -255,10 +262,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="车牌号" >
-              <el-input v-model="form.carNumber" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.carNumber" :disabled="form.warehousingStatus == 2?true:false" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="单据备注" >
-              <el-input v-model="form.remark" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.remark" :disabled="form.warehousingStatus == 2?true:false" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -309,7 +316,7 @@
           <el-table-column prop="totalPrice" label="总金额" width="150px" align="center"/>
           <el-table-column prop="remark" label="产品备注" width="200px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" placeholder="备注" @input="buttonType"/>
+              <el-input v-model="scope.row.remark" :disabled="form.warehousingStatus == 2?true:false" placeholder="备注" @input="buttonType"/>
             </template>
           </el-table-column>
           <el-table-column
@@ -434,7 +441,7 @@ export default {
     return{
       loading: false,dialog: false,detalList:[],userLoading: false,prodOptions: [],addTableFrom: false,isAnd: '',
       userOptions: [],typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
-      dateQuery: '',userLoading: false,userOptions: [],visible: false,
+      dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,
       form: {
         id: '',
         createUser: '',
@@ -450,7 +457,8 @@ export default {
         driverDeputy: '',
         escortOne: '',
         escortTwo: '',
-        carNumber: ''
+        carNumber: '',
+        invalid: ''
       },
       tableForm: {
         prodModel: '',
@@ -475,7 +483,6 @@ export default {
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '入库单号' },
         { key: 'supplierName', display_name: '供应商' },
-        { key: 'driverMain', display_name: '员工' },
       ]
 
 
@@ -525,7 +532,8 @@ export default {
         driverDeputy: data.driverDeputy,
         escortOne: data.escortOne,
         escortTwo: data.escortTwo,
-        carNumber: data.carNumber
+        carNumber: data.carNumber,
+        invalid: data.invalid
       }
       this.tableDetailList(data)
       this.dialog = true
@@ -688,6 +696,7 @@ export default {
         this.sutmitDetailLoading = false
         this.$refs[id].doClose()
         this.dialog = false
+        this.visible = false
         this.init()
         this.$notify({
           title: '确认入库成功',
@@ -707,6 +716,9 @@ export default {
         this.form.warehousingStatus = res.warehousingStatus
         this.form.id = res.id
         this.form.createDate = res.createDate
+        this.form.warehousingDate = res.warehousingDate
+        this.form.createUser = res.createUser
+        this.form.invalid = res.invalid
         this.init()
       }).catch(err => {
         console.log(err.response.data.message)
@@ -776,10 +788,6 @@ export default {
             .indexOf(query.toLowerCase()) > -1
         })
       })
-    },
-    cleanUpOptions() {
-      this.userOptions = []
-      this.prodOptions = []
     },
     resetForm() {
       this.form = {
