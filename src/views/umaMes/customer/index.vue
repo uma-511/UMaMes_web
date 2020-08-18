@@ -43,17 +43,6 @@
           @click="add"
         >新增</el-button>
       </div>
-      <!-- 导出 -->
-      <!-- <div style="display: inline-block;">
-        <el-button
-          :loading="downloadLoading"
-          size="mini"
-          class="filter-item"
-          type="warning"
-          icon="el-icon-download"
-          @click="download"
-        >导出</el-button>
-      </div> -->
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -71,6 +60,7 @@
           <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="account" label="用户余额"/>
       <el-table-column prop="createUser" label="创建人"/>
       <el-table-column
         v-if="checkPermission(['admin','customer:edit','customer:del'])"
@@ -198,7 +188,8 @@ export default {
         createDate: data.createDate,
         createUser: data.createUser,
         delFlag: data.delFlag,
-        fullName: data.fullName
+        fullName: data.fullName,
+        account: data.account
       }
       _this.dialog = true
     },
