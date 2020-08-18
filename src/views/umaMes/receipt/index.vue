@@ -31,10 +31,31 @@
       <el-table-column prop="amountOfMoney" label="金额"/>
       <el-table-column prop="recivedNumber" label="单据编号"/>
       <el-table-column prop="remark" label="备注"/>
-      <el-table-column prop="createUser" label="创单人"/>
-      <el-table-column prop="createDate" label="创单日期">
+      <el-table-column prop="createUser" label="制单人"/>
+      <el-table-column prop="createDate" label="制单日期">
         <template slot-scope="scope">
-          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+          <span>{{ parseTime(scope.row.createDate) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="noteStatus" label="状态">
+        <template slot-scope="scope">
+          <div v-if="scope.row.status == 1">
+            <el-tag
+              size="medium"
+            >{{ statusValue[1] }}</el-tag>
+          </div>
+          <div v-if="scope.row.status == 2">
+            <el-tag
+              size="medium"
+              type="success"
+            >{{ statusValue[2] }}</el-tag>
+          </div>
+          <div v-if="scope.row.status == 0">
+            <el-tag
+              size="medium"
+              type="info"
+            >{{ statusValue[0] }}</el-tag>
+          </div>
         </template>
       </el-table-column>
       <!--<el-table-column prop="status" label="状态"/>-->
@@ -55,14 +76,14 @@
                 @click="doFinish(scope.row.id)"
               >确定</el-button>
             </div>
-            <el-button v-if="scope.row.status == 1" slot="reference" type="success" icon="el-icon-circle-check" size="mini">确认并录入</el-button>
+            <el-button v-if="scope.row.status == 1" slot="reference" type="success" icon="el-icon-circle-check" size="mini">确认录入</el-button>
           </el-popover>
           <el-popover
             v-permission="['admin','receipt:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
-            <p>确定删除本条数据吗？</p>
+            <p>确定将本条数据设为失效吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
               <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
@@ -87,7 +108,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadReceipt, doFinish } from '@/api/receipt'
-import { parseTimeToDate, downloadFile } from '@/utils/index'
+import { parseTime, parseTimeToDate, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -98,7 +119,12 @@ export default {
       delLoading: false,
       finishLoading: false,
       finishRef: '',
-      sutmitDetailLoading: false
+      sutmitDetailLoading: false,
+      statusValue: {
+        0: '已失效',
+        1: '待确认',
+        2: '已确认'
+      }
     }
   },
   created() {
@@ -107,6 +133,7 @@ export default {
     })
   },
   methods: {
+    parseTime,
     parseTimeToDate,
     checkPermission,
     beforeInit() {

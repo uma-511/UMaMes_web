@@ -34,7 +34,7 @@
         end-placeholder="结束日期"
       />
       <el-checkbox
-        v-model="checkInvalidQuery"
+        v-model="showUnEnable"
         @change="toQuery"
       >查询失效单</el-checkbox>
       <el-button
@@ -93,52 +93,53 @@
       <el-table-column prop="createUser" label="制单人"/>
       <el-table-column prop="noteStatus" label="状态">
         <template slot-scope="scope">
-          <!--待打印-->
-          <div v-if="scope.row.noteStatus == 1">
-            <el-tag
-              size="medium"
-            >{{ statusValue[1] }}</el-tag>
-          </div>
-          <!--待出库-->
-          <div v-if="scope.row.noteStatus == 2">
-            <el-tag
-              size="medium"
-            >{{ statusValue[2] }}</el-tag>
-          </div>
-          <!--待签收-->
-          <div v-if="scope.row.noteStatus == 3">
-            <el-tag
-              type="warning"
-              size="medium"
-            >{{ statusValue[3] }}</el-tag>
-          </div>
-          <!--待结款-->
-          <div v-if="scope.row.noteStatus == 4">
-            <el-tag
-              type="danger"
-              size="medium"
-            >{{ statusValue[4] }}</el-tag>
-          </div>
-          <!--结款中-->
-          <div v-if="scope.row.noteStatus == 5">
-            <el-tag
-              type="danger"
-              size="medium"
-            >{{ statusValue[5] }}</el-tag>
-          </div>
-          <!--完结-->
-          <div v-if="scope.row.noteStatus == 6">
-            <el-tag
-              type="success"
-              size="medium"
-            >{{ statusValue[6] }}</el-tag>
-          </div>
-          <!--失效状态-->
-          <div v-if="scope.row.noteStatus <= 0 || scope.row.noteStatus >6 ">
+          <div v-if="scope.row.enable == false">
             <el-tag
               type="info"
               size="medium"
             >{{ statusValue[0] }}</el-tag>
+          </div>
+          <div v-else>
+            <!--待打印-->
+            <div v-if="scope.row.noteStatus == 1">
+              <el-tag
+                size="medium"
+              >{{ statusValue[1] }}</el-tag>
+            </div>
+            <!--待出库-->
+            <div v-if="scope.row.noteStatus == 2">
+              <el-tag
+                size="medium"
+              >{{ statusValue[2] }}</el-tag>
+            </div>
+            <!--待签收-->
+            <div v-if="scope.row.noteStatus == 3">
+              <el-tag
+                type="warning"
+                size="medium"
+              >{{ statusValue[3] }}</el-tag>
+            </div>
+            <!--待结款-->
+            <div v-if="scope.row.noteStatus == 4">
+              <el-tag
+                type="danger"
+                size="medium"
+              >{{ statusValue[4] }}</el-tag>
+            </div>
+            <!--结款中-->
+            <div v-if="scope.row.noteStatus == 5">
+              <el-tag
+                type="danger"
+                size="medium"
+              >{{ statusValue[5] }}</el-tag>
+            </div>
+            <!--完结-->
+            <div v-if="scope.row.noteStatus == 6">
+              <el-tag
+                type="success"
+                size="medium"
+              >{{ statusValue[6] }}</el-tag>
+            </div>
           </div>
         </template>
       </el-table-column>
@@ -158,7 +159,7 @@
           >编辑</el-button>-->
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            v-if="scope.row.invalid == 1"
+            v-if="scope.row.enable == false"
             size="mini"
             type="primary"
             icon="el-icon-tickets"
@@ -167,7 +168,7 @@
           >设为生效</el-button>
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            v-if="scope.row.invalid == 0"
+            v-if="scope.row.enable == true"
             size="mini"
             type="warning"
             icon="el-icon-tickets"
@@ -475,7 +476,7 @@
           <el-table-column prop="unit" label="单位" width="100px" align="center">
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
-              <el-select v-model="scope.row.unit" placeholder="请选择单位" @change="buttonType">
+              <el-select :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" v-model="scope.row.unit" placeholder="请选择单位" @change="buttonType">
                 <el-option
                   v-for="item in option"
                   :key="item.value"
@@ -571,9 +572,9 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button v-if="form.invalid == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
-        <el-button v-if="form.noteStatus == 1 && form.invalid == 0" @click="addTable" >添加产品</el-button>
-        <el-button v-if="form.invalid == 0 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-button v-if="form.enable == 1" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button v-if="form.noteStatus == 1 && form.enable == 1" @click="addTable" >添加产品</el-button>
+        <el-button :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
           :ref="form.id"
           placement="top"
@@ -694,7 +695,7 @@ import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/in
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/customer'
-import { getSelectMap, getByProdName } from '@/api/chemicalFiberStock'
+import { getSelectMap, getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
 import eForm from './form'
 export default {
@@ -704,6 +705,7 @@ export default {
     return {
       dateQuery: '',
       checkInvalidQuery: false,
+      showUnEnable: false,
       delLoading: false,
       payLoading: false,
       dialogVisible: false,
@@ -721,6 +723,7 @@ export default {
       userOptions: [],
       invoiceOption: [],
       invoiceList: '',
+      prodList: '',
       prodOptions: [],
       prods: [],
       typeButton: '',
@@ -757,7 +760,8 @@ export default {
         sendOutFlag: '',
         invalid: '',
         remainder: '',
-        invoiceType: ''
+        invoiceType: '',
+        enable: ''
       },
       customerForm: {
         id: '',
@@ -887,9 +891,9 @@ export default {
       const type = query.type
       const value = query.value
       const dateQuery = this.dateQuery
-      const checkInvalidQurey = this.checkInvalidQuery
+      const checkEnables = this.showUnEnable
       if (type && value) { this.params[type] = value }
-      this.params['queryWithInvalid'] = checkInvalidQurey
+      this.params['showUnEnable'] = checkEnables
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
@@ -971,6 +975,7 @@ export default {
       this.detailLoading = true
       getChemicalFiberDeliveryDetailsList(params).then(res => {
         this.detailList = res
+        this.addAll()
         this.detailLoading = false
       })
     },
@@ -1327,7 +1332,8 @@ export default {
         invalid: data.invalid,
         remainder: data.remainder,
         account: data.account,
-        invoiceType: data.invoiceType
+        invoiceType: data.invoiceType,
+        enable: data.enable
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1709,11 +1715,11 @@ export default {
     // 查询产品下拉框
     prodRemoteMethod(query) {
       const params = { prodName: query }
-      getSelectMap(params).then(res => {
+      getSelectMaps(params).then(res => {
         this.userLoading = false
         this.prodList = res
         this.prodOptions = this.prodList.filter(item => {
-          return item.prodName
+          return item
         })
       })
     },
@@ -1785,7 +1791,8 @@ export default {
         state: '',
         loaderOne: '',
         loaderTwo: '',
-        invalid: 0
+        invalid: 0,
+        enable: 0
       }
     }
   }

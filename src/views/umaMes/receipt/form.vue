@@ -55,7 +55,11 @@
         </template>
       </el-form-item>
       <el-form-item label="收款日期" >
-        <el-date-picker v-model="form.recivedDate" type="datetime" style="width: 370px;"/>
+        <el-date-picker
+          v-model="form.recivedDate"
+          type="datetime"
+          format="yyyy 年 MM 月 dd 日"
+          style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="项目类型" >
         <template slot-scope="scope">
@@ -85,6 +89,7 @@
             reserve-keyword
             placeholder="输入经办人关键词"
             style="width: 370px;"
+            @blur="selectBlur"
           >
             <el-option
               v-for="item in operatorOption"
@@ -108,7 +113,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
-      <el-button :loading="loading" type="primary" @click="doSubmit">更新</el-button>
+      <el-button :loading="loading" type="primary" @click="doSubmit">保存</el-button>
     </div>
   </el-dialog>
 </template>
@@ -121,8 +126,6 @@ import { getCustomerList } from '@/api/customer'
 import { getReceiptTypeList } from '@/api/receiptType'
 import { getUserListByDeptId } from '@/api/user'
 export default {
-  // 设置数据字典
-  dicts: ['recived_type'],
   props: {
     isAdd: {
       type: Boolean,
@@ -249,6 +252,9 @@ export default {
         })
         this.accountLoading = false
       })
+    },
+    selectBlur(e) {
+      this.form.operator = e.target.value
     },
     doSubmit() {
       this.loading = true

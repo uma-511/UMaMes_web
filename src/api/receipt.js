@@ -23,11 +23,11 @@ export function doFinish(id) {
   })
 }
 
-export function edit(params) {
+export function edit(data) {
   return request({
     url: 'api/receipt',
     method: 'put',
-    params
+    data
   })
 }
 
