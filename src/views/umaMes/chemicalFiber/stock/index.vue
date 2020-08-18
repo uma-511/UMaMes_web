@@ -54,9 +54,9 @@
           @click="download"
         >导出</el-button>
       </div>-->
-      <el-tag class="filter-item" type="success">个数汇总 {{ sumFactPerBagNumber }}</el-tag>
-      <el-tag class="filter-item" type="info">净重汇总 {{ sumNetWeight }} KG</el-tag>
-      <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }} KG</el-tag>
+      <el-tag class="filter-item" type="success">总支数 {{ sumFactPerBagNumber }} 支</el-tag>
+      <el-tag class="filter-item" type="info">总吨数 {{ sumNetWeight }} KG</el-tag>
+     <!-- <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }} KG</el-tag>-->
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
@@ -65,17 +65,17 @@
       <el-table-column prop="prodModel" label="产品编号"/>
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodUnit" label="计量单位"/>
-      <el-table-column prop="totalNumber" label="数量"/>
+      <el-table-column prop="totalNumber" :filter-method = "screen"  label="数量"/>
       <!--<el-table-column prop="tonNumber" label="吨数量"/>-->
-      <!--<el-table-column prop="status" label="吨状态">
+      <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          <div v-if="scope.row.tonNumber <= scope.row.min">
+          <div v-if="scope.row.totalNumber <= scope.row.min">
             <el-tag
               :type="stockMapping[2]"
               size="medium"
             >{{ stockValue[2] }}</el-tag>
           </div>
-          <div v-else-if=" scope.row.tonNumber >= scope.row.max">
+          <div v-else-if=" scope.row.totalNumber >= scope.row.max">
             <el-tag
               :type="stockMapping[1]"
               size="medium"
@@ -88,7 +88,7 @@
             >{{ stockValue[0] }}</el-tag>
           </div>
         </template>
-      </el-table-column>-->
+      </el-table-column>
       <!--<el-table-column prop="branchNumber" label="支数量"/>-->
       <!--<el-table-column prop="totalBag" label="总包数"/>-->
       <!--<el-table-column :formatter="maxformatter" prop="max" label="最大值" />
@@ -206,7 +206,7 @@ export default {
     checkPermission,
     beforeInit() {
       this.url = 'api/chemicalFiberStock'
-      const sort = 'id,desc'
+      const sort = 'prodModel,asc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
       const type = query.type
@@ -278,6 +278,9 @@ export default {
         this.sumNetWeight = res.data.sumNetWeight
         this.sumGrossWeight = res.data.sumGrossWeight
       })
+    },
+    screen(value, row) {
+      return
     },
     kgformatter(row, column, cellValue, index) {
       return cellValue + ' KG'
