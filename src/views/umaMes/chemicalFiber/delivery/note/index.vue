@@ -474,8 +474,8 @@
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
           <el-table-column prop="unit" label="单位" width="100px" align="center">
-            <template slot-scope="scope">
-              <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
+           <!-- <template slot-scope="scope">
+              &lt;!&ndash; <el-input v-model="scope.row.unit" placeholder="请输入单位"/> &ndash;&gt;
               <el-select :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" v-model="scope.row.unit" placeholder="请选择单位" @change="buttonType">
                 <el-option
                   v-for="item in option"
@@ -484,7 +484,7 @@
                   :value="item.value"
                 />
               </el-select>
-            </template>
+            </template>-->
           </el-table-column>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
@@ -619,38 +619,25 @@
       <el-dialog
         :visible.sync="addTableFrom"
         :append-to-body = "true"
-        width="40%"
+        width="450px"
         title="添加产品" >
-        <el-form :model="tableForm" size="mini" label-width="80px" >
-          <el-form-item label="产品搜索" >
-            <el-select
-              v-model="form.searchName"
-              :loading="userLoading"
-              :remote-method="prodRemoteMethod"
-              multiple:false
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入产品型号/名称关键词"
-              style="width: 200px;"
-              @change="fullWithProd"
-              @focus="cleanUpOptions"
-            >
-              <el-option
-                v-for="item in prodOptions"
-                :label="item.prodName"
-                :value="item.prodName"
-                @blur="prodOptions"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="产品型号" >
-            <el-input v-model="tableForm.prodModel" :disabled="true" style="width: 370px;"/>
-          </el-form-item>
-          <el-form-item label="产品名称" >
-            <el-input v-model="tableForm.prodName" :disabled="true" style="width: 370px;"/>
-          </el-form-item>
-        </el-form>
+        <el-input
+          v-model="tableForm.innerName"
+          style="width: 400px"
+          placeholder="请输入产品关键词"
+          @input="getProdList"
+        />
+        <el-table
+          v-loading="payDetailLoading"
+          :data="prodList"
+          style="width: 100%"
+          highlight-current-row
+          @row-click="addToDetail"
+        >
+          <el-table-column prop="prodModel" label="产品编号" align="center" width="150px"/>
+          <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
+          <el-table-column prop="prodUnit" label="单位" align="center" width="100px"/>
+        </el-table>
         <div style="text-align: right; margin: 0">
           <el-button size="mini" type="text" @click="addTableFrom = false">取消</el-button>
           <el-button :loading="delLoading" type="primary" size="mini" @click="addTableRow">确定</el-button>
@@ -816,7 +803,9 @@ export default {
         realPrice: '',
         totalPrice: '',
         id: '',
-        customerName: ''
+        customerName: '',
+        innerName: '',
+        prodUnit: ''
       },
       customerQuery: {
         name: '',
@@ -850,13 +839,13 @@ export default {
         {
           label: '不开发票',
           value: '不开发票'
-        },{
+        }, {
           label: '增值税普通发票',
           value: '增值税普通发票'
-        },{
+        }, {
           label: '增值税专用发票',
           value: '增值税专用发票'
-        },{
+        }, {
           label: '增值税电子普通发票',
           value: '增值税电子普通发票'
         }
@@ -1020,6 +1009,7 @@ export default {
       this.resetForm()
       this.dialogVisible = true
       this.detailLoading = false
+      this.form.enable = true
       this.detailList = []
       this.payDetailList = []
       this.buttonType()
@@ -1041,11 +1031,11 @@ export default {
     },
     // 点击添加产品的弹出框并清空里面的数据
     addTable() {
-      this.tableForm = {
-        prodName: ''
+      this.addTableFrom = {
+        innerName: ''
       }
-      this.form.searchName = ''
-      this.prods = []
+      this.prodList = []
+      this.getProdList()
       this.addTableFrom = true
     },
     showPayDialog() {
@@ -1135,7 +1125,7 @@ export default {
         prodModel: this.tableForm.prodModel,
         prodName: this.tableForm.prodName,
         scanNumber: this.form.scanNumber,
-        unit: '吨',
+        unit: this.tableForm.prodUnit,
         sellingPrice: this.tableForm.sellingPrice,
         remark: this.tableForm.remark,
         totalNumber: this.tableForm.totalNumber,
@@ -1208,7 +1198,7 @@ export default {
     // 把详情的数据传给后端
     addAll() {
       // 判断客户Id不为空才进行下一步
-      if (this.form.customerId === null) {
+      if (this.form.customerId === null || this.form.customerId === '') {
         this.$notify({
           title: '请选择客户',
           type: 'warning',
@@ -1217,7 +1207,7 @@ export default {
         return
       }
       // 后期可能要修改上面已经有判断了
-      if (this.form.customerId != '') {
+      if (this.form.customerId !== '') {
         this.id = this.form.customerId
       }
       this.customerForm = {
@@ -1720,15 +1710,69 @@ export default {
         this.tableForm.prodModel = this.prodList[0].prodModel
       })
     },
-    // 查询产品下拉框
-    prodRemoteMethod(query) {
-      const params = { prodName: query }
-      getSelectMaps(params).then(res => {
-        this.userLoading = false
-        this.prodList = res
-        this.prodOptions = this.prodList.filter(item => {
-          return item
+    doAlert() {
+      console.log(this.addTableFrom.innerName)
+    },
+    addToDetail(row) {
+      this.tableForm = {
+        detailNumber: this.detailList.length + 1,
+        prodModel: row.prodModel,
+        prodName: row.prodName,
+        scanNumber: this.form.scanNumber,
+        unit: row.prodUnit
+      }
+      this.detailList.forEach((item) => {
+        if (item.prodName === row.prodName && item.unit === row.prodUnit) {
+          this.$notify({
+            title: '有相同记录，无法添加',
+            type: 'warning',
+            duration: 2500
+          })
+          throw Error()
+        }
+      })
+      this.$confirm('是否添加本条记录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        addTableRow(this.tableForm).then(res => {
+          this.$notify({
+            title: '添加成功',
+            type: 'success',
+            duration: 2500
+          })
+          this.addTableFrom = true
+          this.buttonType()
+          this.dataiList(this.form.scanNumber)
+          this.addTableFrom = false
+          this.$parent.init()
+        }).catch(err => {
+          this.addTableFrom = false
+          console.log(err.response.data.message)
         })
+        this.addTableFrom = false
+      }).catch(() => {
+        this.$notify({
+          type: 'info',
+          message: '已取消',
+          duration: 2500
+        })
+      })
+    },
+    getProdList() {
+      const data = { prodName: this.tableForm.innerName }
+      getSelectMaps(data).then(res => {
+        this.payDetailLoading = false
+        var data = []
+        for (var i = 0; i < res.length; i++) {
+          var obj = {}
+          obj.prodname = res[i].prodName
+          obj.prodModel = res[i].prodModel
+          obj.unit = res[i].unit
+          data[i] = obj
+        }
+        this.prodList = res
       })
     },
     // 查询运输的下拉列表
