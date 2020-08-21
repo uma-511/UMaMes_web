@@ -74,6 +74,7 @@
       size="small"
       show-summary
       style="width: 100%;"
+      @row-dblclick="rowClickWithInvoice($event)"
     >
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
@@ -159,7 +160,8 @@
           >编辑</el-button>-->
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            v-if="scope.row.enable == false"
+            v-if="scope.row.enable == false "
+            :style="{ display: hideInvalidButton }"
             size="mini"
             type="primary"
             icon="el-icon-tickets"
@@ -169,6 +171,7 @@
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             v-if="scope.row.enable == true"
+            :style="{ display: hideInvalidButton }"
             size="mini"
             type="warning"
             icon="el-icon-tickets"
@@ -226,6 +229,7 @@
             <el-form-item label="客户编号">
               <el-select
                 v-model="form.customerCode"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="customerCodeLoading"
                 :remote-method="customerCodeMethod"
                 multiple:false
@@ -247,6 +251,7 @@
             <el-form-item label="客户名称">
               <el-select
                 v-model="form.customerName"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="customerLoading"
                 :remote-method="customerRemoteMethod"
                 multiple:false
@@ -266,10 +271,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="联系人员" >
-              <el-input v-model="form.contacts" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.contacts" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="客户电话" >
-              <el-input v-model="form.contactPhone" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.contactPhone" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="出库单号" >
               <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="buttonType"/>
@@ -277,11 +282,12 @@
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户地址" >
-              <el-input v-model="form.customerAddress" style="width: 382px;" @input="buttonType"/>
+              <el-input v-model="form.customerAddress" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 382px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="仓管人员">
               <el-select
                 v-model="form.storeKeeper"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="storeKeeperRemoteMethod"
                 multiple:false
@@ -305,6 +311,7 @@
             <el-form-item label="业务人员" >
               <el-select
                 v-model="form.seller"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="sellerRemoteMethod"
                 multiple:false
@@ -325,16 +332,17 @@
               </el-select>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input style="width: 150px;" @input="buttonType"/>
+              <el-input :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="交货日期" >
-              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
+              <el-date-picker v-model="form.deliveryDate" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
             </el-form-item>
             <el-form-item label="主 司 机" >
               <el-select
                 v-model="form.driverMain"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
@@ -358,6 +366,7 @@
             <el-form-item label="装载员1" >
               <el-select
                 v-model="form.loaderOne"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
@@ -381,6 +390,7 @@
             <el-form-item label="发票类型" >
               <el-select
                 v-model="form.invoiceType"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 placeholder="选择发票类型"
                 style="width: 156px;"
               >
@@ -392,7 +402,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="付款方式" >
-              <el-input v-model="form.payment" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.payment" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="最新欠款" >
               <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
@@ -401,11 +411,12 @@
           <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
             <el-form-item label="车 牌 号" >
-              <el-input v-model="form.carNumber" style="width: 158px;" @input="buttonType"/>
+              <el-input v-model="form.carNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 158px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="副 司 机" >
               <el-select
                 v-model="form.driverDeputy"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
@@ -429,6 +440,7 @@
             <el-form-item label="装载员2" >
               <el-select
                 v-model="form.loaderTwo"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
@@ -450,7 +462,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="备 注" >
-              <el-input v-model="form.remark" style="width: 403px;" @input="buttonType"/>
+              <el-input v-model="form.remark" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 403px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
         </el-form>
@@ -473,19 +485,7 @@
             width="50px"/>
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
-          <el-table-column prop="unit" label="单位" width="100px" align="center">
-           <!-- <template slot-scope="scope">
-              &lt;!&ndash; <el-input v-model="scope.row.unit" placeholder="请输入单位"/> &ndash;&gt;
-              <el-select :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" v-model="scope.row.unit" placeholder="请选择单位" @change="buttonType">
-                <el-option
-                  v-for="item in option"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </template>-->
-          </el-table-column>
+          <el-table-column prop="unit" label="单位" width="100px" align="center"/>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.totalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" :min="0" type="number" @input = "sum(scope.row)" />
@@ -511,7 +511,7 @@
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" placeholder="备注" @input="buttonType"/>
+              <el-input v-model="scope.row.remark" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" placeholder="备注" @input="buttonType"/>
             </template>
           </el-table-column>
           <el-table-column
@@ -571,7 +571,7 @@
           <el-table-column prop="inputUser" label="操作人" width="400px" align="center"/>
         </el-table>
       </el-row>
-      <span slot="footer" class="dialog-footer">
+      <span v-if="form.enable == 1" slot="footer" class="dialog-footer">
         <el-button v-if="form.enable == 1" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
         <el-button v-if="form.noteStatus == 1 && form.enable == 1" @click="addTable" >添加产品</el-button>
         <el-button :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
@@ -662,7 +662,7 @@
             <el-input v-model="payForm.amount" style="width: 370px;"/>
           </el-form-item>
           <div style="text-align: right; margin: 0">
-            <el-button :loading="delLoading" type="error" size="mini" @click="finalPay" >完结结款</el-button>
+            <el-button :loading="delLoading" type="warning" style="margin-right: 400px" size="mini" @click="finalPay" >完结结款</el-button>
             <el-button size="mini" type="text" @click="payDialog = false">取消</el-button>
             <el-button :loading="delLoading" type="primary" size="mini" @click="doPay">结款</el-button>
           </div>
@@ -691,6 +691,7 @@ export default {
   data() {
     return {
       dateQuery: '',
+      hideInvalidButton: 'none',
       checkInvalidQuery: false,
       showUnEnable: false,
       delLoading: false,
@@ -1376,6 +1377,9 @@ export default {
       this.detailLoading = true
       this.dialogVisible = true
     },
+    rowClickWithInvoice(event) {
+      this.hideInvalidButton = ''
+    },
     formatDate(row, column) {
       // 获取单元格数据
       const data = row[column.property]
@@ -1490,7 +1494,10 @@ export default {
           sums[index] += ' 元'
         }
         if (index === 2) {
-          sums[index] = '余数：' + this.form.remainder + '元'
+          if (this.form.remainder == null) {
+            this.form.remainder = 0
+          }
+          sums[index] = '损数：' + this.form.remainder + '元'
         }
       })
       return sums

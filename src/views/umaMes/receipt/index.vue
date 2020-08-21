@@ -2,6 +2,50 @@
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container">
+      <!-- 搜索 -->
+      <el-input
+        v-model="query.value"
+        clearable
+        placeholder="输入搜索内容"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="toQuery"
+      />
+      <el-select
+        v-model="query.type"
+        clearable
+        placeholder="类型"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in queryTypeOptions"
+          :key="item.key"
+          :label="item.display_name"
+          :value="item.key"
+        />
+      </el-select>
+      <el-date-picker
+        v-model="dateQuery"
+        class="el-range-editor--small filter-item"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+      />
+      <el-checkbox
+        v-model="showUnEnable"
+        label="查询失效单"
+        style="margin-top: 1px"
+        @change="toQuery"
+      />
+      <el-button
+        class="filter-item"
+        size="mini"
+        type="success"
+        icon="el-icon-search"
+        @click="toQuery"
+      >搜索</el-button>
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
@@ -20,7 +64,7 @@
       <el-table-column prop="receiptNumber" label="流水号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="type" label="收入类型"/>
-      <el-table-column prop="recivedAccount" label="收款账号"/>
+      <el-table-column prop="recivedAccount" label="收款方式"/>
       <el-table-column prop="recivedDate" label="单据日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.recivedDate) }}</span>
@@ -61,7 +105,7 @@
       <!--<el-table-column prop="status" label="状态"/>-->
       <el-table-column v-if="checkPermission(['admin','receipt:edit','receipt:del'])" label="操作" width="230px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','receipt:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+         <!-- <el-button v-permission="['admin','receipt:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
             :ref="scope.row.status"
             placement="top"
@@ -77,13 +121,13 @@
               >确定</el-button>
             </div>
             <el-button v-if="scope.row.status == 1" slot="reference" type="success" icon="el-icon-circle-check" size="mini">确认录入</el-button>
-          </el-popover>
+          </el-popover>-->
           <el-popover
             v-permission="['admin','receipt:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
-            <p>确定将本条数据设为失效吗？</p>
+            <p>确定将本条数据永久删除吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
               <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
@@ -116,15 +160,23 @@ export default {
   dicts: ['recived_type'],
   data() {
     return {
+      dateQuery: '',
       delLoading: false,
       finishLoading: false,
+      showUnEnable: false,
       finishRef: '',
       sutmitDetailLoading: false,
       statusValue: {
         0: '已失效',
         1: '待确认',
         2: '已确认'
-      }
+      },
+      queryTypeOptions: [
+        { key: 'receiptNumber', display_name: '流水单号' },
+        { key: 'customerName', display_name: '客户名称' },
+        { key: 'customerCode', display_name: '客户编号' },
+        { key: 'recivedAccount', display_name: '收款方式' }
+      ]
     }
   },
   created() {
@@ -140,6 +192,17 @@ export default {
       this.url = 'api/receipt'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
+      const query = this.query
+      const type = query.type
+      const value = query.value
+      const dateQuery = this.dateQuery
+      const checkEnables = this.showUnEnable
+      if (type && value) { this.params[type] = value }
+      this.params['showUnEnable'] = checkEnables
+      if (dateQuery) {
+        this.params['tempStartTime'] = dateQuery[0].getTime()
+        this.params['tempEndTime'] = dateQuery[1].getTime()
+      }
       return true
     },
     doFinish(id) {
@@ -158,9 +221,6 @@ export default {
         this.$refs[this.finishRef].doClose()
         console.log(err.response.data.message)
       })
-    },
-    doAlert() {
-      this.init()
     },
     subDelete(id) {
       this.delLoading = true

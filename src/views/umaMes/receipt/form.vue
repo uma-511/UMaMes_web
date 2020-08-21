@@ -1,7 +1,7 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="客户名称">
+      <el-form-item label="客户名称" prop="customerName">
         <el-select
           v-model="form.customerName"
           :loading="customerLoading"
@@ -22,7 +22,28 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="收款分类" >
+      <el-form-item label="客户编号" prop="customerCode">
+        <el-select
+          v-model="form.customerCode"
+          :loading="customerLoading"
+          :remote-method="customerCodeMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="输入客户关键词"
+          style="width: 370px;"
+          @change="setCustomerId($event)"
+        >
+          <el-option
+            v-for="item in customerCodeOptions"
+            :key="item.code"
+            :label="item.code"
+            :value="item.code"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="收款分类" prop="type">
         <el-select
           v-model="form.type"
           :loading="accountLoading"
@@ -37,12 +58,12 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="收款账号" >
+      <el-form-item label="收款方式" prop="recivedAccount">
         <template slot-scope="scope">
           <el-select
             v-model="form.recivedAccount"
             :loading="accountLoading"
-            placeholder="请选择收款账号"
+            placeholder="请选择收款方式"
             style="width: 370px;"
             @focus="initAccountOptions">
             <el-option
@@ -54,14 +75,14 @@
           </el-select>
         </template>
       </el-form-item>
-      <el-form-item label="收款日期" >
+      <el-form-item label="收款日期" prop="recivedDate">
         <el-date-picker
           v-model="form.recivedDate"
           type="datetime"
           format="yyyy 年 MM 月 dd 日"
           style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="项目类型" >
+      <el-form-item label="项目类型" prop="projectType">
         <template slot-scope="scope">
           <el-select
             v-model="form.projectType"
@@ -101,7 +122,7 @@
         </template>
       </el-form-item>
 
-      <el-form-item label="金额" >
+      <el-form-item label="金额" prop="amountOfMoney">
         <el-input v-model="form.amountOfMoney" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="单据编号" >
@@ -113,13 +134,13 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
-      <el-button :loading="loading" type="primary" @click="doSubmit">保存</el-button>
+      <el-button :loading="loading" type="primary" @click="doSubmit">确认并录入</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { add, edit } from '@/api/receipt'
+import { add, edit, doFinish } from '@/api/receipt'
 import { getAccountList } from '@/api/accountName'
 import { getBookAccountList } from '@/api/bookAccountType'
 import { getCustomerList } from '@/api/customer'
@@ -141,6 +162,7 @@ export default {
       customerLoading: false,
       customerLists: [],
       customerOptions: [],
+      customerCodeOptions: [],
       form: {
         id: '',
         receiptNumber: '',
@@ -156,13 +178,49 @@ export default {
         createUser: '',
         createDate: '',
         status: '',
-        customerId: ''
+        customerId: '',
+        customerCode: ''
       },
       customerQuery: {
         name: '',
         code: ''
       },
       rules: {
+        customerName: [
+          {
+            required: true, message: '请输入客户名称', trigger: 'blur'
+          }
+        ],
+        customerCode: [
+          {
+            required: true, message: '请输入客户名称', trigger: 'blur'
+          }
+        ],
+        recivedAccount: [
+          {
+            required: true, message: '请输入收款方式', trigger: 'blur'
+          }
+        ],
+        type: [
+          {
+            required: true, message: '请输入收款类别', trigger: 'blur'
+          }
+        ],
+        recivedDate: [
+          {
+            required: true, message: '请输入收款日期', trigger: 'blur'
+          }
+        ],
+        projectType: [
+          {
+            required: true, message: '请输入项目类型', trigger: 'blur'
+          }
+        ],
+        amountOfMoney: [
+          {
+            required: true, message: '请输入金额', trigger: 'blur'
+          }
+        ]
       },
       accountOption: [],
       projectOption: [],
@@ -180,6 +238,25 @@ export default {
     },
     doAlert1() {
       console.log(this.aList)
+    },
+    // 查询客户编号的下拉列表
+    customerCodeMethod(query) {
+      this.customerCodeLoading = false
+      if (query !== '') {
+        this.customerCodeLoading = true
+        this.customerQuery.code = query
+        this.customerCodeOptions = []
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerCodeLoading = false
+          this.customerList = res
+          this.customerQuery.code = ''
+          this.customerCodeOptions = this.customerList.filter(item => {
+            return item
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
     },
     // 查询客户名称的下拉列表
     customerRemoteMethod(query) {
@@ -205,7 +282,14 @@ export default {
       obj = this.customerOptions.find((item) => {
         return item.name === event
       })
+      if (obj == [] || obj == null) {
+        obj = this.customerCodeOptions.find((item) => {
+          return item.code === event
+        })
+      }
       this.form.customerId = obj.id
+      this.form.customerName = obj.name
+      this.form.customerCode = obj.code
     },
     initAccountOptions() {
       this.accountLoading = true
@@ -257,10 +341,14 @@ export default {
       this.form.operator = e.target.value
     },
     doSubmit() {
-      this.loading = true
-      if (this.isAdd) {
-        this.doAdd()
-      } else this.doEdit()
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          if (this.isAdd) {
+            this.doAdd()
+          } else this.doEdit()
+        }
+      })
     },
     doAdd() {
       add(this.form).then(res => {
