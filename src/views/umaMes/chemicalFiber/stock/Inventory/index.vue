@@ -35,7 +35,28 @@
         <el-table-column prop="lnventoryName" label="盘点单名称"/>
         <el-table-column prop="lnventorySurplus" label="盘盈数量"/>
         <el-table-column prop="lnventoryLoss" label="盘亏数量"/>
+        <el-table-column prop="warehousingStatus" label="状态">
+          <template slot-scope="scope">
+            <div v-if="scope.row.lnventoryStatus == 1">
+              <el-tag
+                type="danger"
+                size="medium"
+              >{{ statusValue[1] }}</el-tag>
+            </div>
+            <div v-if="scope.row.lnventoryStatus == 2">
+              <el-tag
+                type="success"
+                size="medium"
+              >{{ statusValue[2] }}</el-tag>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="lnventoryUser" label="制单人"/>
+        <el-table-column prop="createDate" label="制单时间">
+          <template slot-scope="scope">
+            <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+          </template>
+        </el-table-column>
         </el-table-column>
         <el-table-column
           label="操作"
@@ -142,7 +163,7 @@
 
 <script>
 import initData from '@/mixins/initData'
-import { parseTime } from '@/utils/index'
+import { parseTime, parseTimeToDate} from '@/utils/index'
 import { getLnventoryDateil, addLnventoryDateil, getLnventoryDateilList, addLnventoryDateilList, balanceList } from '@/api/chemicalFiberStockLnventoryDetail'
 import { addLnventory } from '@/api/chemicalFiberStockLnventory'
 export default {
@@ -159,6 +180,11 @@ export default {
         lnventoryNumber: '',
         lnventoryLoss: '',
         lnventorySurplus: '',
+      },
+      statusValue: {
+        0: '已失效',
+        1: '未平衡',
+        2: '已平衡'
       }
     }
   },
@@ -169,6 +195,7 @@ export default {
   },
   methods: {
     parseTime,
+    parseTimeToDate,
     beforeInit() {
       this.url = 'api/chemicalFiberStockLnventory'
       const sort = 'id,desc'
@@ -225,7 +252,6 @@ export default {
             }
           })
         })
-
       } else if (this.lnventoryStatus == 2) {
         getLnventoryDateilList(data).then(res => {
           this.detalList = res

@@ -1133,7 +1133,8 @@ export default {
         realQuantity: this.tableForm.realQuantity,
         customerName: this.form.customerName,
         totalPrice: this.tableForm.totalPrice,
-        realPrice: this.tableForm.realPrice
+        realPrice: this.tableForm.realPrice,
+        deliveryNoteId: this.form.id
       }
       if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '') {
         addTableRow(this.tableForm).then(res => {

@@ -60,7 +60,7 @@
           </el-col>
           <el-col :span="2">上期欠款</el-col>
           <el-col :span="6">
-            <el-input v-model="form.accumulatedArrears" style="width: 230px;" @change="accumulatedArrearsChange"/>
+            <el-input v-model="form.accumulatedArrears" disabled style="width: 230px;" @change="accumulatedArrearsChange"/>
           </el-col>
           <el-col :span="2">总欠金额</el-col>
           <el-col :span="6">
@@ -70,11 +70,11 @@
       </el-form-item>
       <el-form-item>
         <el-col :span="24">
-          <el-col :span="2">搜索</el-col>
+          <!--<el-col :span="2">搜索</el-col>
           <el-col :span="10">
             <el-date-picker
               v-model="queryDate"
-              class="el-range-editor--small filter-item"
+              class="el-range-editor&#45;&#45;small filter-item"
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
@@ -86,7 +86,7 @@
               type="success"
               icon="el-icon-search"
               @click="queryDateFun"
-            >搜索</el-button>
+            >搜索</el-button>-->
           </el-col>
           <el-col :span="2">对账单号</el-col>
           <el-col :span="4">
@@ -94,7 +94,7 @@
           </el-col>
           <el-col :span="2">账单周期</el-col>
           <el-col :span="4">
-            {{ parseTimeToDate(cycleDate[0]) }} -- {{ parseTimeToDate(cycleDate[1]) }}
+            {{ parseTimeToDates(cycleDate[0]) }}
           </el-col>
         </el-col>
       </el-form-item>
@@ -143,11 +143,12 @@
             </template>
           </el-table-column>
           <el-table-column prop="prodName" label="产品名称"/>
-          <el-table-column prop="totalBag" label="包数"/>
-          <el-table-column prop="netWeight" label="重量（KG）"/>
+          <el-table-column prop="unit" label="单位"/>
+          <el-table-column prop="totalBag" label="数量"/>
+          <!--<el-table-column prop="netWeight" label="重量（KG）"/>-->
           <el-table-column prop="sellingPrice" label="单价"/>
           <el-table-column prop="totalPrice" label="金额"/>
-          <el-table-column prop="advanceCharge" label="预付款">
+         <!-- <el-table-column prop="advanceCharge" label="预付款">
             <template slot-scope="scope">
               <el-input
                 v-model="scope.row.advanceCharge"
@@ -164,7 +165,7 @@
                 @change="editDetalis(scope.row)"
               />
             </template>
-          </el-table-column>
+          </el-table-column>-->
           <el-table-column prop="remark" label="备注">
             <template slot-scope="scope">
               <el-input
@@ -190,7 +191,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
-      <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
+      <!--<el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>-->
       <el-button :loading="exportStatementLoading" type="success" @click="exportStatement">导出对账单</el-button>
     </div>
   </el-dialog>
@@ -200,7 +201,7 @@
 import { add, edit, getStatementDetailsList, getStatementDetailsAllList, getSums, exportStatementFun } from '@/api/umaChemicalFiberStatement'
 import { statementDetailsEdit } from '@/api/umaChemicalFiberStatementDetails'
 import { getCustomerList } from '@/api/customer'
-import { parseTimeToDate, downloadFile } from '@/utils/index'
+import { parseTimeToDate, downloadFile , parseTimeToDates } from '@/utils/index'
 export default {
   props: {
     isAdd: {
@@ -236,7 +237,8 @@ export default {
         contactPhone: '',
         receivable: '',
         accumulatedArrears: '',
-        totalArrears: ''
+        totalArrears: '',
+        unit: ''
       },
       tableData: [],
       rules: {
@@ -248,6 +250,7 @@ export default {
   },
   methods: {
     parseTimeToDate,
+    parseTimeToDates,
     downloadFile,
     cancel() {
       this.tableData = []
@@ -469,12 +472,12 @@ export default {
       })
     },
     initReceivable() {
-      this.form.receivable = this.sums[6] - this.sums[7] - this.sums[8]
-      this.form.totalArrears = this.form.receivable * 1 + this.form.accumulatedArrears * 1
+      //this.form.receivable = this.sums[4] - this.sums[8]
+      /*this.form.totalArrears = this.form.receivable * 1 + this.form.accumulatedArrears * 1*/
     },
     accumulatedArrearsChange(data) {
-      this.form.accumulatedArrears = data
-      this.initReceivable()
+     /* this.form.accumulatedArrears = data
+      this.initReceivable()*/
     },
     exportStatement() {
       this.exportStatementLoading = true
