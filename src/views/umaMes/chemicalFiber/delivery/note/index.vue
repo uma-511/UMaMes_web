@@ -4,6 +4,7 @@
     <div class="head-container">
       <!-- 搜索 -->
       <el-input
+        v-longpress="showInvoice"
         v-model="query.value"
         clearable
         placeholder="输入搜索内容"
@@ -34,7 +35,7 @@
         end-placeholder="结束日期"
       />
       <el-checkbox
-        v-model="checkInvalidQuery"
+        v-model="showUnEnable"
         @change="toQuery"
       >查询失效单</el-checkbox>
       <el-button
@@ -74,6 +75,7 @@
       size="small"
       show-summary
       style="width: 100%;"
+      @row-click="detail($event)"
     >
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
@@ -93,45 +95,53 @@
       <el-table-column prop="createUser" label="制单人"/>
       <el-table-column prop="noteStatus" label="状态">
         <template slot-scope="scope">
-          <!--待打印-->
-          <div v-if="scope.row.noteStatus == 1">
-            <el-tag
-              size="medium"
-            >{{ statusValue[1] }}</el-tag>
-          </div>
-          <!--待出库-->
-          <div v-if="scope.row.noteStatus == 2">
-            <el-tag
-              size="medium"
-            >{{ statusValue[2] }}</el-tag>
-          </div>
-          <!--待签收-->
-          <div v-if="scope.row.noteStatus == 3">
-            <el-tag
-              type="warning"
-              size="medium"
-            >{{ statusValue[3] }}</el-tag>
-          </div>
-          <!--待结款-->
-          <div v-if="scope.row.noteStatus == 4">
-            <el-tag
-              type="danger"
-              size="medium"
-            >{{ statusValue[4] }}</el-tag>
-          </div>
-          <!--完结-->
-          <div v-if="scope.row.noteStatus == 5">
-            <el-tag
-              type="success"
-              size="medium"
-            >{{ statusValue[5] }}</el-tag>
-          </div>
-          <!--失效状态-->
-          <div v-if="scope.row.noteStatus <= 0 || scope.row.noteStatus >5 ">
+          <div v-if="scope.row.enable == false">
             <el-tag
               type="info"
               size="medium"
             >{{ statusValue[0] }}</el-tag>
+          </div>
+          <div v-else>
+            <!--待打印-->
+            <div v-if="scope.row.noteStatus == 1">
+              <el-tag
+                size="medium"
+              >{{ statusValue[1] }}</el-tag>
+            </div>
+            <!--待出库-->
+            <div v-if="scope.row.noteStatus == 2">
+              <el-tag
+                size="medium"
+              >{{ statusValue[2] }}</el-tag>
+            </div>
+            <!--待签收-->
+            <div v-if="scope.row.noteStatus == 3">
+              <el-tag
+                type="warning"
+                size="medium"
+              >{{ statusValue[3] }}</el-tag>
+            </div>
+            <!--待结款-->
+            <div v-if="scope.row.noteStatus == 4">
+              <el-tag
+                type="danger"
+                size="medium"
+              >{{ statusValue[4] }}</el-tag>
+            </div>
+            <!--结款中-->
+            <div v-if="scope.row.noteStatus == 5">
+              <el-tag
+                type="danger"
+                size="medium"
+              >{{ statusValue[5] }}</el-tag>
+            </div>
+            <!--完结-->
+            <div v-if="scope.row.noteStatus == 6">
+              <el-tag
+                type="success"
+                size="medium"
+              >{{ statusValue[6] }}</el-tag>
+            </div>
           </div>
         </template>
       </el-table-column>
@@ -142,31 +152,6 @@
         align="center"
       >
         <template slot-scope="scope">
-          <!--<el-button
-            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            size="mini"
-            type="primary"
-            icon="el-icon-edit"
-            @click="edit(scope.row)"
-          >编辑</el-button>-->
-          <el-button
-            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            v-if="scope.row.invalid == 1"
-            size="mini"
-            type="primary"
-            icon="el-icon-tickets"
-            @click="unInvalid(scope.row.id)"
-            @click.stop
-          >设为生效</el-button>
-          <el-button
-            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            v-if="scope.row.invalid == 0"
-            size="mini"
-            type="warning"
-            icon="el-icon-tickets"
-            @click="doInvalid(scope.row.id)"
-            @click.stop
-          >设为失效</el-button>
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             size="mini"
@@ -175,6 +160,26 @@
             @click="detail(scope.row)"
             @click.stop
           >详情</el-button>
+          <el-button
+            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            v-if="scope.row.enable == false "
+            :style="{ display: hideInvalidButton }"
+            size="mini"
+            type="primary"
+            icon="el-icon-tickets"
+            @click="unInvalid(scope.row.id)"
+            @click.stop
+          >设为生效</el-button>
+          <el-button
+            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            v-if="scope.row.enable == true"
+            :style="{ display: hideInvalidButton }"
+            size="mini"
+            type="warning"
+            icon="el-icon-tickets"
+            @click="doInvalid(scope.row.id)"
+            @click.stop
+          >设为失效</el-button>
           <!-- <el-popover
             v-permission="['admin','chemicalFiberDeliveryNote:del']"
             :ref="scope.row.id"
@@ -218,6 +223,7 @@
             <el-form-item label="客户编号">
               <el-select
                 v-model="form.customerCode"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="customerCodeLoading"
                 :remote-method="customerCodeMethod"
                 multiple:false
@@ -239,6 +245,7 @@
             <el-form-item label="客户名称">
               <el-select
                 v-model="form.customerName"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="customerLoading"
                 :remote-method="customerRemoteMethod"
                 multiple:false
@@ -258,10 +265,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="联系人员" >
-              <el-input v-model="form.contacts" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.contacts" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="客户电话" >
-              <el-input v-model="form.contactPhone" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.contactPhone" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="出库单号" >
               <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="buttonType"/>
@@ -269,11 +276,12 @@
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="客户地址" >
-              <el-input v-model="form.customerAddress" style="width: 382px;" @input="buttonType"/>
+              <el-input v-model="form.customerAddress" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 382px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="仓管人员">
               <el-select
                 v-model="form.storeKeeper"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="storeKeeperRemoteMethod"
                 multiple:false
@@ -297,6 +305,7 @@
             <el-form-item label="业务人员" >
               <el-select
                 v-model="form.seller"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="sellerRemoteMethod"
                 multiple:false
@@ -310,23 +319,24 @@
               >
                 <el-option
                   v-for="item in userOptions"
-                  :key="item.username"
-                  :label="item.username"
-                  :value="item.username"
+                  :key="item.realname"
+                  :label="item.realname"
+                  :value="item.realname"
                 />
               </el-select>
             </el-form-item>
             <el-form-item label="订单号码" >
-              <el-input style="width: 150px;" @input="buttonType"/>
+              <el-input :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
             <el-form-item label="交货日期" >
-              <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
+              <el-date-picker v-model="form.deliveryDate" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
             </el-form-item>
             <el-form-item label="主 司 机" >
               <el-select
                 v-model="form.driverMain"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
@@ -350,6 +360,7 @@
             <el-form-item label="装载员1" >
               <el-select
                 v-model="form.loaderOne"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
@@ -370,8 +381,22 @@
                 />
               </el-select>
             </el-form-item>
+            <el-form-item label="发票类型" >
+              <el-select
+                v-model="form.invoiceType"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                placeholder="选择发票类型"
+                style="width: 156px;"
+              >
+                <el-option
+                  v-for="item in localInvoiceOption"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
             <el-form-item label="付款方式" >
-              <el-input v-model="form.payment" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.payment" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="最新欠款" >
               <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
@@ -380,11 +405,12 @@
           <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
             <el-form-item label="车 牌 号" >
-              <el-input v-model="form.carNumber" style="width: 158px;" @input="buttonType"/>
+              <el-input v-model="form.carNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 158px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="副 司 机" >
               <el-select
                 v-model="form.driverDeputy"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
@@ -408,6 +434,7 @@
             <el-form-item label="装载员2" >
               <el-select
                 v-model="form.loaderTwo"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 multiple:false
@@ -429,7 +456,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="备 注" >
-              <el-input v-model="form.remark" style="width: 403px;" @input="buttonType"/>
+              <el-input v-model="form.remark" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 403px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
         </el-form>
@@ -452,19 +479,7 @@
             width="50px"/>
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
-          <el-table-column prop="unit" label="单位" width="100px" align="center">
-            <template slot-scope="scope">
-              <!-- <el-input v-model="scope.row.unit" placeholder="请输入单位"/> -->
-              <el-select v-model="scope.row.unit" placeholder="请选择单位" @change="buttonType">
-                <el-
-                  v-for="item in option"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </template>
-          </el-table-column>
+          <el-table-column prop="unit" label="单位" width="100px" align="center"/>
           <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.totalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" :min="0" type="number" @input = "sum(scope.row)" />
@@ -490,7 +505,7 @@
           <el-table-column prop="realPrice" label="应收金额" width="120px" align="center"/>
           <el-table-column prop="remark" label="备注" width="250px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" placeholder="备注" @input="buttonType"/>
+              <el-input v-model="scope.row.remark" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" placeholder="备注" @input="buttonType"/>
             </template>
           </el-table-column>
           <el-table-column
@@ -527,10 +542,33 @@
           </el-table-column>
         </el-table>
       </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button v-if="form.invalid == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
-        <el-button v-if="form.noteStatus == 1 && form.invalid == 0" @click="addTable" >添加产品</el-button>
-        <el-button v-if="form.invalid == 0 && form.noteStatus == 1 || form.noteStatus == 2 " :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+      <el-row>
+        <el-table
+          v-loading="payDetailLoading"
+          :data="payDetailList"
+          :summary-method="getPaySummaries"
+          style="width: 100%"
+          show-summary
+          highlight-current-row
+        >
+          <!--<el-form-item label="交货日期" >
+            <el-date-picker v-model="form.deliveryDate" type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
+          </el-form-item>-->
+          <el-table-column
+            :formatter="formatDate"
+            prop="payDate"
+            label="结款日期"
+            align="center"
+            width="500px"
+          />
+          <el-table-column prop="amount" label="结款金额" width="300px" align="center"/>
+          <el-table-column prop="inputUser" label="操作人" width="400px" align="center"/>
+        </el-table>
+      </el-row>
+      <span v-if="form.enable == 1" slot="footer" class="dialog-footer">
+        <el-button v-if="form.enable == 1" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button v-if="form.noteStatus == 1 && form.enable == 1" @click="addTable" >添加产品</el-button>
+        <el-button :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
           :ref="form.id"
           placement="top"
@@ -563,48 +601,66 @@
           </div>
           <el-button slot="reference" :disabled="form.noteStatus != 3 ? true : false" :type="form.noteStatus != 3 ? 'info' : 'warning'" icon="el-icon-suitcase">签收</el-button>
         </el-popover>
+        <template v-if="form.noteStatus == 5">
+          <el-button :disabled="form.noteStatus != 5 ? true : false" :type="form.noteStatus != 5 ? 'info' : 'warning'" icon="el-icon-s-finance" @click="showPayDialog">继续结款</el-button>
+        </template>
+        <template v-else>
+          <el-button :disabled="form.noteStatus != 4 ? true : false" :type="form.noteStatus != 4 ? 'info' : 'warning'" icon="el-icon-s-finance" @click="showPayDialog">结款</el-button>
+        </template>
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
 
       <el-dialog
         :visible.sync="addTableFrom"
         :append-to-body = "true"
-        width="40%"
+        width="450px"
         title="添加产品" >
-        <el-form :model="tableForm" size="mini" label-width="80px" >
-          <el-form-item label="产品搜索" >
-            <el-select
-              v-model="form.searchName"
-              :loading="userLoading"
-              :remote-method="prodRemoteMethod"
-              multiple:false
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请输入产品型号/名称关键词"
-              style="width: 200px;"
-              @change="fullWithProd"
-              @focus="cleanUpOptions"
-            >
-              <el-option
-                v-for="item in prodOptions"
-                :label="item.prodName"
-                :value="item.prodName"
-                @blur="prodOptions"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="产品型号" >
-            <el-input v-model="tableForm.prodModel" :disabled="true" style="width: 370px;"/>
-          </el-form-item>
-          <el-form-item label="产品名称" >
-            <el-input v-model="tableForm.prodName" :disabled="true" style="width: 370px;"/>
-          </el-form-item>
-        </el-form>
+        <el-input
+          v-model="tableForm.innerName"
+          style="width: 400px"
+          placeholder="请输入产品关键词"
+          @input="getProdList"
+        />
+        <el-table
+          v-loading="payDetailLoading"
+          :data="prodList"
+          style="width: 100%"
+          highlight-current-row
+          @row-click="addToDetail"
+        >
+          <el-table-column prop="prodModel" label="产品编号" align="center" width="150px"/>
+          <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
+          <el-table-column prop="prodUnit" label="单位" align="center" width="100px"/>
+        </el-table>
         <div style="text-align: right; margin: 0">
           <el-button size="mini" type="text" @click="addTableFrom = false">取消</el-button>
           <el-button :loading="delLoading" type="primary" size="mini" @click="addTableRow">确定</el-button>
         </div>
+      </el-dialog>
+      <el-dialog
+        :visible.sync="payDialog"
+        :append-to-body = "true"
+        width="40%"
+        title="结款" >
+        <el-form ref="form" :model="payForm" size="small" label-width="80px">
+          <el-form-item label="当前欠款" >
+            <el-input v-model="form.balance" :disabled="true" style="width: 370px;"/>
+          </el-form-item>
+          <el-form-item label="客户余额" >
+            <el-input v-model="customerForm.account" :disabled="true" style="width: 370px;"/>
+          </el-form-item>
+          <el-form-item label="支付日期" >
+            <el-date-picker v-model="payForm.payDate" type="datetime" style="width: 370px;"/>
+          </el-form-item>
+          <el-form-item label="支付金额" >
+            <el-input v-model="payForm.amount" style="width: 370px;"/>
+          </el-form-item>
+          <div style="text-align: right; margin: 0">
+            <el-button :loading="delLoading" type="warning" style="margin-right: 400px" size="mini" @click="finalPay" >完结结款</el-button>
+            <el-button size="mini" type="text" @click="payDialog = false">取消</el-button>
+            <el-button :loading="delLoading" type="primary" size="mini" @click="doPay">结款</el-button>
+          </div>
+        </el-form>
       </el-dialog>
     </el-dialog>
   </div>
@@ -619,8 +675,9 @@ import { edit, editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDe
 import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
-import { getCustomerList, getCustomerLists } from '@/api/customer'
-import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
+import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/customer'
+import { getSelectMap, getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
+import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -628,19 +685,27 @@ export default {
   data() {
     return {
       dateQuery: '',
+      hideInvalidButton: 'none',
       checkInvalidQuery: false,
+      showUnEnable: false,
       delLoading: false,
+      payLoading: false,
       dialogVisible: false,
       detailLoading: false,
+      payDetailLoading: false,
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
       customerCodeLoading: false,
       addTableFrom: false,
+      payDialog: false,
       isAdd: '',
       customerOptions: [],
       customerCodeOptions: [],
       userOptions: [],
+      invoiceOption: [],
+      invoiceList: '',
+      prodList: '',
       prodOptions: [],
       prods: [],
       typeButton: '',
@@ -675,7 +740,10 @@ export default {
         realPrice: '',
         noteStatus: '',
         sendOutFlag: '',
-        invalid: ''
+        invalid: '',
+        remainder: '',
+        invoiceType: '',
+        enable: ''
       },
       customerForm: {
         id: '',
@@ -702,7 +770,19 @@ export default {
         balance: '',
         payment: '',
         realPrice: '',
-        noteStatus: ''
+        noteStatus: '',
+        account: ''
+      },
+      payForm: {
+        id: '',
+        customerId: '',
+        customerName: '',
+        payment: '',
+        createDate: '',
+        payDate: '',
+        inputUser: '',
+        scanNumber: '',
+        amount: ''
       },
       tableForm: {
         detailNumber: '',
@@ -718,7 +798,9 @@ export default {
         realPrice: '',
         totalPrice: '',
         id: '',
-        customerName: ''
+        customerName: '',
+        innerName: '',
+        prodUnit: ''
       },
       customerQuery: {
         name: '',
@@ -744,9 +826,25 @@ export default {
         2: '待发货',
         3: '待签收',
         4: '待结款',
-        5: '已完结'
+        5: '结款中',
+        6: '完结'
       },
       detailList: [],
+      localInvoiceOption: [
+        {
+          label: '不开发票',
+          value: '不开发票'
+        }, {
+          label: '增值税普通发票',
+          value: '增值税普通发票'
+        }, {
+          label: '增值税专用发票',
+          value: '增值税专用发票'
+        }, {
+          label: '增值税电子普通发票',
+          value: '增值税电子普通发票'
+        }
+      ],
       option: [
         {
           value: '吨',
@@ -777,12 +875,17 @@ export default {
       const type = query.type
       const value = query.value
       const dateQuery = this.dateQuery
-      const checkInvalidQurey = this.checkInvalidQuery
+      const checkEnables = this.showUnEnable
       if (type && value) { this.params[type] = value }
-      this.params['queryWithInvalid'] = checkInvalidQurey
+      this.params['showUnEnable'] = checkEnables
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
+      }
+      if (type != '' || value != '') {
+        return true
+      } else {
+        this.hideInvalidButton = 'none'
       }
       return true
     },
@@ -906,7 +1009,9 @@ export default {
       this.resetForm()
       this.dialogVisible = true
       this.detailLoading = false
+      this.form.enable = true
       this.detailList = []
+      this.payDetailList = []
       this.buttonType()
     },
     // 导出
@@ -926,12 +1031,92 @@ export default {
     },
     // 点击添加产品的弹出框并清空里面的数据
     addTable() {
-      this.tableForm = {
-        prodName: ''
+      this.addTableFrom = {
+        innerName: ''
       }
-      this.form.searchName = ''
-      this.prods = []
+      this.prodList = []
+      this.getProdList()
       this.addTableFrom = true
+    },
+    showPayDialog() {
+      this.payDialog = true
+      this.payForm = {
+        id: '',
+        customerId: '',
+        customerName: '',
+        payment: '',
+        createDate: '',
+        payDate: new Date(),
+        inputUser: '',
+        scanNumber: '',
+        amount: ''
+      }
+    },
+    doPay() {
+      this.payForm = {
+        customerId: this.form.customerId,
+        customerName: this.form.customerName,
+        scanNumber: this.form.scanNumber,
+        payDate: this.payForm.payDate,
+        amount: this.payForm.amount
+      }
+      if (!this.payForm.amount || this.payForm.amount === '') {
+        this.$notify({
+          title: '请填写金额',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.payLoading = true
+      doPay(this.payForm).then(res => {
+        this.$notify({
+          title: '付款成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.payDialog = false
+        this.init()
+      }).catch(err => {
+        this.payDialog = false
+        console.log(err.response.data.message)
+      })
+      this.payLoading = false
+      this.payDialog = false
+      this.dialogVisible = false
+    },
+    finalPay() {
+      this.payForm = {
+        customerId: this.form.customerId,
+        customerName: this.form.customerName,
+        scanNumber: this.form.scanNumber,
+        payDate: this.payForm.payDate,
+        amount: this.payForm.amount
+      }
+      if (!this.payForm.amount || this.payForm.amount === '') {
+        this.$notify({
+          title: '请填写金额',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.payLoading = true
+      finalPay(this.payForm).then(res => {
+        this.$notify({
+          title: '付款成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.payDialog = false
+        this.init()
+      }).catch(err => {
+        this.payDialog = false
+        console.log(err.response.data.message)
+      })
+      this.payLoading = false
+      this.payDialog = false
+      this.dialogVisible = false
     },
     // 传添加产品数据给后端
     addTableRow() {
@@ -940,7 +1125,7 @@ export default {
         prodModel: this.tableForm.prodModel,
         prodName: this.tableForm.prodName,
         scanNumber: this.form.scanNumber,
-        unit: '吨',
+        unit: this.tableForm.prodUnit,
         sellingPrice: this.tableForm.sellingPrice,
         remark: this.tableForm.remark,
         totalNumber: this.tableForm.totalNumber,
@@ -1014,7 +1199,7 @@ export default {
     // 把详情的数据传给后端
     addAll() {
       // 判断客户Id不为空才进行下一步
-      if (this.form.customerId === null || this.form.customerId == '') {
+      if (this.form.customerId === null || this.form.customerId === '') {
         this.$notify({
           title: '请选择客户',
           type: 'warning',
@@ -1023,7 +1208,7 @@ export default {
         return
       }
       // 后期可能要修改上面已经有判断了
-      if (this.form.customerId != '') {
+      if (this.form.customerId !== '') {
         this.id = this.form.customerId
       }
       this.customerForm = {
@@ -1053,13 +1238,15 @@ export default {
         realPrice: this.form.realPrice,
         noteStatus: this.form.noteStatus,
         totalNumber: this.form.totalNumber,
-        realQuantity: this.form.realQuantity
+        realQuantity: this.form.realQuantity,
+        account: this.form.account,
+        invoiceType: this.form.invoiceType
       }
       if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
       }
-      //form表单保存
-      //this.doEdit(this.customerForm)
+      // form表单保存
+      // this.doEdit(this.customerForm)
       var ifNull = true
       // 循环列表里面的数据判断
       for (var i = 0; i < this.detailList.length; i++) {
@@ -1141,7 +1328,11 @@ export default {
         payment: data.payment,
         balance: data.balance,
         remark: data.remark,
-        invalid: data.invalid
+        invalid: data.invalid,
+        remainder: data.remainder,
+        account: data.account,
+        invoiceType: data.invoiceType,
+        enable: data.enable
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1165,8 +1356,42 @@ export default {
         }
         this.detailList = res
       })
+      const paramCustomer = { id: this.form.customerId }
+      getCustomerById(paramCustomer).then(res => {
+        this.customerForm.account = res.account
+      })
+      const paramPay = { scanNumber: this.form.scanNumber }
+      getPayDetailList(paramPay).then(res => {
+        this.payDetailLoading = false
+        var data = []
+        for (var i = 0; i < res.length; i++) {
+          var obj = {}
+          obj.payDate = res[i].payDate
+          obj.amount = res[i].amount
+          obj.inputUser = res[i].amount
+          data[i] = obj
+        }
+        this.payDetailList = res
+      })
+      this.payDetailLoading = true
       this.detailLoading = true
       this.dialogVisible = true
+    },
+    showInvoice(event) {
+      if (this.hideInvalidButton == 'none') {
+        this.hideInvalidButton = ''
+      } else {
+        this.hideInvalidButton = 'none'
+      }
+    },
+    formatDate(row, column) {
+      // 获取单元格数据
+      const data = row[column.property]
+      if (data == null) {
+        return null
+      }
+      const dt = new Date(data)
+      return dt.getFullYear() + '-' + (dt.getMonth() + 1) + '-' + dt.getDate() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds()
     },
     doInvalid(id) {
       doInvalid(id).then(res => {
@@ -1204,7 +1429,7 @@ export default {
     },
     // 触发输入框后自动计算预计金额和实际金额
     sum(data) {
-      //this.typeButton = 'danger'
+      // this.typeButton = 'danger'
       this.buttonType()
       if (data.totalNumber == '' || data.totalNumber == 0) {
         this.$notify({
@@ -1228,7 +1453,7 @@ export default {
       this.detailLoading = false
     },
     // 改变保存按钮的状态方法
-    buttonType(){
+    buttonType() {
       this.typeButton = 'danger'
     },
     // 单号列表的合计显示
@@ -1251,6 +1476,32 @@ export default {
             }
           }, 0).toFixed(2)
           sums[index] += ' 元'
+        }
+      })
+      return sums
+    },
+    getPaySummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      sums[0] = '客户账户余额：' + this.customerForm.account
+      columns.forEach((column, index) => {
+        const values = data.map(item => Number(item[column.property]))
+        if (index === 1) {
+          sums[index] = '总结款金额：' + values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 2) {
+          if (this.form.remainder == null) {
+            this.form.remainder = 0
+          }
+          sums[index] = '损数：' + this.form.remainder + '元'
         }
       })
       return sums
@@ -1434,7 +1685,8 @@ export default {
     // 查询业务员的下拉列表
     sellerRemoteMethod(query) {
       // 业务员deptId为19
-      const params = { deptId: 19, realname: query }
+      const idList = [19]
+      const params = { deptIdList: idList + '', realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
@@ -1448,7 +1700,8 @@ export default {
     // 查询仓管员的下拉列表
     storeKeeperRemoteMethod(query) {
       // 仓管员deptId为16
-      const params = { deptId: 16, realname: query }
+      const idList = [16]
+      const params = { deptIdList: idList + '', realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
@@ -1468,21 +1721,73 @@ export default {
         this.tableForm.prodModel = this.prodList[0].prodModel
       })
     },
-    // 查询产品下拉框
-    prodRemoteMethod(query) {
-      const params = { prodName: query }
-      getSelectMaps(params).then(res => {
-        this.userLoading = false
-        this.prodList = res
-        this.prodOptions = this.prodList.filter(item => {
-          return item.prodName
+    addToDetail(row) {
+      this.tableForm = {
+        detailNumber: this.detailList.length + 1,
+        prodModel: row.prodModel,
+        prodName: row.prodName,
+        scanNumber: this.form.scanNumber,
+        unit: row.prodUnit
+      }
+      this.detailList.forEach((item) => {
+        if (item.prodName === row.prodName && item.unit === row.prodUnit) {
+          this.$notify({
+            title: '有相同记录，无法添加',
+            type: 'warning',
+            duration: 2500
+          })
+          throw Error()
+        }
+      })
+      this.$confirm('是否添加本条记录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        addTableRow(this.tableForm).then(res => {
+          this.$notify({
+            title: '添加成功',
+            type: 'success',
+            duration: 2500
+          })
+          this.addTableFrom = true
+          this.buttonType()
+          this.dataiList(this.form.scanNumber)
+          this.addTableFrom = false
+          this.$parent.init()
+        }).catch(err => {
+          this.addTableFrom = false
+          console.log(err.response.data.message)
         })
+        this.addTableFrom = false
+      }).catch(() => {
+        this.$notify({
+          type: 'info',
+          message: '已取消',
+          duration: 2500
+        })
+      })
+    },
+    getProdList() {
+      const data = { prodName: this.tableForm.innerName }
+      getSelectMaps(data).then(res => {
+        this.payDetailLoading = false
+        var data = []
+        for (var i = 0; i < res.length; i++) {
+          var obj = {}
+          obj.prodname = res[i].prodName
+          obj.prodModel = res[i].prodModel
+          obj.unit = res[i].unit
+          data[i] = obj
+        }
+        this.prodList = res
       })
     },
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
       // 运输部deptId为18
-      const params = { deptId: 18, realname: query }
+      const idList = [18]
+      const params = { deptIdList: idList + '', realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
@@ -1546,7 +1851,8 @@ export default {
         state: '',
         loaderOne: '',
         loaderTwo: '',
-        invalid: 0
+        invalid: 0,
+        enable: 0
       }
     }
   }
