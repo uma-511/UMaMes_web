@@ -4,6 +4,7 @@
     <div class="head-container">
       <!-- 搜索 -->
       <el-input
+        v-longpress="showInvoice"
         v-model="query.value"
         clearable
         placeholder="输入搜索内容"
@@ -74,7 +75,7 @@
       size="small"
       show-summary
       style="width: 100%;"
-      @row-dblclick="rowClickWithInvoice($event)"
+      @row-click="detail($event)"
     >
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
@@ -151,13 +152,14 @@
         align="center"
       >
         <template slot-scope="scope">
-          <!--<el-button
+          <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             size="mini"
-            type="primary"
-            icon="el-icon-edit"
-            @click="edit(scope.row)"
-          >编辑</el-button>-->
+            type="success"
+            icon="el-icon-tickets"
+            @click="detail(scope.row)"
+            @click.stop
+          >详情</el-button>
           <el-button
             v-permission="['admin','chemicalFiberDeliveryNote:edit']"
             v-if="scope.row.enable == false "
@@ -178,14 +180,6 @@
             @click="doInvalid(scope.row.id)"
             @click.stop
           >设为失效</el-button>
-          <el-button
-            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            size="mini"
-            type="success"
-            icon="el-icon-tickets"
-            @click="detail(scope.row)"
-            @click.stop
-          >详情</el-button>
           <!-- <el-popover
             v-permission="['admin','chemicalFiberDeliveryNote:del']"
             :ref="scope.row.id"
@@ -888,6 +882,11 @@ export default {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
+      if (type != '' || value != '') {
+        return true
+      } else {
+        this.hideInvalidButton = 'none'
+      }
       return true
     },
     sendOut(id) {
@@ -1377,8 +1376,12 @@ export default {
       this.detailLoading = true
       this.dialogVisible = true
     },
-    rowClickWithInvoice(event) {
-      this.hideInvalidButton = ''
+    showInvoice(event) {
+      if (this.hideInvalidButton == 'none') {
+        this.hideInvalidButton = ''
+      } else {
+        this.hideInvalidButton = 'none'
+      }
     },
     formatDate(row, column) {
       // 获取单元格数据
@@ -1716,9 +1719,6 @@ export default {
         this.tableForm.prodName = this.prodList[0].prodName
         this.tableForm.prodModel = this.prodList[0].prodModel
       })
-    },
-    doAlert() {
-      console.log(this.addTableFrom.innerName)
     },
     addToDetail(row) {
       this.tableForm = {
