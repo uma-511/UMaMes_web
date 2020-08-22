@@ -567,7 +567,7 @@
       </el-row>
       <span v-if="form.enable == 1" slot="footer" class="dialog-footer">
         <el-button v-if="form.enable == 1" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
-        <el-button v-if="form.noteStatus == 1 && form.enable == 1" @click="addTable" >添加产品</el-button>
+        <el-button v-if="form.noteStatus == 1 && form.enable == 1 && isAdd != 1" @click="addTable" >添加产品</el-button>
         <el-button :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
         <el-popover
           :ref="form.id"
@@ -586,12 +586,12 @@
           <el-button slot="reference" :disabled="form.noteStatus != 2 ? true : false" :type="form.noteStatus != 2 ? 'info' : 'success'" icon="el-icon-truck">发货</el-button>
         </el-popover>
         <el-popover
-          :ref="tableForm.customerName"
+          :ref="form.customerName"
           placement="top"
         >
           <p>确认签收前，请确认回填信息</p>
           <div style="text-align: right; margin: 0">
-            <el-button size="mini" type="text" @click="popoverClose(tableForm.customerName)">取消</el-button>
+            <el-button size="mini" type="text" @click="popoverClose(form.customerName)">取消</el-button>
             <el-button
               :loading="sutmitDetailLoading"
               type="primary"
@@ -946,7 +946,7 @@ export default {
       this.sutmitDetailLoading = true
       recived(id).then(res => {
         this.sutmitDetailLoading = false
-        this.$refs[this.tableForm.customerName].doClose()
+        this.$refs[this.form.customerName].doClose()
         this.dialogVisible = false
         this.init()
         this.$notify({
@@ -1010,6 +1010,7 @@ export default {
       this.dialogVisible = true
       this.detailLoading = false
       this.form.enable = true
+      this.form.noteStatus = 1
       this.detailList = []
       this.payDetailList = []
       this.buttonType()
