@@ -643,14 +643,14 @@
         width="40%"
         title="结款" >
         <el-form ref="form" :model="payForm" size="small" label-width="80px">
-          <el-form-item label="当前欠款" >
-            <el-input v-model="form.balance" :disabled="true" style="width: 370px;"/>
+          <el-form-item label="支付时间" >
+            <el-date-picker v-model="payForm.payDate" type="datetime" style="width: 370px;"/>
           </el-form-item>
           <el-form-item label="客户余额" >
             <el-input v-model="customerForm.account" :disabled="true" style="width: 370px;"/>
           </el-form-item>
-          <el-form-item label="支付日期" >
-            <el-date-picker v-model="payForm.payDate" type="datetime" style="width: 370px;"/>
+          <el-form-item label="当前欠款" >
+            <el-input v-model="form.balance" :disabled="true" style="width: 370px;"/>
           </el-form-item>
           <el-form-item label="支付金额" >
             <el-input v-model="payForm.amount" style="width: 370px;"/>
@@ -1041,6 +1041,12 @@ export default {
     },
     showPayDialog() {
       this.payDialog = true
+      let initAmount = 0
+      if (this.customerForm.account > this.form.balance) {
+        initAmount = this.form.balance
+      } else {
+        initAmount = this.customerForm.account
+      }
       this.payForm = {
         id: '',
         customerId: '',
@@ -1050,7 +1056,7 @@ export default {
         payDate: new Date(),
         inputUser: '',
         scanNumber: '',
-        amount: ''
+        amount: initAmount
       }
     },
     doPay() {
@@ -1061,7 +1067,7 @@ export default {
         payDate: this.payForm.payDate,
         amount: this.payForm.amount
       }
-      if (!this.payForm.amount || this.payForm.amount === '') {
+      if (!this.payForm.amount || this.payForm.amount === '' || this.payForm.amount === '0' ) {
         this.$notify({
           title: '请填写金额',
           type: 'warning',
@@ -1740,34 +1746,22 @@ export default {
           throw Error()
         }
       })
-      this.$confirm('是否添加本条记录?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        addTableRow(this.tableForm).then(res => {
-          this.$notify({
-            title: '添加成功',
-            type: 'success',
-            duration: 2500
-          })
-          this.addTableFrom = true
-          this.buttonType()
-          this.dataiList(this.form.scanNumber)
-          this.addTableFrom = false
-          this.$parent.init()
-        }).catch(err => {
-          this.addTableFrom = false
-          console.log(err.response.data.message)
-        })
-        this.addTableFrom = false
-      }).catch(() => {
+      addTableRow(this.tableForm).then(res => {
         this.$notify({
-          type: 'info',
-          message: '已取消',
+          title: '添加成功',
+          type: 'success',
           duration: 2500
         })
+        this.addTableFrom = true
+        this.buttonType()
+        this.dataiList(this.form.scanNumber)
+        this.addTableFrom = false
+        this.$parent.init()
+      }).catch(err => {
+        this.addTableFrom = false
+        console.log(err.response.data.message)
       })
+      this.addTableFrom = false
     },
     getProdList() {
       const data = { prodName: this.tableForm.innerName }
