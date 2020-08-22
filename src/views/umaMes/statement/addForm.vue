@@ -68,10 +68,10 @@
           </el-col>
         </el-col>
       </el-form-item>
-      <el-form-item label="搜索">
+      <!--<el-form-item label="搜索">
         <el-date-picker
           v-model="queryDate"
-          class="el-range-editor--small filter-item"
+          class="el-range-editor&#45;&#45;small filter-item"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -84,7 +84,7 @@
           icon="el-icon-search"
           @click="queryDateFun"
         >搜索</el-button>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-table
           v-loading="tableLoading"

@@ -225,7 +225,6 @@ export default {
             }
           })
         })
-
       } else if (this.lnventoryStatus == 2) {
         getLnventoryDateilList(data).then(res => {
           this.detalList = res

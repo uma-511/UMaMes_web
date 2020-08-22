@@ -32,16 +32,23 @@
         icon="el-icon-search"
         @click="toQuery"
       >搜索</el-button>
+      <!--<el-button
+        class="filter-item"
+        size="mini"
+        type="success"
+        icon="el-icon-search"
+        @click="TableStatement"
+      >导出对账单</el-button>-->
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
-        <el-button
+        <!--<el-button
           v-permission="['admin', 'umaChemicalFiberStatement:add']"
           class="filter-item"
           size="mini"
           type="primary"
           icon="el-icon-plus"
           @click="add"
-        >新增</el-button>
+        >新增</el-button>-->
       </div>
       <!-- 导出 -->
       <!-- <div style="display: inline-block;">
@@ -72,7 +79,11 @@
       <!-- <el-table-column prop="contacts" label="客户联系人"/>
       <el-table-column prop="contactPhone" label="客户联系电话"/>-->
       <el-table-column prop="receivable" label="应收金额"/>
-      <el-table-column prop="accumulatedArrears" label="上期欠款"/>
+      <el-table-column prop="accumulatedArrears" label="上期欠款">
+        <template slot-scope="scope">
+          <span>{{ parses(scope.row) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="totalArrears" label="总欠金额"/>
       <el-table-column prop="createUser" label="创建人"/>
       <el-table-column
@@ -146,7 +157,7 @@ export default {
         { key: 'customerName', display_name: '客户名称' }
         // { key: 'contacts', display_name: '客户联系人' },
         // { key: 'contactPhone', display_name: '客户联系电话' }
-      ]
+      ],
     }
   },
   created() {
@@ -164,6 +175,9 @@ export default {
       const query = this.query
       const type = query.type
       const value = query.value
+      const date = new Date()
+      const createDate = date.getTime();
+      this.params['createDate'] = createDate
       if (type && value) { this.params[type] = value }
       return true
     },
@@ -203,11 +217,15 @@ export default {
         contactPhone: data.contactPhone,
         receivable: data.receivable,
         accumulatedArrears: data.accumulatedArrears,
-        totalArrears: data.totalArrears
+        totalArrears: data.totalArrears,
+        unit: data.unit
       }
       _this.dialog = true
       _this.initEdit(_this.form)
       _this.initGetSums(_this.form)
+    },
+    TableStatement() {
+
     },
     // 导出
     download() {
@@ -219,6 +237,10 @@ export default {
       }).catch(() => {
         this.downloadLoading = false
       })
+    },
+    parses(data){
+      data.accumulatedArrears = data.totalArrears - data.receivable
+      return data.accumulatedArrears
     }
   }
 }

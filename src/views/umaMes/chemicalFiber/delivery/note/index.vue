@@ -947,7 +947,8 @@ export default {
         realQuantity: this.tableForm.realQuantity,
         customerName: this.form.customerName,
         totalPrice: this.tableForm.totalPrice,
-        realPrice: this.tableForm.realPrice
+        realPrice: this.tableForm.realPrice,
+        deliveryNoteId: this.form.id
       }
       if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '') {
         addTableRow(this.tableForm).then(res => {
@@ -1013,7 +1014,7 @@ export default {
     // 把详情的数据传给后端
     addAll() {
       // 判断客户Id不为空才进行下一步
-      if (this.form.customerId === null) {
+      if (this.form.customerId === null || this.form.customerId == '') {
         this.$notify({
           title: '请选择客户',
           type: 'warning',

@@ -37,6 +37,23 @@ export function parseTimeToDate(time) {
   }
 }
 
+export function parseTimeToDates(time) {
+  if (time) {
+    var date = new Date(time)
+    var year = date.getFullYear()
+    /* 在日期格式中，月份是从0开始的，因此要加0
+     * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+     * */
+    var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+    var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+    // 拼接
+    return year + '-' + month
+  } else {
+    return ''
+  }
+}
+
+
 export function formatTime(time, option) {
   time = +time * 1000
   const d = new Date(time)
