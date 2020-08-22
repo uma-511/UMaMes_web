@@ -71,6 +71,22 @@
           </template>
         </el-table-column>
         <el-table-column prop="createUser" label="制单人"/>
+        <el-table-column prop="warehousingStatus" label="状态">
+          <template slot-scope="scope">
+            <div v-if="scope.row.warehousingStatus == 1">
+              <el-tag
+                type="danger"
+                size="medium"
+              >{{ statusValue[1] }}</el-tag>
+            </div>
+            <div v-if="scope.row.warehousingStatus == 2">
+              <el-tag
+                type="success"
+                size="medium"
+              >{{ statusValue[2] }}</el-tag>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column
           label="操作"
           width="240px"
@@ -483,7 +499,12 @@ export default {
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '入库单号' },
         { key: 'supplierName', display_name: '供应商' },
-      ]
+      ],
+      statusValue: {
+        0: '已失效',
+        1: '待新增',
+        2: '已入库'
+      }
 
 
     }
@@ -684,7 +705,7 @@ export default {
         })
         return
       }
-      if (this.detalList.length == '') {
+      if (this.detalList.length == '' || this.detalList.length == 0) {
         this.$notify({
           title: '请先添加产品',
           type: 'warning',
@@ -778,7 +799,8 @@ export default {
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
       // 运输部deptId为18
-      const params = { deptId: 18, realname: query }
+      const idList = [18]
+      const params = { deptIdList: idList + '', realname: query }
       this.userLoading = true
       getUserListByDeptId(params).then(res => {
         this.userLoading = false
