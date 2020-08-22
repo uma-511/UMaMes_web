@@ -179,10 +179,10 @@ export default {
       sumNetWeight: 0,
       sumGrossWeight: 0,
       queryTypeOptions: [
-        { key: 'prodModel', display_name: '产品型号' },
+        { key: 'prodModel', display_name: '产品编号' },
         { key: 'prodName', display_name: '产品名称' },
-        { key: 'prodColor', display_name: '产品色号' },
-        { key: 'prodFineness', display_name: '产品纤度' },
+ /*       { key: 'prodColor', display_name: '产品色号' },
+        { key: 'prodFineness', display_name: '产品纤度' },*/
         { key: 'prodUnit', display_name: '计量单位' }
       ],
       stockMapping: {

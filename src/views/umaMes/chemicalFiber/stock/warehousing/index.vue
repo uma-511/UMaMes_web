@@ -60,14 +60,14 @@
         <el-table-column prop="batchNumber" label="批号"/>
         <el-table-column prop="supplierName" label="供应商名称"/>
         <el-table-column prop="totalPrice" label="总金额"/>
-        <el-table-column prop="createDate" label="制单日期">
+        <el-table-column prop="createDate" label="制单时间">
           <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.createDate) }}</span>
+            <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="warehousingDate" label="入库时间">
           <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.warehousingDate) }}</span>
+            <span>{{ parseTimeToDate(scope.row.warehousingDate) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="createUser" label="制单人"/>
@@ -166,11 +166,31 @@
             <el-form-item label="入库单号" >
               <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
-            <el-form-item label="供应商" >
-              <el-input v-model="form.supplierName" :disabled="form.warehousingStatus == 2?true:false" style="width: 150px;" @input="buttonType"/>
-            </el-form-item>
             <el-form-item label="批号" >
               <el-input v-model="form.batchNumber" type="number" :disabled="form.warehousingStatus == 2?true:false" maxlength="17" style="width: 150px;" @input="buttonType"/>
+            </el-form-item>
+            <!--<el-form-item label="供应商" >
+              <el-input v-model="form.supplierName" :disabled="form.warehousingStatus == 2?true:false" style="width: 150px;" @input="buttonType"/>
+            </el-form-item>-->
+            <el-form-item label="客户名称">
+              <el-select
+                v-model="form.supplierName"
+                :loading="customerLoading"
+                :remote-method="customerRemoteMethod"
+                multiple:false
+                filterable
+                remote
+                reserve-keyword
+                placeholder="输入客户关键词"
+                style="width: 150px;"
+              >
+                <el-option
+                  v-for="item in customerOptions"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="入库日期" >
               <el-date-picker v-model="form.warehousingDate" :disabled="form.warehousingStatus == 2?true:false"s type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
@@ -363,7 +383,7 @@
         </el-table>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
+        <el-button v-if="form.warehousingStatus == 1 || form.warehousingStatus == 0" :loading="loading" :type="typeButton" icon="el-icon-edit" @click="addAll">保存</el-button>
         <el-button v-if="form.warehousingStatus == 1" @click="addTable" >添加产品</el-button>
         <el-popover
           :ref="form.id"
@@ -443,6 +463,7 @@
 
 <script>
 import initData from '@/mixins/initData'
+import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/customer'
 import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
 import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { getProdList } from '@/api/chemicalFiberProduct'
@@ -457,7 +478,7 @@ export default {
     return{
       loading: false,dialog: false,detalList:[],userLoading: false,prodOptions: [],addTableFrom: false,isAnd: '',
       userOptions: [],typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
-      dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,
+      dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,customerOptions: [],
       form: {
         id: '',
         createUser: '',
@@ -502,9 +523,13 @@ export default {
       ],
       statusValue: {
         0: '已失效',
-        1: '待新增',
+        1: '编辑中',
         2: '已入库'
-      }
+      },
+      customerQuery: {
+        name: '',
+        code: ''
+      },
 
 
     }
@@ -516,6 +541,7 @@ export default {
   },
   methods: {
     parseTime,
+    parseTimeToDate,
     beforeInit() {
       this.url = 'api/chemicalFiberStockWarehousing'
       const sort = 'id,desc'
@@ -566,6 +592,7 @@ export default {
       this.detalList = []
       this.typeButton = 'success'
       this.isAdd = true
+      this.form.warehousingStatus = 0
       this.dialog = true
     },
     // 添加产品触发
@@ -638,6 +665,14 @@ export default {
     },
     addAll() {
       this.typeButton = 'success'
+      if (this.form.supplierName == '') {
+        this.$notify({
+          title: '请填写供应商',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       if (this.isAnd == 1) {
         this.doAdd(this.form)
         return
@@ -667,7 +702,7 @@ export default {
       delDetail(id).then(res => {
         this.sutmitDetailLoading = false
         this.$refs[id].doClose()
-        this.tableDetailList()
+        this.tableDetailList(this.form)
         this.$notify({
           title: '删除成功',
           type: 'success',
@@ -678,6 +713,8 @@ export default {
         this.$refs[id].doClose()
         console.log(err.response.data.message)
       })
+
+
     },
     delWarehousing(id) {
       this.sutmitDetailLoading = true
@@ -760,6 +797,7 @@ export default {
       this.typeButton = 'danger'
     },
     tableDetailList(data) {
+      this.detaLoading = true
       this.detalList = []
       var params = { 'scanNumber': data.scanNumber }
       warehousingDetaliList(params).then(res => {
@@ -810,6 +848,25 @@ export default {
             .indexOf(query.toLowerCase()) > -1
         })
       })
+    },
+    // 查询客户名称的下拉列表
+    customerRemoteMethod(query) {
+      if (query !== '') {
+        this.customerLoading = true
+        this.customerQuery.name = query
+        this.customerOptions = []
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerLoading = false
+          this.customerQuery.name = ''
+          this.customerList = res
+          this.customerOptions = this.customerList.filter(item => {
+            return item.name.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
     },
     resetForm() {
       this.form = {
