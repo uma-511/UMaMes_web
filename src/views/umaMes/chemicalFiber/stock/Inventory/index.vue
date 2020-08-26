@@ -31,10 +31,15 @@
         size="small"
         style="width: 100%;"
       >
+        <el-table-column
+          label="序号"
+          align="center"
+          type="index"
+          width="50px"/>
         <el-table-column prop="lnventoryNumber" label="单号"/>
         <el-table-column prop="lnventoryName" label="盘点单名称"/>
-        <el-table-column prop="lnventorySurplus" label="盘盈数量"/>
-        <el-table-column prop="lnventoryLoss" label="盘亏数量"/>
+        <el-table-column prop="lnventorySurplusStr" label="盘盈数量"/>
+        <el-table-column prop="lnventoryLossStr" label="盘亏数量"/>
         <el-table-column prop="warehousingStatus" label="状态">
           <template slot-scope="scope">
             <div v-if="scope.row.lnventoryStatus == 1">
@@ -71,6 +76,31 @@
               @click="edit(scope.row)"
               @click.stop
             >编辑</el-button>
+            <el-popover
+              v-if="scope.$index == 0"
+              :ref="scope.row.id"
+              placement="top"
+            >
+              <p>是否删除</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="popoverClose(scope.row.id)">取消</el-button>
+                <el-button
+                  :loading="sutmitDetailLoading"
+                  type="primary"
+                  size="mini"
+                  @click="delect(scope.row.id)"
+                >确定</el-button>
+              </div>
+              <el-button slot="reference" type="warning" icon="el-icon-delete" size="mini">删除</el-button>
+            </el-popover>
+            <!--<el-button
+              size="mini"
+
+              type="danger"
+              icon="el-icon-tickets"
+              @click="delect(scope.row)"
+              @click.stop
+            >删除</el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -165,13 +195,13 @@
 import initData from '@/mixins/initData'
 import { parseTime, parseTimeToDate} from '@/utils/index'
 import { getLnventoryDateil, addLnventoryDateil, getLnventoryDateilList, addLnventoryDateilList, balanceList } from '@/api/chemicalFiberStockLnventoryDetail'
-import { addLnventory } from '@/api/chemicalFiberStockLnventory'
+import { addLnventory, delectsStock } from '@/api/chemicalFiberStockLnventory'
 export default {
   mixins: [initData],
   data() {
     return {
       isAdd:true,dialog: false,detalList: [],detaLoading: false,isAnd: '',visible: false,sutmitDetailLoading: false,
-      lnventoryStatus: '',typeButton: '',dateQuery: '',
+      lnventoryStatus: '',typeButton: '',dateQuery: '',checkInvalidQuery: false,sutmitDetailLoading: false,
       form: {
         prodModel: '',
         prodName: '',
@@ -199,8 +229,10 @@ export default {
     beforeInit() {
       this.url = 'api/chemicalFiberStockLnventory'
       const sort = 'id,desc'
-      const dateQuery = this.dateQuery
       this.params = { page: this.page, size: this.size, sort: sort}
+      const dateQuery = this.dateQuery
+      const checkInvalidQurey = this.checkInvalidQuery
+      this.params['queryWithInvalid'] = checkInvalidQurey
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
@@ -231,6 +263,7 @@ export default {
       })
     },
     edit(data) {
+      console.log(data)
       this.typeButton = 'success'
       this.lnventoryStatus = data.lnventoryStatus
       this.isAdd = false
@@ -262,12 +295,23 @@ export default {
 
     },
     add() {
+      for (var i = 0; i < this.data.length; i ++) {
+        if (this.data[i].lnventoryStatus == 1) {
+          this.$notify({
+            title: '请先平衡库存',
+            type: 'warning',
+            duration: 2500
+          })
+          return
+        }
+      }
       this.typeButton = 'danger'
       this.lnventoryStatus = ''
       this.detalList = []
       this.detaLoading = true
       this.isAnd = 1
       this.dialog = true
+      console.log(this.data)
       getLnventoryDateil().then(res => {
         this.detalList = res
         this.detaLoading = false
@@ -309,6 +353,19 @@ export default {
             duration: 2500
           })
         })
+      })
+    },
+    delect(id) {
+      this.sutmitDetailLoading = true
+      delectsStock(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        this.$notify({
+          title: '删除成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.init()
       })
     },
     getSummaries(param) {
@@ -356,6 +413,10 @@ export default {
       })
       return sums
     },
+    popoverClose(id) {
+      this.sutmitDetailLoading = false
+      this.$refs[id].doClose()
+    },
     sum(data){
       // 盈亏
       if (data.lnventoryNumber <= data.prodNumber ) {
@@ -372,5 +433,6 @@ export default {
 </script>
 
 <style scoped>
+
 
 </style>

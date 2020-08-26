@@ -1,0 +1,170 @@
+<template>
+  <div class="app-container">
+    <el-input
+      v-model="query.value"
+      clearable
+      size="mini"
+      placeholder="输入搜索内容"
+      style="width: 200px;"
+      class="filter-item"
+      @keyup.enter.native="toQuery"
+    />
+    <el-select
+      v-model="query.type"
+      clearable
+      size="mini"
+      placeholder="类型"
+      class="filter-item"
+      style="width: 130px"
+    >
+      <el-option
+        v-for="item in queryTypeOptions"
+        :key="item.key"
+        :label="item.display_name"
+        :value="item.key"
+      />
+    </el-select>
+    <el-date-picker
+      v-model="dateQuery"
+      size="mini"
+      class="el-range-editor--small filter-item"
+      type="daterange"
+      range-separator="至"
+      start-placeholder="开始日期"
+      end-placeholder="结束日期"
+    />
+    <el-button
+      class="filter-item"
+      size="mini"
+      type="success"
+      icon="el-icon-search"
+      @click="toQuery"
+    >搜索</el-button>
+    <div class="head-container">
+      <el-table
+        v-loading="loading"
+        :data="data"
+        border
+        size="small"
+        style="width: 100%;"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+          align="center">
+        </el-table-column>
+        <el-table-column prop="scanNumber" label="入库单号"/>
+        <el-table-column prop="warehousingDate" label="入库时间">
+          <template slot-scope="scope">
+            <span>{{ parseTimeToDate(scope.row.warehousingDate) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="supplierName" label="供应商名称"/>
+        <el-table-column prop="prodName" label="产品名称"/>
+        <el-table-column prop="unit" label="单位"/>
+        <el-table-column prop="warehousingNumber" label="数量"/>
+        <el-table-column prop="price" label="单价"/>
+        <el-table-column prop="totalPrice" label="金额"/>
+        <el-table-column prop="createUser" label="制单人"/>
+        <el-table-column prop="createDate" label="制单时间">
+          <template slot-scope="scope">
+            <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+          </template>
+        </el-table-column>
+        <!--<el-table-column prop="warehousingStatus" label="状态">
+          <template slot-scope="scope">
+            <div v-if="scope.row.warehousingStatus == 1">
+              <el-tag
+                type="danger"
+                size="medium"
+              >{{ statusValue[1] }}</el-tag>
+            </div>
+            <div v-if="scope.row.warehousingStatus == 2">
+              <el-tag
+                type="success"
+                size="medium"
+              >{{ statusValue[2] }}</el-tag>
+            </div>
+          </template>
+        </el-table-column>-->
+        <!--<el-table-column
+          label="操作"
+          width="240px"
+          align="center"
+        >-->
+
+        </el-table-column>
+      </el-table>
+      <!--分页组件-->
+      <el-pagination
+        :total="total"
+        :current-page="page + 1"
+        style="margin-top: 8px;"
+        layout="total, prev, pager, next, sizes"
+        @size-change="sizeChange"
+        @current-change="pageChange"
+      />
+    </div>
+  </div>
+</template>
+
+<script>
+import initData from '@/mixins/initData'
+import { parseTime, parseTimeToDate} from '@/utils/index'
+export default {
+  mixins: [initData],
+  data() {
+    return {
+      dateQuery: '',checkInvalidQuery: false,
+      queryTypeOptions: [
+        { key: 'scanNumber', display_name: '入库单号' },
+        { key: 'prodName', display_name: '产品名称' },
+        { key: 'supplierName', display_name: '供应商名称' },
+        { key: 'createUser', display_name: '制单人' }
+      ]
+    }
+
+  },
+  created() {
+    this.$nextTick(() => {
+      this.init()
+    })
+  },
+  methods: {
+    parseTime,
+    parseTimeToDate,
+    beforeInit() {
+      this.url = 'api/chemicalFiberWarehousingReort'
+      const sort = 'id,desc'
+      this.params = { page: this.page, size: this.size, sort: sort}
+      const dateQuery = this.dateQuery
+      const query = this.query
+      const type = query.type
+      const value = query.value
+      const checkInvalidQurey = this.checkInvalidQuery
+      this.params['queryWithInvalid'] = checkInvalidQurey
+      if (type && value) { this.params[type] = value }
+      if (dateQuery) {
+        this.params['tempStartTime'] = dateQuery[0].getTime()
+        this.params['tempEndTime'] = dateQuery[1].getTime()
+      }
+      /*const query = this.query
+      const type = query.type
+      const value = query.value
+      const dateQuery = this.dateQuery
+      const checkInvalidQurey = this.checkInvalidQuery
+      if (type && value) { this.params[type] = value }
+      this.params['queryWithInvalid'] = checkInvalidQurey
+      */
+      return true
+    }
+  }
+}
+</script>
+
+<style>
+  body .el-table th.gutter {
+    display: table-cell !important
+  }
+
+</style>

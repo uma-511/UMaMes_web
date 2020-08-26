@@ -711,6 +711,7 @@ export default {
       typeButton: '',
       visible: false,
       sumRealQuantity: '',
+      sumTotalQuantity: '',
       id: '',
       form: {
         id: '',
@@ -735,6 +736,7 @@ export default {
         state: '',
         loaderOne: '',
         loaderTwo: '',
+        totalCost: '',
         balance: '',
         payment: '',
         realPrice: '',
@@ -768,6 +770,7 @@ export default {
         loaderOne: '',
         loaderTwo: '',
         balance: '',
+        totalCost: '',
         payment: '',
         realPrice: '',
         noteStatus: '',
@@ -1247,8 +1250,10 @@ export default {
         totalNumber: this.form.totalNumber,
         realQuantity: this.form.realQuantity,
         account: this.form.account,
+        totalCost: this.sumTotalQuantity,
         invoiceType: this.form.invoiceType
       }
+      console.log(this.sumTotalQuantity)
       if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
       }
@@ -1328,6 +1333,7 @@ export default {
         loaderOne: data.loaderOne,
         loaderTwo: data.loaderTwo,
         totalPrice: data.totalPrice,
+        totalCost: data.totalCost,
         realPrice: data.realPrice,
         customerId: data.customerId,
         deliveryDate: data.deliveryDate,
@@ -1532,6 +1538,7 @@ export default {
               return prev
             }
           }, 0).toFixed(2)
+          this.sumTotalQuantity = sums[index]
           sums[index] += ' 元'
         }
         if (index === 8) {

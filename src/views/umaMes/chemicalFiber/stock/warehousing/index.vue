@@ -678,7 +678,7 @@ export default {
         return
       }else if (this.isAnd == 2) {
         for (var i = 0; i < this.detalList.length; i++) {
-          if (this.detalList[i].warehousingNumber == '' && this.detalList[i].warehousingNumber == 0) {
+          if (this.detalList[i].warehousingNumber == '' || this.detalList[i].warehousingNumber == 0) {
             this.$notify({
               title: '请填写数量',
               type: 'warning',
