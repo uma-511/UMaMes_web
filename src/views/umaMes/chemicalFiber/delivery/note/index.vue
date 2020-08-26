@@ -214,7 +214,7 @@
       :visible.sync="dialogVisible"
       :append-to-body="true"
       :modal="true"
-      title="出货单详情"
+      title="送货单详情"
       width="80%"
     >
       <el-row style="width: 100%">
@@ -487,7 +487,7 @@
           </el-table-column>
           <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5?true : false" :min="0" type="number" @input = "sum(scope.row)" />
+              <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5 || form.noteStatus == 6?true : false" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
           <el-table-column prop="sellingPrice" label="单价" width="130px" align="center">
@@ -1213,6 +1213,9 @@ export default {
           duration: 2500
         })
         return
+      }
+      if (this.form.deliveryDate === null || this.form.deliveryDate === '') {
+        this.form.deliveryDate = new Date()
       }
       // 后期可能要修改上面已经有判断了
       if (this.form.customerId !== '') {

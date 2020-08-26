@@ -83,22 +83,30 @@
       </el-table-column>
       <el-table-column prop="noteStatus" label="状态">
         <template slot-scope="scope">
-          <div v-if="scope.row.status == 1">
+          <div v-if="scope.row.enable == false">
             <el-tag
-              size="medium"
-            >{{ statusValue[1] }}</el-tag>
-          </div>
-          <div v-if="scope.row.status == 2">
-            <el-tag
-              size="medium"
-              type="success"
-            >{{ statusValue[2] }}</el-tag>
-          </div>
-          <div v-if="scope.row.status == 0">
-            <el-tag
-              size="medium"
               type="info"
+              size="medium"
             >{{ statusValue[0] }}</el-tag>
+          </div>
+          <div v-else>
+            <div v-if="scope.row.status == 1">
+              <el-tag
+                size="medium"
+              >{{ statusValue[1] }}</el-tag>
+            </div>
+            <div v-if="scope.row.status == 2">
+              <el-tag
+                size="medium"
+                type="success"
+              >{{ statusValue[2] }}</el-tag>
+            </div>
+            <div v-if="scope.row.status == 0">
+              <el-tag
+                size="medium"
+                type="info"
+              >{{ statusValue[0] }}</el-tag>
+            </div>
           </div>
         </template>
       </el-table-column>
@@ -132,7 +140,7 @@
               <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
               <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
             </div>
-            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
+            <el-button v-if="scope.row.enable == true" slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
           </el-popover>
         </template>
       </el-table-column>

@@ -169,7 +169,7 @@ export default {
         customerName: '',
         type: '',
         recivedAccount: '',
-        recivedDate: '',
+        recivedDate: new Date(),
         projectType: '',
         operator: '',
         amountOfMoney: '',
@@ -204,11 +204,6 @@ export default {
         type: [
           {
             required: true, message: '请输入收款类别', trigger: 'blur'
-          }
-        ],
-        recivedDate: [
-          {
-            required: true, message: '请输入收款日期', trigger: 'blur'
           }
         ],
         projectType: [
