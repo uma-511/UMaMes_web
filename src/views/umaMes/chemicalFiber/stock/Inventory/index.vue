@@ -31,10 +31,15 @@
         size="small"
         style="width: 100%;"
       >
+        <el-table-column
+          label="序号"
+          align="center"
+          type="index"
+          width="50px"/>
         <el-table-column prop="lnventoryNumber" label="单号"/>
         <el-table-column prop="lnventoryName" label="盘点单名称"/>
-        <el-table-column prop="lnventorySurplus" label="盘盈数量"/>
-        <el-table-column prop="lnventoryLoss" label="盘亏数量"/>
+        <el-table-column prop="lnventorySurplusStr" label="盘盈数量"/>
+        <el-table-column prop="lnventoryLossStr" label="盘亏数量"/>
         <el-table-column prop="warehousingStatus" label="状态">
           <template slot-scope="scope">
             <div v-if="scope.row.lnventoryStatus == 1">
@@ -54,7 +59,7 @@
         <el-table-column prop="lnventoryUser" label="制单人"/>
         <el-table-column prop="createDate" label="制单时间">
           <template slot-scope="scope">
-            <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+            <span>{{ parseTime(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
         </el-table-column>
@@ -71,6 +76,31 @@
               @click="edit(scope.row)"
               @click.stop
             >编辑</el-button>
+            <el-popover
+              v-if="scope.$index == 0"
+              :ref="scope.row.id"
+              placement="top"
+            >
+              <p>是否删除</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="popoverClose(scope.row.id)">取消</el-button>
+                <el-button
+                  :loading="sutmitDetailLoading"
+                  type="primary"
+                  size="mini"
+                  @click="delect(scope.row.id)"
+                >确定</el-button>
+              </div>
+              <el-button slot="reference" type="warning" icon="el-icon-delete" size="mini">删除</el-button>
+            </el-popover>
+            <!--<el-button
+              size="mini"
+
+              type="danger"
+              icon="el-icon-tickets"
+              @click="delect(scope.row)"
+              @click.stop
+            >删除</el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -88,6 +118,7 @@
       :append-to-body="true"
       :close-on-click-modal="false"
       :visible.sync="dialog"
+      :modal="true"
       :title="isAdd ? '盘点单新增' : '盘点单编辑'"
       width="65%">
       <el-row>
@@ -96,6 +127,7 @@
           :data="detalList"
           style="width: 100%"
           show-summary
+          max-height="380"
           :summary-method="getSummaries"
           highlight-current-row
           row-key="id">
@@ -165,13 +197,13 @@
 import initData from '@/mixins/initData'
 import { parseTime, parseTimeToDate} from '@/utils/index'
 import { getLnventoryDateil, addLnventoryDateil, getLnventoryDateilList, addLnventoryDateilList, balanceList } from '@/api/chemicalFiberStockLnventoryDetail'
-import { addLnventory } from '@/api/chemicalFiberStockLnventory'
+import { addLnventory, delectsStock } from '@/api/chemicalFiberStockLnventory'
 export default {
   mixins: [initData],
   data() {
     return {
       isAdd:true,dialog: false,detalList: [],detaLoading: false,isAnd: '',visible: false,sutmitDetailLoading: false,
-      lnventoryStatus: '',typeButton: '',dateQuery: '',
+      lnventoryStatus: '',typeButton: '',dateQuery: '',checkInvalidQuery: false,sutmitDetailLoading: false,
       form: {
         prodModel: '',
         prodName: '',
@@ -199,8 +231,10 @@ export default {
     beforeInit() {
       this.url = 'api/chemicalFiberStockLnventory'
       const sort = 'id,desc'
-      const dateQuery = this.dateQuery
       this.params = { page: this.page, size: this.size, sort: sort}
+      const dateQuery = this.dateQuery
+      const checkInvalidQurey = this.checkInvalidQuery
+      this.params['queryWithInvalid'] = checkInvalidQurey
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
@@ -231,6 +265,7 @@ export default {
       })
     },
     edit(data) {
+      console.log(data)
       this.typeButton = 'success'
       this.lnventoryStatus = data.lnventoryStatus
       this.isAdd = false
@@ -262,12 +297,23 @@ export default {
 
     },
     add() {
+      for (var i = 0; i < this.data.length; i ++) {
+        if (this.data[i].lnventoryStatus == 1) {
+          this.$notify({
+            title: '请先平衡库存',
+            type: 'warning',
+            duration: 2500
+          })
+          return
+        }
+      }
+      this.isAnd = 1
       this.typeButton = 'danger'
       this.lnventoryStatus = ''
       this.detalList = []
       this.detaLoading = true
-      this.isAnd = 1
       this.dialog = true
+      console.log(this.data)
       getLnventoryDateil().then(res => {
         this.detalList = res
         this.detaLoading = false
@@ -311,6 +357,19 @@ export default {
         })
       })
     },
+    delect(id) {
+      this.sutmitDetailLoading = true
+      delectsStock(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[id].doClose()
+        this.$notify({
+          title: '删除成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.init()
+      })
+    },
     getSummaries(param) {
       const { columns, data } = param
       const sums = []
@@ -340,7 +399,20 @@ export default {
               return prev
             }
           }, 0)
-          sums[index]
+          var a = 0;
+          var b = 0;
+          for (var i = 0; i < this.detalList.length; i++) {
+            if (this.isAnd != 1) {
+              if (this.detalList[i].lnventoryNumber >= this.detalList[i].prodNumber) {
+                if (this.detalList[i].unit == "吨") {
+                  a += this.detalList[i].lnventoryNumber - this.detalList[i].prodNumber
+                } else {
+                  b += this.detalList[i].lnventoryNumber - this.detalList[i].prodNumber
+                }
+              }
+            }
+          }
+          sums[index] = a+"吨/"+b+ "支"
         }
         if (index === 7) {
           sums[index] = values.reduce((prev, curr) => {
@@ -351,10 +423,28 @@ export default {
               return prev
             }
           }, 0)
-          sums[index]
+          var a = 0;
+          var b = 0;
+          for (var i = 0; i < this.detalList.length; i++) {
+            if (this.isAnd != 1) {
+              if (this.detalList[i].lnventoryNumber <= this.detalList[i].prodNumber) {
+                if (this.detalList[i].unit == "吨") {
+                  a += this.detalList[i].prodNumber - this.detalList[i].lnventoryNumber
+                } else {
+                  b += this.detalList[i].prodNumber - this.detalList[i].lnventoryNumber
+                }
+              }
+            }
+
+          }
+          sums[index] = a+"吨/"+b+ "支"
         }
       })
       return sums
+    },
+    popoverClose(id) {
+      this.sutmitDetailLoading = false
+      this.$refs[id].doClose()
     },
     sum(data){
       // 盈亏
@@ -372,5 +462,6 @@ export default {
 </script>
 
 <style scoped>
+
 
 </style>

@@ -6,3 +6,10 @@ export function addLnventory() {
     method: 'post',
   })
 }
+
+export function delectsStock(id) {
+  return request({
+    url: 'api/chemicalFiberStockLnventory/' + id,
+    method: 'delete'
+  })
+}

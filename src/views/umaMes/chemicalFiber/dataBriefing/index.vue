@@ -27,11 +27,15 @@
         <el-col :xs="12" :sm="12" :lg="12" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
-              <svg-icon icon-class="ipvisits" class-name="card-panel-icon" />
+              <svg-icon icon-class="ck (1)" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">库存吨数</div>
               <count-to :start-val="0" :end-val="count.stockTonNumber" :duration="3600" class="card-panel-num"/>
+            </div>
+            <div class="card-panel-description" style="width:300px;">
+              <div class="card-panel-text">库存支数</div>
+              <count-to :start-val="0" :end-val="count.stockBranchNumber" :duration="3600" class="card-panel-num"/>
             </div>
           </div>
         </el-col>
@@ -40,10 +44,22 @@
             <div class="card-panel-icon-wrapper icon-message">
               <svg-icon icon-class="ipvisits" class-name="card-panel-icon" />
             </div>
-            <div class="card-panel-description">
+            <div class="card-panel-description" >
+              <div class="card-panel-text">入库支数</div>
+              <count-to :start-val="0" :end-val="count.warehousingBranchNumber" :duration="3000" class="card-panel-num"/>
+            </div>
+            <div class="card-panel-description" style="width:150px;">
+              <div class="card-panel-text">入库吨数</div>
+              <count-to :start-val="0" :end-val="count.warehousingTonNumber" :duration="3000" class="card-panel-num"/>
+            </div>
+            <div class="card-panel-description" style="width:150px;">
+              <div class="card-panel-text">入库单数</div>
+              <count-to :start-val="0" :end-val="count.warehousingNumber" :duration="2600" class="card-panel-num"/>
+            </div>
+            <!--<div class="card-panel-description">
               <div class="card-panel-text">库存支数</div>
               <count-to :start-val="0" :end-val="count.stockBranchNumber" :duration="3600" class="card-panel-num"/>
-            </div>
+            </div>-->
           </div>
         </el-col>
       </el-row>
@@ -93,7 +109,7 @@
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="40" class="panel-group">
+     <!-- <el-row :gutter="40" class="panel-group">
         <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
@@ -125,9 +141,10 @@
               <div class="card-panel-text">入库支数</div>
               <count-to :start-val="0" :end-val="count.warehousingBranchNumber" :duration="3000" class="card-panel-num"/>
             </div>
+
           </div>
         </el-col>
-      </el-row>
+      </el-row>-->
 
     </div>
   </div>

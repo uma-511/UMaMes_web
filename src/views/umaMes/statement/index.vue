@@ -106,7 +106,7 @@
             icon="el-icon-edit"
             @click="edit(scope.row)"
           />
-          <el-popover
+          <!--<el-popover
             v-permission="['admin', 'umaChemicalFiberStatement:del']"
             :ref="scope.row.id"
             placement="top"
@@ -123,7 +123,7 @@
               >确定</el-button>
             </div>
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
-          </el-popover>
+          </el-popover>-->
         </template>
       </el-table-column>
     </el-table>

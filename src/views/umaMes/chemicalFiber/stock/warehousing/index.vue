@@ -57,15 +57,15 @@
         style="width: 100%;"
       >
         <el-table-column prop="scanNumber" label="入库单号"/>
-        <el-table-column prop="batchNumber" label="批号"/>
         <el-table-column prop="supplierName" label="供应商名称"/>
+        <el-table-column prop="batchNumber" label="批号"/>
         <el-table-column prop="totalPrice" label="总金额"/>
-        <el-table-column prop="createDate" label="制单时间">
+        <el-table-column prop="createDate" label="制单日期">
           <template slot-scope="scope">
             <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="warehousingDate" label="入库时间">
+        <el-table-column prop="warehousingDate" label="入库日期">
           <template slot-scope="scope">
             <span>{{ parseTimeToDate(scope.row.warehousingDate) }}</span>
           </template>
@@ -157,6 +157,7 @@
     <el-dialog
       :append-to-body="true"
       :close-on-click-modal="false"
+      :modal="true"
       :visible.sync="dialog"
       :title="isAdd ? '新增' : '编辑'"
       width="65%">
@@ -178,6 +179,7 @@
                 :loading="customerLoading"
                 :remote-method="customerRemoteMethod"
                 multiple:false
+                :disabled="form.warehousingStatus == 2?true:false"
                 filterable
                 remote
                 reserve-keyword
@@ -315,6 +317,7 @@
           :data="detalList"
           :summary-method="getSummaries"
           style="width: 100%"
+          max-height="300"
           show-summary
           highlight-current-row
           row-key="id"
@@ -407,6 +410,7 @@
       <el-dialog
         :visible.sync="addTableFrom"
         :append-to-body = "true"
+        :modal="true"
         width="40%"
         title="添加产品" >
         <el-form :model="tableForm" size="mini" label-width="80px" >
@@ -673,12 +677,20 @@ export default {
         })
         return
       }
+      if (this.form.warehousingDate == null) {
+        this.$notify({
+          title: '请填日期',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       if (this.isAnd == 1) {
         this.doAdd(this.form)
         return
       }else if (this.isAnd == 2) {
         for (var i = 0; i < this.detalList.length; i++) {
-          if (this.detalList[i].warehousingNumber == '' && this.detalList[i].warehousingNumber == 0) {
+          if (this.detalList[i].warehousingNumber == '' || this.detalList[i].warehousingNumber == 0) {
             this.$notify({
               title: '请填写数量',
               type: 'warning',

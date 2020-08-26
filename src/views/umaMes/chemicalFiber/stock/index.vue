@@ -55,7 +55,7 @@
         >导出</el-button>
       </div>-->
       <el-tag class="filter-item" type="success">总支数 {{ sumFactPerBagNumber }} 支</el-tag>
-      <el-tag class="filter-item" type="info">总吨数 {{ sumNetWeight }} KG</el-tag>
+      <el-tag class="filter-item" type="info">总吨数 {{ sumNetWeight }} T</el-tag>
      <!-- <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }} KG</el-tag>-->
     </div>
     <!--表单组件-->
@@ -69,7 +69,13 @@
       <!--<el-table-column prop="tonNumber" label="吨数量"/>-->
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          <div v-if="scope.row.totalNumber <= scope.row.min">
+          <div v-if="scope.row.min == 0 && scope.row.max == 0 || scope.row.min == undefined  || scope.row.max == undefined ">
+            <el-tag
+              :type="stockMapping[0]"
+              size="medium"
+            >{{ stockValue[0] }}</el-tag>
+          </div>
+          <div v-else-if="scope.row.totalNumber <= scope.row.min">
             <el-tag
               :type="stockMapping[2]"
               size="medium"
@@ -87,6 +93,7 @@
               size="medium"
             >{{ stockValue[0] }}</el-tag>
           </div>
+
         </template>
       </el-table-column>
       <!--<el-table-column prop="branchNumber" label="支数量"/>-->
@@ -177,7 +184,7 @@ export default {
       delLoading: false,
       sumFactPerBagNumber: 0,
       sumNetWeight: 0,
-      sumGrossWeight: 0,
+      sumGrossWeight: 0,isType : null,
       queryTypeOptions: [
         { key: 'prodModel', display_name: '产品编号' },
         { key: 'prodName', display_name: '产品名称' },
