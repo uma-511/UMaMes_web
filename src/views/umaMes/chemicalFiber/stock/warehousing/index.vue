@@ -57,15 +57,15 @@
         style="width: 100%;"
       >
         <el-table-column prop="scanNumber" label="入库单号"/>
-        <el-table-column prop="batchNumber" label="批号"/>
         <el-table-column prop="supplierName" label="供应商名称"/>
+        <el-table-column prop="batchNumber" label="批号"/>
         <el-table-column prop="totalPrice" label="总金额"/>
-        <el-table-column prop="createDate" label="制单时间">
+        <el-table-column prop="createDate" label="制单日期">
           <template slot-scope="scope">
             <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="warehousingDate" label="入库时间">
+        <el-table-column prop="warehousingDate" label="入库日期">
           <template slot-scope="scope">
             <span>{{ parseTimeToDate(scope.row.warehousingDate) }}</span>
           </template>
@@ -179,6 +179,7 @@
                 :loading="customerLoading"
                 :remote-method="customerRemoteMethod"
                 multiple:false
+                :disabled="form.warehousingStatus == 2?true:false"
                 filterable
                 remote
                 reserve-keyword
@@ -671,6 +672,14 @@ export default {
       if (this.form.supplierName == '') {
         this.$notify({
           title: '请填写供应商',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      if (this.form.warehousingDate == null) {
+        this.$notify({
+          title: '请填日期',
           type: 'warning',
           duration: 2500
         })
