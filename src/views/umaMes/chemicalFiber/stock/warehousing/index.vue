@@ -157,6 +157,7 @@
     <el-dialog
       :append-to-body="true"
       :close-on-click-modal="false"
+      :modal="true"
       :visible.sync="dialog"
       :title="isAdd ? '新增' : '编辑'"
       width="65%">
@@ -315,6 +316,7 @@
           :data="detalList"
           :summary-method="getSummaries"
           style="width: 100%"
+          max-height="300"
           show-summary
           highlight-current-row
           row-key="id"
@@ -407,6 +409,7 @@
       <el-dialog
         :visible.sync="addTableFrom"
         :append-to-body = "true"
+        :modal="true"
         width="40%"
         title="添加产品" >
         <el-form :model="tableForm" size="mini" label-width="80px" >

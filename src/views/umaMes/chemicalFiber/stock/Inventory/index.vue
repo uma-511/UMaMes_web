@@ -118,6 +118,7 @@
       :append-to-body="true"
       :close-on-click-modal="false"
       :visible.sync="dialog"
+      :modal="true"
       :title="isAdd ? '盘点单新增' : '盘点单编辑'"
       width="65%">
       <el-row>
@@ -126,6 +127,7 @@
           :data="detalList"
           style="width: 100%"
           show-summary
+          max-height="380"
           :summary-method="getSummaries"
           highlight-current-row
           row-key="id">
@@ -305,11 +307,11 @@ export default {
           return
         }
       }
+      this.isAnd = 1
       this.typeButton = 'danger'
       this.lnventoryStatus = ''
       this.detalList = []
       this.detaLoading = true
-      this.isAnd = 1
       this.dialog = true
       console.log(this.data)
       getLnventoryDateil().then(res => {
@@ -397,7 +399,20 @@ export default {
               return prev
             }
           }, 0)
-          sums[index]
+          var a = 0;
+          var b = 0;
+          for (var i = 0; i < this.detalList.length; i++) {
+            if (this.isAnd != 1) {
+              if (this.detalList[i].lnventoryNumber >= this.detalList[i].prodNumber) {
+                if (this.detalList[i].unit == "吨") {
+                  a += this.detalList[i].lnventoryNumber - this.detalList[i].prodNumber
+                } else {
+                  b += this.detalList[i].lnventoryNumber - this.detalList[i].prodNumber
+                }
+              }
+            }
+          }
+          sums[index] = a+"吨/"+b+ "支"
         }
         if (index === 7) {
           sums[index] = values.reduce((prev, curr) => {
@@ -408,7 +423,21 @@ export default {
               return prev
             }
           }, 0)
-          sums[index]
+          var a = 0;
+          var b = 0;
+          for (var i = 0; i < this.detalList.length; i++) {
+            if (this.isAnd != 1) {
+              if (this.detalList[i].lnventoryNumber <= this.detalList[i].prodNumber) {
+                if (this.detalList[i].unit == "吨") {
+                  a += this.detalList[i].prodNumber - this.detalList[i].lnventoryNumber
+                } else {
+                  b += this.detalList[i].prodNumber - this.detalList[i].lnventoryNumber
+                }
+              }
+            }
+
+          }
+          sums[index] = a+"吨/"+b+ "支"
         }
       })
       return sums
