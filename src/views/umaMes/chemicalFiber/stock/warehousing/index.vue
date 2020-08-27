@@ -510,7 +510,8 @@ export default {
         scanNumber: '',
         warehousingId: '',
         unit: '',
-        totalPrice: ''
+        totalPrice: '',
+        createDate: ''
       },
       option: [
         {
@@ -639,7 +640,8 @@ export default {
         prodName: this.tableForm.prodName,
         prodId: this.tableForm.prodId,
         prodModel: this.tableForm.prodModel,
-        unit: this.tableForm.unit
+        unit: this.tableForm.unit,
+        createDate: this.form.createDate
       }
       this.addTableFrom = true
       if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '' && !this.tableForm.unit == '') {
