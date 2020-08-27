@@ -56,6 +56,7 @@
       <el-table-column prop="contactPhone" label="联系电话"/>
       <el-table-column prop="account" label="用户余额"/>
       <el-table-column prop="totalArrears" label="上期欠款"/>
+      <el-table-column prop="currentArrears" label="本月欠款"/>
       <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
@@ -191,7 +192,8 @@ export default {
         delFlag: data.delFlag,
         fullName: data.fullName,
         account: data.account,
-        totalArrears: data.totalArrears
+        totalArrears: data.totalArrears,
+        currentArrears: data.currentArrears
       }
       _this.dialog = true
     },
