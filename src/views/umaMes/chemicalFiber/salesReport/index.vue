@@ -43,7 +43,7 @@
         align="center">
       </el-table-column>
       <el-table-column prop="scanNumber" label="送货单号" align="center"/>
-      <el-table-column prop="deliveryDate" label="送货时间" align="center">
+      <el-table-column prop="deliveryDate" label="送货日期" align="center">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.deliveryDate) }}</span>
         </template>
@@ -105,7 +105,7 @@
       <el-table-column prop="totalPrice" label="实收金额" align="center"/>
       <el-table-column prop="remainder" label="损数" align="center"/>
       <el-table-column prop="createUser" label="制单人" align="center"/>
-      <el-table-column prop="createDate" label="制单时间" align="center">
+      <el-table-column prop="createDate" label="制单日期" align="center">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
