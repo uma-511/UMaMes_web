@@ -85,7 +85,6 @@
         </template>
       </el-table-column>
       <el-table-column prop="totalArrears" label="总欠金额"/>
-      <el-table-column prop="createUser" label="创建人"/>
       <el-table-column
         v-if="
           checkPermission([
