@@ -398,8 +398,14 @@
             <el-form-item label="付款方式" >
               <el-input v-model="form.payment" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
-            <el-form-item label="最新欠款" >
+            <el-form-item label="当前订单欠款" >
               <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
+            </el-form-item>
+            <el-form-item label="客户往期欠款" >
+              <el-input v-model="customerForm.totalArrears" :disabled="true" style="width: 150px;" @input="buttonType"/>
+            </el-form-item>
+            <el-form-item label="客户本月欠款" >
+              <el-input v-model="customerForm.currentArrears" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini"/>
@@ -774,7 +780,9 @@ export default {
         payment: '',
         realPrice: '',
         noteStatus: '',
-        account: ''
+        account: '',
+        totalArrears: '',
+        currentArrears: ''
       },
       payForm: {
         id: '',
@@ -1375,6 +1383,8 @@ export default {
       const paramCustomer = { id: this.form.customerId }
       getCustomerById(paramCustomer).then(res => {
         this.customerForm.account = res.account
+        this.customerForm.totalArrears = res.totalArrears
+        this.customerForm.currentArrears = res.currentArrears
       })
       const paramPay = { scanNumber: this.form.scanNumber }
       getPayDetailList(paramPay).then(res => {
