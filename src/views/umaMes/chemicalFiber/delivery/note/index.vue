@@ -1022,6 +1022,8 @@ export default {
       this.detailLoading = false
       this.form.enable = true
       this.form.noteStatus = 1
+      this.customerForm.currentArrears = ''
+      this.customerForm.totalArrears = ''
       this.detailList = []
       this.payDetailList = []
       this.buttonType()
@@ -1646,6 +1648,8 @@ export default {
         this.form.customerId = this.customerLists[0].id
         this.id = this.customerLists[0].id
         this.customerQueryCode.code = ''
+        this.customerForm.totalArrears = this.customerLists[0].totalArrears
+        this.customerForm.currentArrears = this.customerLists[0].currentArrears
       })
       this.buttonType()
     },
@@ -1662,6 +1666,8 @@ export default {
         this.form.customerId = this.customerLists[0].id
         this.id = this.customerLists[0].id
         this.customerQueryName.name = ''
+        this.customerForm.totalArrears = this.customerLists[0].totalArrears
+        this.customerForm.currentArrears = this.customerLists[0].currentArrears
       })
       this.buttonType()
     },
