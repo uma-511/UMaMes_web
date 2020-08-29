@@ -398,15 +398,6 @@
             <el-form-item label="付款方式" >
               <el-input v-model="form.payment" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
-            <el-form-item label="当前订单欠款" >
-              <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
-            </el-form-item>
-            <el-form-item label="客户往期欠款" >
-              <el-input v-model="customerForm.totalArrears" :disabled="true" style="width: 150px;" @input="buttonType"/>
-            </el-form-item>
-            <el-form-item label="客户本月欠款" >
-              <el-input v-model="customerForm.currentArrears" :disabled="true" style="width: 150px;" @input="buttonType"/>
-            </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
@@ -460,6 +451,17 @@
                   @blur="userOptions"
                 />
               </el-select>
+            </el-form-item>
+            <el-form-item label="上期欠款" >
+              <el-input v-model="customerForm.totalArrears" :disabled="true" style="width: 150px;" @input="buttonType"/>
+            </el-form-item>
+            <el-form-item label="本月欠款" >
+              <el-input v-model="customerForm.currentArrears" :disabled="true" style="width: 150px;" @input="buttonType"/>
+            </el-form-item>
+          </el-form>
+          <el-form :inline="true" size="mini">
+            <el-form-item label="单据应收账款" >
+              <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="备 注" >
               <el-input v-model="form.remark" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 403px;" @input="buttonType"/>
@@ -1264,7 +1266,9 @@ export default {
         realQuantity: this.form.realQuantity,
         account: this.form.account,
         totalCost: this.sumTotalQuantity,
-        invoiceType: this.form.invoiceType
+        invoiceType: this.form.invoiceType,
+        totalArrears: this.customerForm.totalArrears,
+        currentArrears: this.customerForm.currentArrears
       }
       console.log(this.sumTotalQuantity)
       if (this.isAdd == 1) {

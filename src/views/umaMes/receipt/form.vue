@@ -1,27 +1,6 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="客户名称" prop="customerName">
-        <el-select
-          v-model="form.customerName"
-          :loading="customerLoading"
-          :remote-method="customerRemoteMethod"
-          multiple:false
-          filterable
-          remote
-          reserve-keyword
-          placeholder="输入客户关键词"
-          style="width: 370px;"
-          @change="setCustomerId($event)"
-        >
-          <el-option
-            v-for="item in customerOptions"
-            :key="item.id"
-            :label="item.name"
-            :value="item.name"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="客户编号" prop="customerCode">
         <el-select
           v-model="form.customerCode"
@@ -40,6 +19,27 @@
             :key="item.code"
             :label="item.code"
             :value="item.code"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="客户名称" prop="customerName">
+        <el-select
+          v-model="form.customerName"
+          :loading="customerLoading"
+          :remote-method="customerRemoteMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="输入客户关键词"
+          style="width: 370px;"
+          @change="setCustomerId($event)"
+        >
+          <el-option
+            v-for="item in customerOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
           />
         </el-select>
       </el-form-item>
