@@ -1,6 +1,6 @@
 <template>
-  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
-    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
+  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="550px">
+    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
       <el-form-item label="车牌号" >
         <el-input v-model="form.carNumber" style="width: 370px;"/>
       </el-form-item>
@@ -10,8 +10,18 @@
       <el-form-item label="负责人" >
         <el-input v-model="form.carDirector" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="审理周期" >
-        <el-date-picker v-model="form.trialCycle" type="datetime" style="width: 370px;"/>
+      <el-form-item label="审理周期">
+        <el-select
+          v-model="form.trialCycle"
+          placeholder="请选择审理周期"
+          style="width: 370px;">
+          <el-option
+            v-for="item in option"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="上次审核日期" >
         <el-date-picker v-model="form.lastTrial" type="datetime" style="width: 370px;"/>
@@ -53,7 +63,19 @@ export default {
         enable: ''
       },
       rules: {
-      }
+      },
+      option: [
+        {
+          value: '三个月',
+          label: '三个月'
+        }, {
+          value: '六个月',
+          label: '六个月'
+        }, {
+          value: '十二个月',
+          label: '十二个月'
+        }
+      ]
     }
   },
   methods: {

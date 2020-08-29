@@ -5,7 +5,6 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','car:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -31,27 +30,22 @@
       <el-table-column prop="carNumber" label="车牌号"/>
       <el-table-column prop="carType" label="车辆类型"/>
       <el-table-column prop="carDirector" label="负责人"/>
-      <el-table-column prop="trialCycle" label="审理周期">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.trialCycle) }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column prop="trialCycle" label="审理周期"/>
       <el-table-column prop="lastTrial" label="上次审核日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.lastTrial) }}</span>
+          <span>{{ parseTimeToDate(scope.row.lastTrial) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="expectDate" label="预计审核日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.expectDate) }}</span>
+          <span>{{ parseTimeToDate(scope.row.expectDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="enable" label="是否可用"/>
-      <el-table-column v-if="checkPermission(['admin','car:edit','car:del'])" label="操作" width="150px" align="center">
+      <el-table-column label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','car:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
-            v-permission="['admin','car:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
@@ -81,6 +75,7 @@ import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadCar } from '@/api/car'
 import { parseTime, downloadFile } from '@/utils/index'
+import { parseTimeToDate } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -96,7 +91,7 @@ export default {
     })
   },
   methods: {
-    parseTime,
+    parseTimeToDate,
     checkPermission,
     beforeInit() {
       this.url = 'api/car'
