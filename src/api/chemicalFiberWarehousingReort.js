@@ -7,3 +7,10 @@ import request from '@/utils/request'
     data
   })
 }*/
+export function getSummaryData(data) {
+  return request({
+    url: 'api/chemicalFiberWarehousingReort/getSummaryData',
+    method: 'post',
+    data
+  })
+}
