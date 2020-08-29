@@ -383,9 +383,9 @@ export default {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
-              return prev + curr
+              return (((prev * 10) + (curr * 10))/10)
             } else {
-              return prev
+              return ((prev * 10)/10)
             }
           }, 0)
           sums[index]
