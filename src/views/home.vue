@@ -3,7 +3,7 @@
     <div class="dashboard-editor-container">
       <panel-group/>
 
-      <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+      <!--<el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
         <line-chart/>
       </el-row>
 
@@ -23,7 +23,7 @@
             <bar-chart/>
           </div>
         </el-col>
-      </el-row>
+      </el-row>-->
     </div>
   </div>
 </template>
@@ -46,10 +46,10 @@ export default {
   name: 'Dashboard',
   components: {
     PanelGroup,
-    LineChart,
+    /*LineChart,
     RaddarChart,
     PieChart,
-    BarChart },
+    BarChart */},
   computed: {
     ...mapGetters([
       'roles'
@@ -61,7 +61,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
   .dashboard-editor-container {
     padding: 18px 22px 22px 22px;
-    background-color: rgb(240, 242, 245);
+    background-color: #ffffff;
     .chart-wrapper {
       background: #fff;
       padding: 16px 16px 0;
