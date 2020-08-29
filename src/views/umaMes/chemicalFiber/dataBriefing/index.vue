@@ -27,7 +27,7 @@
         <el-col :xs="12" :sm="12" :lg="12" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
-              <svg-icon icon-class="HK" class-name="card-panel-icon" />
+              <svg-icon icon-class="ckf" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">库存吨数</div>
@@ -42,7 +42,7 @@
         <el-col :xs="12" :sm="12" :lg="12" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
-              <svg-icon icon-class="HK" class-name="card-panel-icon" />
+              <svg-icon icon-class="ck2" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description" >
               <div class="card-panel-text">入库支数</div>
@@ -67,7 +67,7 @@
         <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
-              <svg-icon icon-class="ipvisits" class-name="card-panel-icon" />
+              <svg-icon icon-class="ck" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">送货单数</div>
@@ -78,7 +78,18 @@
         <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
-              <svg-icon icon-class="ipvisits" class-name="card-panel-icon" />
+              <svg-icon icon-class="ck" class-name="card-panel-icon" />
+            </div>
+            <div class="card-panel-description">
+              <div class="card-panel-text">送货金额</div>
+              <count-to :start-val="0" :end-val="count.deliveryTotalNumber" :duration="3600" class="card-panel-num"/>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+          <div class="card-panel">
+            <div class="card-panel-icon-wrapper icon-message">
+              <svg-icon icon-class="ck" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">送货吨数</div>
@@ -89,22 +100,11 @@
         <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
-              <svg-icon icon-class="ipvisits" class-name="card-panel-icon" />
+              <svg-icon icon-class="ck" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">送货支数</div>
               <count-to :start-val="0" :end-val="count.deliveryBranchNumber" :duration="3600" class="card-panel-num"/>
-            </div>
-          </div>
-        </el-col>
-        <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-          <div class="card-panel">
-            <div class="card-panel-icon-wrapper icon-message">
-              <svg-icon icon-class="ipvisits" class-name="card-panel-icon" />
-            </div>
-            <div class="card-panel-description">
-              <div class="card-panel-text">送货金额</div>
-              <count-to :start-val="0" :end-val="count.deliveryTotalNumber" :duration="3600" class="card-panel-num"/>
             </div>
           </div>
         </el-col>
@@ -254,7 +254,7 @@ export default {
       position: relative;
       overflow: hidden;
       color: #666;
-      background: #fff;
+      background: #d5d5d5;;
       box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
       border-color: rgba(0, 0, 0, .05);
       .icon-people {
@@ -288,11 +288,11 @@ export default {
         .card-panel-text {
           line-height: 18px;
           color: rgba(0, 0, 0, 0.45);
-          font-size: 16px;
+          font-size: 25px;
           margin-bottom: 12px;
         }
         .card-panel-num {
-          font-size: 20px;
+          font-size: 23px;
         }
       }
     }

@@ -405,9 +405,9 @@ export default {
             if (this.isAnd != 1) {
               if (this.detalList[i].lnventoryNumber >= this.detalList[i].prodNumber) {
                 if (this.detalList[i].unit == "吨") {
-                  a += this.detalList[i].lnventoryNumber - this.detalList[i].prodNumber
+                  a += (((this.detalList[i].lnventoryNumber * 10) - (this.detalList[i].prodNumber * 10))/10)
                 } else {
-                  b += this.detalList[i].lnventoryNumber - this.detalList[i].prodNumber
+                  b += (((this.detalList[i].lnventoryNumber * 10) - (this.detalList[i].prodNumber * 10))/10)
                 }
               }
             }
@@ -429,9 +429,9 @@ export default {
             if (this.isAnd != 1) {
               if (this.detalList[i].lnventoryNumber <= this.detalList[i].prodNumber) {
                 if (this.detalList[i].unit == "吨") {
-                  a += this.detalList[i].prodNumber - this.detalList[i].lnventoryNumber
+                  a += (((this.detalList[i].prodNumber * 10) - (this.detalList[i].lnventoryNumber * 10))/10)
                 } else {
-                  b += this.detalList[i].prodNumber - this.detalList[i].lnventoryNumber
+                  b += (((this.detalList[i].prodNumber * 10) - (this.detalList[i].lnventoryNumber * 10))/10)
                 }
               }
             }
@@ -449,11 +449,11 @@ export default {
     sum(data){
       // 盈亏
       if (data.lnventoryNumber <= data.prodNumber ) {
-        data.lnventoryLoss = data.prodNumber - data.lnventoryNumber
+        data.lnventoryLoss = (((data.prodNumber * 10) - data.lnventoryNumber * 10)/10)
         data.lnventorySurplus = 0
       }
       if (data.lnventoryNumber >= data.prodNumber) {
-        data.lnventorySurplus = data.lnventoryNumber - data.prodNumber
+        data.lnventorySurplus = (((data.lnventoryNumber * 10) - (data.prodNumber * 10))/10)
         data.lnventoryLoss = 0
       }
     }
