@@ -40,6 +40,9 @@
       icon="el-icon-search"
       @click="toQuery"
     >搜索</el-button>
+    <el-tag class="filter-item" type="info">总支数 {{ sum}} 支</el-tag>
+    <el-tag class="filter-item" type="info">总吨数 {{ sumTon }} T</el-tag>
+    <el-tag class="filter-item" type="success">总金额 {{ sumtotalPrice }} 元</el-tag>
     <div class="head-container">
       <el-table
         v-loading="loading"
@@ -111,11 +114,12 @@
 <script>
 import initData from '@/mixins/initData'
 import { parseTime, parseTimeToDate} from '@/utils/index'
+import { getSummaryData } from '@/api/chemicalFiberWarehousingReort'
 export default {
   mixins: [initData],
   data() {
     return {
-      dateQuery: '',checkInvalidQuery: false,
+      dateQuery: '',checkInvalidQuery: false,sumtotalPrice: 0,sumTon: 0,sum: 0,
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '入库单号' },
         { key: 'prodName', display_name: '产品名称' },
@@ -136,18 +140,21 @@ export default {
     beforeInit() {
       this.url = 'api/chemicalFiberWarehousingReort'
       const sort = 'id,desc'
-      this.params = { page: this.page, size: this.size, sort: sort}
+      this.params = {page: this.page, size: this.size, sort: sort}
       const dateQuery = this.dateQuery
       const query = this.query
       const type = query.type
       const value = query.value
       const checkInvalidQurey = this.checkInvalidQuery
       this.params['queryWithInvalid'] = checkInvalidQurey
-      if (type && value) { this.params[type] = value }
+      if (type && value) {
+        this.params[type] = value
+      }
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
+      this.getSummaryData(this.params)
       /*const query = this.query
       const type = query.type
       const value = query.value
@@ -157,9 +164,18 @@ export default {
       this.params['queryWithInvalid'] = checkInvalidQurey
       */
       return true
+    },
+    getSummaryData(params) {
+      getSummaryData(params).then((res) => {
+        this.sumtotalPrice = res.data.sumTotalPrice
+        this.sumTon = res.data.sumTon
+        this.sum = res.data.sum
+      })
+
     }
   }
 }
+
 </script>
 
 <style>

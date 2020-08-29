@@ -33,7 +33,7 @@
       :summary-method="getDataSummaries"
       size="small"
       border
-      max-height="250"
+      max-height="530"
       show-summary
       @row-click="detailList($event)"
     >
