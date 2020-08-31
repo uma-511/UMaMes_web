@@ -5,10 +5,38 @@
         <el-input v-model="form.carNumber" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="车辆类型" >
-        <el-input v-model="form.carType" style="width: 370px;"/>
+        <el-select
+          v-model="form.carType"
+          placeholder="请选择车辆类型"
+          style="width: 370px;">
+          <el-option
+            v-for="item in typeOption"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="负责人" >
-        <el-input v-model="form.carDirector" style="width: 370px;"/>
+        <el-select
+          v-model="form.carDirector"
+          :loading="userLoading"
+          :remote-method="transporterRemoteMethod"
+          multiple:false
+          filterable
+          remote
+          reserve-keyword
+          placeholder="输入负责人关键字"
+          style="width: 370px;"
+          @focus="cleanUpOptions"
+        >
+          <el-option
+            v-for="item in userOptions"
+            :key="item.realname"
+            :label="item.realname"
+            :value="item.realname"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="审理周期">
         <el-select
@@ -27,10 +55,7 @@
         <el-date-picker v-model="form.lastTrial" type="datetime" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="预计审核日期" >
-        <el-date-picker v-model="form.expectDate" type="datetime" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="是否可用" >
-        <el-input v-model="form.enable" style="width: 370px;"/>
+        <el-date-picker :disabled="true" v-model="form.expectDate" type="datetime" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -42,6 +67,7 @@
 
 <script>
 import { add, edit } from '@/api/car'
+import { getUserListByDeptId } from '@/api/user'
 export default {
   props: {
     isAdd: {
@@ -62,6 +88,8 @@ export default {
         expectDate: '',
         enable: ''
       },
+      userLoading: false,
+      userOptions: [],
       rules: {
       },
       option: [
@@ -75,12 +103,43 @@ export default {
           value: '十二个月',
           label: '十二个月'
         }
+      ],
+      typeOption: [
+        {
+          value: '槽罐车',
+          label: '槽罐车'
+        }, {
+          value: '厢式车',
+          label: '厢式车'
+        }, {
+          value: '拖头车',
+          label: '拖头车'
+        }
       ]
     }
   },
   methods: {
     cancel() {
       this.resetForm()
+    },
+    // 清空下拉框
+    cleanUpOptions() {
+      this.userOptions = []
+    },
+    // 查询运输的下拉列表
+    transporterRemoteMethod(query) {
+      // 运输部deptId为18
+      const idList = [18]
+      const params = { deptIdList: idList + '', realname: query }
+      this.userLoading = true
+      getUserListByDeptId(params).then(res => {
+        this.userLoading = false
+        this.userList = res
+        this.userOptions = this.userList.filter(item => {
+          return item.realname.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+      })
     },
     doSubmit() {
       this.loading = true
@@ -129,7 +188,8 @@ export default {
         trialCycle: '',
         lastTrial: '',
         expectDate: '',
-        enable: ''
+        enable: '',
+        userOptions: ''
       }
     }
   }

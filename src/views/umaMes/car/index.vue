@@ -41,7 +41,22 @@
           <span>{{ parseTimeToDate(scope.row.expectDate) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="enable" label="是否可用"/>
+      <el-table-column prop="enable" label="状态">
+        <template slot-scope="scope">
+          <div v-if="scope.row.enable == false">
+            <el-tag
+              type="info"
+              size="medium"
+            >已失效</el-tag>
+          </div>
+          <div v-if="scope.row.enable == true">
+            <el-tag
+              type="success"
+              size="medium"
+            >正常</el-tag>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
