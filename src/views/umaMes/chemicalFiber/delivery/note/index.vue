@@ -402,7 +402,29 @@
           <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
             <el-form-item label="车 牌 号" >
-              <el-input v-model="form.carNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 158px;" @input="buttonType"/>
+              <el-select
+                v-model="form.carNumber"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                :loading="carLoading"
+                :remote-method="carRemoteMethod"
+                multiple:false
+                filterable
+                allow-create
+                remote
+                reserve-keyword
+                placeholder="输入车牌关键词"
+                style="width: 156px;"
+                @change="buttonType"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in carOptions"
+                  :key="item.carNumber"
+                  :label="item.carNumber"
+                  :value="item.carNumber"
+                  @blur="carOptions"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="副 司 机" >
               <el-select
@@ -462,6 +484,54 @@
           <el-form :inline="true" size="mini">
             <el-form-item label="单据应收账款" >
               <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
+            </el-form-item>
+            <el-form-item label="发货地" >
+              <el-select
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                v-model="form.startPlace"
+                :loading="customerLoading"
+                :remote-method="customerRemoteMethod"
+                filterable
+                allow-create
+                remote
+                reserve-keyword
+                placeholder="输入发货地关键词"
+                style="width: 150px;"
+                @visible-change="$forceUpdate()"
+                @focus="cleanUpOptions"
+                @change="buttonType"
+              >
+                <el-option
+                  v-for="item in customerOptions"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="目的地" >
+              <el-select
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                v-model="form.endPlace"
+                :loading="customerLoading"
+                :remote-method="customerRemoteMethod"
+                filterable
+                allow-create
+                remote
+                reserve-keyword
+                placeholder="输入目的地关键词"
+                style="width: 150px;"
+                @visible-change="$forceUpdate()"
+                @focus="cleanUpOptions"
+                @change="buttonType"
+              >
+                <el-option
+                  v-for="item in customerOptions"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="备 注" >
               <el-input v-model="form.remark" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 403px;" @input="buttonType"/>
@@ -684,8 +754,10 @@ import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/in
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/customer'
+import { getCarList } from '@/api/car'
 import { getSelectMap, getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
+import Config from '@/config'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -704,11 +776,14 @@ export default {
       sutmitDetailLoading: false,
       customerLoading: false,
       userLoading: false,
+      carLoading: false,
       customerCodeLoading: false,
       addTableFrom: false,
       payDialog: false,
       isAdd: '',
       customerOptions: [],
+      carOptions: [],
+      carList: '',
       customerCodeOptions: [],
       userOptions: [],
       invoiceOption: [],
@@ -753,7 +828,9 @@ export default {
         invalid: '',
         remainder: '',
         invoiceType: '',
-        enable: ''
+        enable: '',
+        startPlace: '',
+        endPlace: ''
       },
       customerForm: {
         id: '',
@@ -1023,6 +1100,7 @@ export default {
       this.dialogVisible = true
       this.detailLoading = false
       this.form.enable = true
+      this.form.startPlace = Config.globalCompanyName
       this.form.noteStatus = 1
       this.customerForm.currentArrears = ''
       this.customerForm.totalArrears = ''
@@ -1090,6 +1168,14 @@ export default {
         })
         return
       }
+      if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0' ) {
+        this.$notify({
+          title: '客户余额为0，无法执行该操作',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.payLoading = true
       doPay(this.payForm).then(res => {
         this.$notify({
@@ -1118,6 +1204,14 @@ export default {
       if (!this.payForm.amount || this.payForm.amount === '') {
         this.$notify({
           title: '请填写金额',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0' ) {
+        this.$notify({
+          title: '客户余额为0，无法执行该操作',
           type: 'warning',
           duration: 2500
         })
@@ -1236,6 +1330,14 @@ export default {
       if (this.form.customerId !== '') {
         this.id = this.form.customerId
       }
+      if (this.form.startPlace == this.form.endPlace) {
+        this.$notify({
+          title: '发货地不能与目的地相同',
+          type: 'success',
+          duration: 2500
+        })
+        return
+      }
       this.customerForm = {
         id: this.form.id,
         scanNumber: this.form.scanNumber,
@@ -1268,7 +1370,9 @@ export default {
         totalCost: this.sumTotalQuantity,
         invoiceType: this.form.invoiceType,
         totalArrears: this.customerForm.totalArrears,
-        currentArrears: this.customerForm.currentArrears
+        currentArrears: this.customerForm.currentArrears,
+        startPlace: this.form.startPlace,
+        endPlace: this.form.endPlace
       }
       console.log(this.sumTotalQuantity)
       if (this.isAdd == 1) {
@@ -1362,7 +1466,9 @@ export default {
         remainder: data.remainder,
         account: data.account,
         invoiceType: data.invoiceType,
-        enable: data.enable
+        enable: data.enable,
+        startPlace: data.startPlace,
+        endPlace: data.endPlace
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1651,6 +1757,7 @@ export default {
         this.form.customerAddress = this.customerLists[0].address
         this.form.customerId = this.customerLists[0].id
         this.id = this.customerLists[0].id
+        this.form.endPlace = this.customerLists[0].name
         this.customerQueryCode.code = ''
         this.customerForm.totalArrears = this.customerLists[0].totalArrears
         this.customerForm.currentArrears = this.customerLists[0].currentArrears
@@ -1668,6 +1775,7 @@ export default {
         this.form.contactPhone = this.customerLists[0].contactPhone
         this.form.customerAddress = this.customerLists[0].address
         this.form.customerId = this.customerLists[0].id
+        this.form.endPlace = this.customerLists[0].name
         this.id = this.customerLists[0].id
         this.customerQueryName.name = ''
         this.customerForm.totalArrears = this.customerLists[0].totalArrears
@@ -1679,6 +1787,8 @@ export default {
     cleanUpOptions() {
       this.userOptions = []
       this.prodOptions = []
+      this.customerOptions = []
+      this.caroptions = []
     },
     // 查询客户名称的下拉列表
     customerRemoteMethod(query) {
@@ -1807,6 +1917,18 @@ export default {
         }
         this.prodList = res
       })
+    },
+    carRemoteMethod(query) {
+      const params = { carNumber: query }
+      this.carLoading = true
+      getCarList(params)
+        .then(res => {
+          this.carLoading = false
+          this.carList = res
+          this.carOptions = this.carList.filter(item => {
+            return item
+          })
+        })
     },
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {

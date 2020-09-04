@@ -15,6 +15,10 @@ export default {
    */
   webName: '优码生产管理系统',
   /**
+   * @description 当前公司名   罗村xq祥琦   高明yq永琦
+   */
+  globalCompanyName: '祥琦',
+  /**
    * @description 是否只保持一个子菜单的展开
    */
   uniqueOpened: true,

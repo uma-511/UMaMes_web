@@ -1,25 +1,10 @@
 <template>
-  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="550px">
-    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
-      <el-form-item label="车牌号" >
-        <el-input v-model="form.carNumber" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="车辆类型" >
+  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
+    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
+      <el-form-item label="责任人" >
         <el-select
-          v-model="form.carType"
-          placeholder="请选择车辆类型"
-          style="width: 370px;">
-          <el-option
-            v-for="item in typeOption"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="负责人" >
-        <el-select
-          v-model="form.carDirector"
+          v-model="form.personName"
+          :disabled="!isAdd"
           :loading="userLoading"
           :remote-method="transporterRemoteMethod"
           filterable
@@ -29,6 +14,7 @@
           placeholder="输入负责人关键字"
           style="width: 370px;"
           @focus="cleanUpOptions"
+          @change="initIdAndPermission"
         >
           <el-option
             v-for="item in userOptions"
@@ -38,24 +24,29 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="审理周期">
-        <el-select
-          v-model="form.trialCycle"
-          placeholder="请选择审理周期"
-          style="width: 370px;">
-          <el-option
-            v-for="item in option"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
+      <el-form-item label="职位" >
+        <el-input :disabled="true" v-model="form.permission" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="上次审核日期" >
-        <el-date-picker v-model="form.lastTrial" type="date" style="width: 370px;"/>
+      <el-form-item label="里程费" >
+        <el-input v-model="form.mileageFee" style="width: 370px;" @input="doCount"/>
       </el-form-item>
-      <el-form-item label="预计审核日期" >
-        <el-date-picker :disabled="true" v-model="form.expectDate" type="date" style="width: 370px;"/>
+      <el-form-item label="加班费" >
+        <el-input v-model="form.overtimePay" style="width: 370px;" @input="doCount"/>
+      </el-form-item>
+      <el-form-item label="补贴费" >
+        <el-input v-model="form.allowance" style="width: 370px;" @input="doCount"/>
+      </el-form-item>
+      <el-form-item label="附加费" >
+        <el-input v-model="form.surcharge" style="width: 370px;" @input="doCount"/>
+      </el-form-item>
+      <el-form-item label="装卸费" >
+        <el-input v-model="form.handlingCost" style="width: 370px;" @input="doCount"/>
+      </el-form-item>
+      <el-form-item label="绩效总计" >
+        <el-input :disabled="true" v-model="form.totalPerformance" style="width: 370px;"/>
+      </el-form-item>
+      <el-form-item label="日期" >
+        <el-date-picker :disabled="!isAdd" v-model="form.createTime" type="date" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -66,9 +57,8 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/car'
+import { add, edit } from '@/api/travelPersionPerformance'
 import { getUserListByDeptId } from '@/api/user'
-import { parseTimeToDate } from '@/utils/index'
 export default {
   props: {
     isAdd: {
@@ -79,54 +69,36 @@ export default {
   data() {
     return {
       loading: false, dialog: false,
-      form: {
-        id: '',
-        carNumber: '',
-        carType: '',
-        carDirector: '',
-        trialCycle: '',
-        lastTrial: '',
-        expectDate: '',
-        enable: ''
-      },
       userLoading: false,
       userOptions: [],
-      rules: {
+      form: {
+        id: '',
+        personName: '',
+        personId: '',
+        permission: '',
+        mileageFee: '',
+        overtimePay: '',
+        allowance: '',
+        surcharge: '',
+        handlingCost: '',
+        totalPerformance: '',
+        createTime: '',
+        enable: ''
       },
-      option: [
-        {
-          value: '三个月',
-          label: '三个月'
-        }, {
-          value: '六个月',
-          label: '六个月'
-        }, {
-          value: '十二个月',
-          label: '十二个月'
-        }
-      ],
-      typeOption: [
-        {
-          value: '槽罐车',
-          label: '槽罐车'
-        }, {
-          value: '厢式车',
-          label: '厢式车'
-        }, {
-          value: '拖头车',
-          label: '拖头车'
-        }
-      ]
+      rules: {
+      }
     }
   },
   methods: {
-    parseTimeToDate,
     cancel() {
       this.resetForm()
     },
     // 清空下拉框
     cleanUpOptions() {
       this.userOptions = []
+    },
+    initIdAndPermission() {
+      alert()
     },
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
@@ -138,8 +110,7 @@ export default {
         this.userLoading = false
         this.userList = res
         this.userOptions = this.userList.filter(item => {
-          return item.realname.toLowerCase()
-            .indexOf(query.toLowerCase()) > -1
+          return item
         })
       })
     },
@@ -148,6 +119,15 @@ export default {
       if (this.isAdd) {
         this.doAdd()
       } else this.doEdit()
+    },
+    doCount() {
+      var n1 = this.form.mileageFee
+      var n2 = this.form.overtimePay
+      var n3 = this.form.allowance
+      var n4 = this.form.surcharge
+      var n5 = this.form.handlingCost
+      var sum = n1 * 1 + n2 * 1 + n3 * 1 + n4 * 1 + n5 * 1
+      this.form.totalPerformance = sum.toFixed(2)
     },
     doAdd() {
       add(this.form).then(res => {
@@ -184,14 +164,17 @@ export default {
       this.$refs['form'].resetFields()
       this.form = {
         id: '',
-        carNumber: '',
-        carType: '',
-        carDirector: '',
-        trialCycle: '',
-        lastTrial: '',
-        expectDate: '',
-        enable: '',
-        userOptions: ''
+        personName: '',
+        personId: '',
+        permission: '',
+        mileageFee: '',
+        overtimePay: '',
+        allowance: '',
+        surcharge: '',
+        handlingCost: '',
+        totalPerformance: '',
+        createTime: '',
+        enable: ''
       }
     }
   }

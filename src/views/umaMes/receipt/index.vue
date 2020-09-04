@@ -49,7 +49,6 @@
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','receipt:add']"
           class="filter-item"
           size="mini"
           type="primary"
