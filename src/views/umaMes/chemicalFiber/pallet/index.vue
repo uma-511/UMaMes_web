@@ -3,7 +3,7 @@
     <!--工具栏-->
     <div class="head-container">
       <!-- 搜索 -->
-     <!-- <el-input
+      <el-input
         v-model="query.value"
         clearable
         placeholder="输入搜索内容"
@@ -25,23 +25,9 @@
           :value="item.key"
         />
       </el-select>
-      <el-select
-        v-model="query.status"
-        clearable
-        placeholder="状态"
-        class="filter-item"
-        style="width: 130px"
-      >
-        <el-option key="0" label="待入仓" value="0"/>
-        <el-option key="1" label="已入仓" value="1"/>
-        <el-option key="2" label="已出仓" value="2"/>
-        <el-option key="3" label="已作废" value="3"/>
-        <el-option key="4" label="已返仓" value="4"/>
-        <el-option key="5" label="已退货" value="5"/>
-      </el-select>
       <el-date-picker
         v-model="dateQuery"
-        class="el-range-editor&#45;&#45;small filter-item"
+        class="el-range-editor--small filter-item"
         type="daterange"
         range-separator="至"
         start-placeholder="开始日期"
@@ -53,60 +39,56 @@
         type="success"
         icon="el-icon-search"
         @click="toQuery"
-      >搜索</el-button>-->
-      <!-- 新增 -->
-      <!-- <div style="display: inline-block;margin: 0px 2px;">
-        <el-button
-          v-permission="['admin','chemicalFiberLabel:add']"
-          class="filter-item"
-          size="mini"
-          type="primary"
-          icon="el-icon-plus"
-          @click="add">新增</el-button>
-      </div>-->
-      <!-- 导出 -->
-      <!-- <div style="display: inline-block;">
-        <el-button
-          :loading="downloadLoading"
-          size="mini"
-          class="filter-item"
-          type="warning"
-          icon="el-icon-download"
-          @click="download">导出</el-button>
-      </div>-->
-      <!--<el-tag class="filter-item" type="success">个数汇总 {{ sumFactPerBagNumber }}</el-tag>
-      <el-tag class="filter-item" type="info">净重汇总 {{ sumNetWeight }} KG</el-tag>
-      <el-tag class="filter-item" type="warning">毛重汇总 {{ sumGrossWeight }} KG</el-tag>-->
+      >搜索</el-button>
     </div>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="palletNumber" label="托板号"/>
+    <el-table  v-loading="loading"
+               :data="data"
+               size="small"
+               border
+               max-height="530"
+               @row-click="detailList($event)"
+                >
+      <el-table-column prop="palletNumber" width="125px" label="托板号"/>
       <el-table-column prop="prodModel" label="料号"/>
       <el-table-column prop="prodName" label="品名"/>
       <el-table-column prop="prodColor" label="纤度"/>
       <el-table-column prop="prodFineness" label="色号"/>
-      <el-table-column prop="totalBag" label="包数"/>
-      <el-table-column prop="totalNumber" label="个数"/>
-      <el-table-column :formatter="kgformatter" prop="netWeight" label="净重"/>
-      <el-table-column prop="tare" label="皮重"/>
-      <el-table-column prop="grossWeight" label="毛重"/>
+      <el-table-column prop="totalBag" width="55px" label="包数"/>
+      <el-table-column prop="totalNumber" width="55px" label="个数"/>
+      <el-table-column :formatter="kgformatter" width="55px" prop="netWeight" label="净重"/>
+      <el-table-column prop="tare" width="55px" label="皮重"/>
+      <el-table-column prop="grossWeight" width="55px" label="毛重"/>
       <el-table-column prop="totalBag" label="出库包数"/>
       <el-table-column prop="totalNumber" label="出库个数"/>
       <el-table-column prop="packer" label="包装员"/>
       <el-table-column prop="printStatus" label="打印状态">
-        <!--<template slot-scope="scope">
+        <template slot-scope="scope">
           <div slot="reference" class="name-wrapper">
             <el-tag
-              :type="typeMapping[scope.row.status]"
+              :type="typePrintStatus[scope.row.printStatus]"
               size="medium"
-            >{{ typeValue[scope.row.status] }}</el-tag>
+            >{{ typePrintStatusValue[scope.row.printStatus] }}</el-tag>
           </div>
-        </template>-->
+        </template>
       </el-table-column>
       <el-table-column prop="printNumber" label="打印次数"/>
       <el-table-column prop="printTime" label="打印时间">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.printTime) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        align="center"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="warning"
+            icon="el-icon-tickets"
+          >打印</el-button>
+
         </template>
       </el-table-column>
       <!-- <el-table-column v-if="checkPermission(['admin','chemicalFiberLabel:edit','chemicalFiberLabel:del'])" label="操作" width="150px" align="center">
@@ -136,30 +118,33 @@
       @size-change="sizeChange"
       @current-change="pageChange"
     />
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="palletNumber" label="条码号"/>
+    <el-table v-loading="dataLoading"
+              :data="dataList"
+              size="small"
+              border
+              max-height="530">
+      <el-table-column prop="labelNumber" width="125px" label="条码号"/>
       <el-table-column prop="prodModel" label="料号"/>
       <el-table-column prop="prodName" label="品名"/>
-      <el-table-column prop="prodColor" label="纤度"/>
-      <el-table-column prop="prodFineness" label="色号"/>
-      <el-table-column prop="totalBag" label="包数"/>
-      <el-table-column prop="totalNumber" label="个数"/>
+      <el-table-column prop="color" label="纤度"/>
+      <el-table-column prop="fineness" label="色号"/>
+      <el-table-column prop="factPerBagNumber" label="个数"/>
       <el-table-column :formatter="kgformatter" prop="netWeight" label="净重"/>
       <el-table-column prop="tare" label="皮重"/>
       <el-table-column prop="grossWeight" label="毛重"/>
-      <el-table-column prop="totalBag" label="班次"/>
-      <el-table-column prop="totalNumber" label="机台号"/>
-      <el-table-column prop="packer" label="状态"/>
-      <el-table-column prop="printStatus" label="包装员">
-        <!--<template slot-scope="scope">
+      <el-table-column prop="shifts" label="班次"/>
+      <el-table-column prop="machine" label="机台号"/>
+      <el-table-column prop="status" label="状态">
+        <template slot-scope="scope">
           <div slot="reference" class="name-wrapper">
             <el-tag
               :type="typeMapping[scope.row.status]"
               size="medium"
             >{{ typeValue[scope.row.status] }}</el-tag>
           </div>
-        </template>-->
+        </template>
       </el-table-column>
+      <el-table-column prop="packer" label="包装员"/>
     </el-table>
   </div>
 </template>
@@ -167,11 +152,41 @@
 <script>
 import initData from '@/mixins/initData'
 import { parseTime, downloadFile } from '@/utils/index'
+import { getPalletDateilList } from '@/api/chemicalFiberPalletDetail'
 export default {
   mixins: [initData],
   data() {
     return {
-      loading: false
+      loading: false,
+      dataLoading:false,dateQuery: '',
+      form: {
+        palletId: ''
+      },
+      typeMapping: {
+        0: '',
+        1: 'success',
+        2: '',
+        3: 'info',
+        4: 'warning',
+        5: 'danger'
+      },
+      typeValue: {
+        0: '待入仓',
+        1: '已入仓',
+        9: '托板入仓',
+        2: '已出仓',
+        3: '已作废',
+        4: '已返仓',
+        5: '已退货'
+      },
+      typePrintStatus: {
+        0: 'danger',
+        1: 'success'
+      },
+      typePrintStatusValue: {
+        0: '未打印',
+        1: '已打印'
+      }
     }
   },
   created() {
@@ -186,12 +201,37 @@ export default {
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       return true
+    },
+    detailList(data) {
+      this.form.palletId = data.palletNumber
+      this.dataLoading = true
+      getPalletDateilList(this.form).then(res => {
+        this.dataList = res
+        for (var i = 0; i < res.length; i++) {
+          this.dataList[i].prodModel = res[i].color + "-" + res[i].fineness
+          this.dataList[i].prodName = res[i].color + "-" + res[i].fineness
+
+        }
+        this.dataLoading = false
+      })
     }
 
   }
 }
 </script>
 
-<style scoped>
+<style>
+  .el-table .warning-row {
+    background: #c5c8ce;
+  }
+
+  .el-table .success-row {
+    background: #ffffff;
+  }
+
+  body .el-table th.gutter {
+    display: table-cell !important
+  }
+
 
 </style>
