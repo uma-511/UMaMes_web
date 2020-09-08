@@ -162,13 +162,16 @@ export default {
         'RK': 'success',
         'SH': '',
         'TK': 'warning',
-        'TH': 'danger'
+        'TH': 'danger',
+        'TH': 'success',
       },
       scanValue: {
         'RK': '入仓',
         'SH': '出仓',
         'TK': '返仓',
-        'TH': '退货'
+        'TH': '退货',
+        'TB': '托板入库'
+
       }
     }
   },
