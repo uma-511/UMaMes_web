@@ -78,6 +78,11 @@
           <span>{{ parseTime(scope.row.printTime) }}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="printEndTime" label="最后打印时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.printEndTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -87,6 +92,7 @@
             size="mini"
             type="warning"
             icon="el-icon-tickets"
+            @click="exportPoundExcel(scope.row)"
           >打印</el-button>
 
         </template>
@@ -116,6 +122,7 @@
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
       @size-change="sizeChange"
+      max-height="400"
       @current-change="pageChange"
     />
     <el-table v-loading="dataLoading"
@@ -123,13 +130,13 @@
               size="small"
               border
               max-height="530">
-      <el-table-column prop="labelNumber" width="125px" label="条码号"/>
+      <el-table-column prop="labelNumber" width="125px" label="条码号" />
       <el-table-column prop="prodModel" label="料号"/>
       <el-table-column prop="prodName" label="品名"/>
       <el-table-column prop="color" label="纤度"/>
       <el-table-column prop="fineness" label="色号"/>
       <el-table-column prop="factPerBagNumber" label="个数"/>
-      <el-table-column :formatter="kgformatter" prop="netWeight" label="净重"/>
+      <el-table-column prop="netWeight" label="净重"/>
       <el-table-column prop="tare" label="皮重"/>
       <el-table-column prop="grossWeight" label="毛重"/>
       <el-table-column prop="shifts" label="班次"/>
@@ -153,6 +160,7 @@
 import initData from '@/mixins/initData'
 import { parseTime, downloadFile } from '@/utils/index'
 import { getPalletDateilList } from '@/api/chemicalFiberPalletDetail'
+import { exportPoundExcel } from '@/api/chemicalFiberPallet'
 export default {
   mixins: [initData],
   data() {
@@ -162,6 +170,12 @@ export default {
       form: {
         palletId: ''
       },
+      queryTypeOptions: [
+        { key: 'palletNumber', display_name: '条码号' },
+        { key: 'packer', display_name: '包装员' },
+        { key: 'fineness', display_name: '纤度' },
+        { key: 'color', display_name: '色号' },
+      ],
       typeMapping: {
         0: '',
         1: 'success',
@@ -200,6 +214,21 @@ export default {
       this.url = 'api/chemicalFiberPallet'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
+      const query = this.query
+      const type = query.type
+      const value = query.value
+      const status = query.status
+      const dateQuery = this.dateQuery
+      if (type && value) {
+        this.params[type] = value
+      }
+      if (status) {
+        this.params['status'] = status
+      }
+      if (dateQuery) {
+        this.params['tempStartTime'] = dateQuery[0].getTime()
+        this.params['tempEndTime'] = dateQuery[1].getTime()
+      }
       return true
     },
     detailList(data) {
@@ -214,7 +243,17 @@ export default {
         }
         this.dataLoading = false
       })
-    }
+    },
+    exportPoundExcel(data) {
+      this.loading = true
+      exportPoundExcel(data).then(result => {
+        this.init();
+        this.loading = false
+        downloadFile(result, '磅码单导出', 'xls')
+      }).catch(() => {
+        this.loading = false
+      })
+    },
 
   }
 }
