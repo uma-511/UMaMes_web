@@ -45,7 +45,6 @@
     <el-table  v-loading="loading"
                :data="data"
                size="small"
-               border
                max-height="530"
                @row-click="detailList($event)"
                 >
@@ -73,12 +72,12 @@
         </template>
       </el-table-column>
       <el-table-column prop="printNumber" label="打印次数"/>
-      <el-table-column prop="printTime" label="打印时间">
+      <el-table-column prop="printTime" width="135px" label="打印时间">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.printTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="printEndTime" label="最后打印时间">
+      <el-table-column prop="printEndTime" width="135px" label="最后打印时间">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.printEndTime) }}</span>
         </template>
@@ -93,6 +92,7 @@
             type="warning"
             icon="el-icon-tickets"
             @click="exportPoundExcel(scope.row)"
+            @click.stop
           >打印</el-button>
 
         </template>
@@ -128,7 +128,6 @@
     <el-table v-loading="dataLoading"
               :data="dataList"
               size="small"
-              border
               max-height="530">
       <el-table-column prop="labelNumber" width="125px" label="条码号" />
       <el-table-column prop="prodModel" label="料号"/>
