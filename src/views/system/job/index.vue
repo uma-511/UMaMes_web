@@ -47,6 +47,7 @@
           <div>{{ scope.row.deptSuperiorName ? scope.row.deptSuperiorName + ' / ' : '' }}{{ scope.row.dept.name }}</div>
         </template>
       </el-table-column>
+      <el-table-column prop="basicSalary" label="基本工资"/>
       <el-table-column prop="sort" label="排序">
         <template slot-scope="scope">
           {{ scope.row.sort }}
@@ -171,6 +172,7 @@ export default {
         name: data.name,
         sort: data.sort,
         enabled: data.enabled.toString(),
+        basicSalary: data.basicSalary,
         createTime: data.createTime,
         dept: { id: data.dept.id }
       }

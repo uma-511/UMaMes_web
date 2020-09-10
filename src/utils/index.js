@@ -53,7 +53,6 @@ export function parseTimeToDates(time) {
   }
 }
 
-
 export function formatTime(time, option) {
   time = +time * 1000
   const d = new Date(time)

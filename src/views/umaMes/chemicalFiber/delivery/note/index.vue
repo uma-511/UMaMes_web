@@ -755,7 +755,7 @@ import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/customer'
 import { getCarList } from '@/api/car'
-import { getSelectMap, getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
+import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
 import Config from '@/config'
 import eForm from './form'
@@ -1160,7 +1160,7 @@ export default {
         payDate: this.payForm.payDate,
         amount: this.payForm.amount
       }
-      if (!this.payForm.amount || this.payForm.amount === '' || this.payForm.amount === '0' ) {
+      if (!this.payForm.amount || this.payForm.amount === '' || this.payForm.amount === '0') {
         this.$notify({
           title: '请填写金额',
           type: 'warning',
@@ -1168,7 +1168,7 @@ export default {
         })
         return
       }
-      if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0' ) {
+      if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0') {
         this.$notify({
           title: '客户余额为0，无法执行该操作',
           type: 'warning',
@@ -1209,7 +1209,7 @@ export default {
         })
         return
       }
-      if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0' ) {
+      if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0') {
         this.$notify({
           title: '客户余额为0，无法执行该操作',
           type: 'warning',

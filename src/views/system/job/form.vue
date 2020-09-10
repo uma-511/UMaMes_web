@@ -4,6 +4,9 @@
       <el-form-item label="名称" prop="name">
         <el-input v-model="form.name" style="width: 370px;"/>
       </el-form-item>
+      <el-form-item label="基本工资" prop="basicSalary">
+        <el-input v-model="form.basicSalary" style="width: 370px;"/>
+      </el-form-item>
       <el-form-item label="排序" prop="sort">
         <el-input-number v-model.number="form.sort" :min="0" :max="999" controls-position="right" style="width: 370px;"/>
       </el-form-item>

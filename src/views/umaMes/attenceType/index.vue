@@ -7,16 +7,11 @@
       <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
         <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select>
-      <el-checkbox
-        v-model="showUnEnable"
-        label="查询失效单"
-        style="margin-top: 1px"
-        @change="toQuery"
-      />
+      <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
-          v-permission="['admin','travelPersionPerformance:add']"
+          v-permission="['admin','attenceType:add']"
           class="filter-item"
           size="mini"
           type="primary"
@@ -28,19 +23,7 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="personName" label="责任人"/>
-      <el-table-column prop="permission" label="职位"/>
-      <el-table-column prop="mileageFee" label="里程费"/>
-      <el-table-column prop="overtimePay" label="加班费"/>
-      <el-table-column prop="allowance" label="补贴费"/>
-      <el-table-column prop="surcharge" label="附加费"/>
-      <el-table-column prop="handlingCost" label="装卸费"/>
-      <el-table-column prop="totalPerformance" label="绩效总计"/>
-      <el-table-column prop="createTime" label="日期">
-        <template slot-scope="scope">
-          <span>{{ parseTimeToDate(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column prop="attenceType" label="类型"/>
       <el-table-column prop="enable" label="状态">
         <template slot-scope="scope">
           <div v-if="scope.row.enable == false">
@@ -57,11 +40,11 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column v-if="checkPermission(['admin','travelPersionPerformance:edit','travelPersionPerformance:del'])" label="操作" width="150px" align="center">
+      <el-table-column v-if="checkPermission(['admin','attenceType:edit','attenceType:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','travelPersionPerformance:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <el-button v-permission="['admin','attenceType:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
-            v-permission="['admin','travelPersionPerformance:del']"
+            v-permission="['admin','attenceType:del']"
             :ref="scope.row.id"
             placement="top"
             width="180">
@@ -89,8 +72,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadTravelPersionPerformance } from '@/api/travelPersionPerformance'
-import { parseTimeToDate, downloadFile } from '@/utils/index'
+import { del, downloadAttenceType } from '@/api/attenceType'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -98,9 +80,9 @@ export default {
   data() {
     return {
       delLoading: false,
-      showUnEnable: false,
       queryTypeOptions: [
-        { key: 'personName', display_name: '责任人' }
+        { key: 'attenceType', display_name: '类型' },
+        { key: 'enable', display_name: '状态' }
       ]
     }
   },
@@ -110,17 +92,14 @@ export default {
     })
   },
   methods: {
-    parseTimeToDate,
     checkPermission,
     beforeInit() {
-      this.url = 'api/travelPersionPerformance'
+      this.url = 'api/attenceType'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
       const type = query.type
       const value = query.value
-      const checkEnables = this.showUnEnable
-      this.params['showUnEnable'] = checkEnables
       if (type && value) { this.params[type] = value }
       return true
     },
@@ -151,35 +130,14 @@ export default {
       const _this = this.$refs.form
       _this.form = {
         id: data.id,
-        personName: data.personName,
-        personId: data.personId,
-        permission: data.permission,
-        mileageFee: data.mileageFee,
-        overtimePay: data.overtimePay,
-        allowance: data.allowance,
-        surcharge: data.surcharge,
-        handlingCost: data.handlingCost,
-        totalPerformance: data.totalPerformance,
-        createTime: data.createTime,
+        attenceType: data.attenceType,
         enable: data.enable
       }
       _this.dialog = true
-    },
-    // 导出
-    download() {
-      this.beforeInit()
-      this.downloadLoading = true
-      downloadTravelPersionPerformance(this.params).then(result => {
-        downloadFile(result, 'TravelPersionPerformance列表', 'xlsx')
-        this.downloadLoading = false
-      }).catch(() => {
-        this.downloadLoading = false
-      })
     }
   }
 }
 </script>
 
 <style scoped>
-
 </style>

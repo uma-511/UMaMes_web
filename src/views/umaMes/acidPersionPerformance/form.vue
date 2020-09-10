@@ -3,7 +3,7 @@
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
       <el-form-item label="责任人" >
         <el-select
-          v-model="form.personName"
+          v-model="form.person"
           :disabled="!isAdd"
           :loading="userLoading"
           :remote-method="transporterRemoteMethod"
@@ -24,29 +24,44 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="职位" >
-        <el-input :disabled="true" v-model="form.permission" style="width: 370px;"/>
+      <el-form-item label="任务日期" >
+        <el-date-picker v-model="form.taskDate" type="date" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="里程费" >
-        <el-input v-model="form.mileageFee" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
+      <el-form-item label="产品名称" >
+        <el-select
+          v-model="form.productName"
+          :disabled="!isAdd"
+          :loading="userLoading"
+          :remote-method="prodRemoteMethod"
+          filterable
+          remote
+          reserve-keyword
+          placeholder="输入产品名称关键字"
+          style="width: 370px;"
+          @focus="cleanUpOptions"
+        >
+          <el-option
+            v-for="item in prodOptions"
+            :key="item.prodName"
+            :label="item.prodName"
+            :value="item.prodName"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="加班费" >
-        <el-input v-model="form.overtimePay" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
+      <el-form-item label="桶数" >
+        <el-input v-model="form.number" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="补贴费" >
-        <el-input v-model="form.allowance" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
+      <el-form-item label="规格(公斤)" >
+        <el-input v-model="form.specifications" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="附加费" >
-        <el-input v-model="form.surcharge" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
+      <el-form-item label="吨数" >
+        <el-input v-model="form.weight" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="装卸费" >
-        <el-input v-model="form.handlingCost" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
+      <el-form-item label="单价(元)" >
+        <el-input v-model="form.unitPrice" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="绩效总计" >
-        <el-input :disabled="true" v-model="form.totalPerformance" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="日期" >
-        <el-date-picker :disabled="!isAdd" v-model="form.createTime" type="date" style="width: 370px;"/>
+      <el-form-item label="金额" >
+        <el-input v-model="form.price" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -57,8 +72,9 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/travelPersionPerformance'
-import { getUserListByDeptId, getPermissionByUserId } from '@/api/user'
+import { add, edit } from '@/api/acidPersionPerformance'
+import { getUserListByDeptId } from '@/api/user'
+import { getSelectMaps } from '@/api/chemicalFiberStock'
 export default {
   props: {
     isAdd: {
@@ -68,23 +84,24 @@ export default {
   },
   data() {
     return {
-      loading: false,
-      dialog: false,
+      loading: false, dialog: false,
       userLoading: false,
       userOptions: [],
+      prodOptions: [],
+      prodList: '',
       form: {
         id: '',
-        personName: '',
+        person: '',
         personId: '',
-        permission: '',
-        mileageFee: '',
-        overtimePay: '',
-        allowance: '',
-        surcharge: '',
-        handlingCost: '',
-        totalPerformance: '',
-        createTime: new Date(),
-        enable: ''
+        taskDate: new Date(),
+        productName: '',
+        number: '',
+        specifications: '',
+        weight: '',
+        unitPrice: '',
+        price: '',
+        enable: '',
+        createDate: ''
       },
       rules: {
       }
@@ -94,9 +111,16 @@ export default {
     cancel() {
       this.resetForm()
     },
+    doSubmit() {
+      this.loading = true
+      if (this.isAdd) {
+        this.doAdd()
+      } else this.doEdit()
+    },
     // 清空下拉框
     cleanUpOptions() {
       this.userOptions = []
+      this.prodOptions = []
     },
     initIdAndPermission(event) {
       let obj = []
@@ -104,10 +128,6 @@ export default {
         return item.realname === event
       })
       this.form.personId = obj.id
-      const params = { id: obj.id }
-      getPermissionByUserId(params).then(res => {
-        this.form.permission = res[0].permission
-      })
     },
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
@@ -123,20 +143,17 @@ export default {
         })
       })
     },
-    doSubmit() {
-      this.loading = true
-      if (this.isAdd) {
-        this.doAdd()
-      } else this.doEdit()
-    },
-    doCount() {
-      var n1 = this.form.mileageFee
-      var n2 = this.form.overtimePay
-      var n3 = this.form.allowance
-      var n4 = this.form.surcharge
-      var n5 = this.form.handlingCost
-      var sum = n1 * 1 + n2 * 1 + n3 * 1 + n4 * 1 + n5 * 1
-      this.form.totalPerformance = sum.toFixed(2)
+    // 查询产品的下拉列表
+    prodRemoteMethod(query) {
+      const params = { prodName: query }
+      this.userLoading = true
+      getSelectMaps(params).then(res => {
+        this.userLoading = false
+        this.prodList = res
+        this.prodOptions = this.prodList.filter(item => {
+          return item
+        })
+      })
     },
     doAdd() {
       add(this.form).then(res => {
@@ -171,19 +188,20 @@ export default {
     resetForm() {
       this.dialog = false
       this.$refs['form'].resetFields()
+      this.cleanUpOptions()
       this.form = {
         id: '',
-        personName: '',
+        person: '',
         personId: '',
-        permission: '',
-        mileageFee: '',
-        overtimePay: '',
-        allowance: '',
-        surcharge: '',
-        handlingCost: '',
-        totalPerformance: '',
-        createTime: new Date(),
-        enable: ''
+        taskDate: new Date(),
+        productName: '',
+        number: '',
+        specifications: '',
+        weight: '',
+        unitPrice: '',
+        price: '',
+        enable: '',
+        createDate: ''
       }
     }
   }
