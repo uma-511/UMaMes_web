@@ -56,3 +56,12 @@ export function getProductionReportSummaries(data) {
   })
 }
 
+export function exportPoundExcelProduct(params) {
+  return request({
+    url: 'api/chemicalFiberProduction/downloadProduct',
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+

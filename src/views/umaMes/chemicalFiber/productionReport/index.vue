@@ -40,6 +40,13 @@
         icon="el-icon-search"
         @click="toQuery"
       >搜索</el-button>
+      <el-button
+        class="filter-item"
+        size="mini"
+        type="success"
+        icon="el-icon-search"
+        @click="exportPoundExcelProduct()"
+      >导出</el-button>
     </div>
     <!--表单组件-->
     <!-- <eForm ref="form" :is-add="isAdd"/> -->
@@ -58,49 +65,69 @@
         label="编号"
         align="center"/>
       <!-- <el-table-column prop="number" label="编号" align="center"/> -->
+      <el-table-column prop="color" label="日期" align="center">
+        <template slot-scope="scope">
+          <span>{{ parseTimeToDate(scope.row.create_date) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="color" label="生产单号" align="center">
+        <template slot-scope="scope">
+          <span style="color:#67C23A;">{{ scope.row.number }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="color" label="机台" align="center">
+        <template slot-scope="scope">
+          <span style="color:#67C23A;">{{ scope.row.machine_number }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="color" label="班次" align="center">
+        <template slot-scope="scope">
+          <span style="color:#67C23A;">{{ scope.row.shifts }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="color" label="色号" align="center"/>
       <el-table-column prop="fineness" label="纤度" align="center"/>
-      <el-table-column prop="in_stock_pack" label="在库包数" align="center">
+      <el-table-column prop="in_stock_pack" label="生产包数" align="center">
         <template slot-scope="scope">
           <span style="color:#67C23A;">{{ scope.row.in_stock_pack }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="in_stock_number" label="在库个数" align="center">
+      <el-table-column prop="in_stock_number" label="生产个数" align="center">
         <template slot-scope="scope">
           <span style="color:#67C23A;">{{ scope.row.in_stock_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="in_net_weight" label="在库净重(kg)" align="center">
+      <el-table-column prop="in_net_weight" label="生产净重(kg)" align="center">
         <template slot-scope="scope">
           <span style="color:#67C23A;">{{ scope.row.in_net_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="in_gross_weight" label="在库毛重(kg)" align="center">
+      <el-table-column prop="in_gross_weight" label="生产毛重(kg)" align="center">
         <template slot-scope="scope">
           <span style="color:#67C23A;">{{ scope.row.in_gross_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="out_stock_pack" label="出库包数" align="center">
+      <el-table-column prop="out_stock_pack" label="入库库包数" align="center">
         <template slot-scope="scope">
           <span style="color:#409EFF;">{{ scope.row.out_stock_pack }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="out_stock_number" label="出库个数" align="center">
+      <el-table-column prop="out_stock_number" label="入库个数" align="center">
         <template slot-scope="scope">
           <span style="color:#409EFF;">{{ scope.row.out_stock_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="out_net_weight" label="出库净重(kg)" align="center">
+      <el-table-column prop="out_net_weight" label="入库净重(kg)" align="center">
         <template slot-scope="scope">
           <span style="color:#409EFF;">{{ scope.row.out_net_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="out_gross_weight" label="出库毛重(kg)" align="center">
+      <el-table-column prop="out_gross_weight" label="入库毛重(kg)" align="center">
         <template slot-scope="scope">
           <span style="color:#409EFF;">{{ scope.row.out_gross_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="in_stock_prop" label="在库包数比例" align="center">
+      <!--<el-table-column prop="in_stock_prop" label="在库包数比例" align="center">
         <template slot-scope="scope">
           <span style="color:#E6A23C;">{{ scope.row.in_stock_prop }}%</span>
         </template>
@@ -129,7 +156,7 @@
         <template slot-scope="scope">
           <span style="color:#F56C6C;">{{ scope.row.cancel_gross_weight }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
     <!--分页组件-->
     <el-pagination
@@ -145,7 +172,8 @@
 
 <script>
 import checkPermission from '@/utils/permission'
-import { getProductionReportSummaries } from '@/api/chemicalFiberProduction'
+import { getProductionReportSummaries, exportPoundExcelProduct} from '@/api/chemicalFiberProduction'
+import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
 import initData from '@/mixins/initData'
 export default {
   mixins: [initData],
@@ -167,6 +195,8 @@ export default {
     this.dateQuery = [start, new Date(start.getTime() + 24 * 60 * 60 * 1000)]
   },
   methods: {
+    parseTime,
+    parseTimeToDate,
     checkPermission,
     beforeInit() {
       this.url = 'api/chemicalFiberProduction/getProductionReport'
@@ -197,6 +227,14 @@ export default {
     tempGetProductionReportSummaries() {
       getProductionReportSummaries(this.params).then(res => {
         this.sums = res.data
+      })
+    },
+    exportPoundExcelProduct() {
+      exportPoundExcelProduct(this.params).then(result => {
+        this.detailLoading = false
+        downloadFile(result, '导出列表', 'xls')
+      }).catch(() => {
+        this.detailLoading = false
       })
     }
   }
