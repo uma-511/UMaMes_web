@@ -3,14 +3,33 @@
     <!--工具栏-->
     <div class="head-container">
       <!-- 搜索 -->
-      <el-input
+      <!--<el-input
         v-model="query.value"
         clearable
         placeholder="输入搜索客户"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="toQuery"
-      />
+      />-->
+      <el-select
+        v-model="query.value"
+        :remote-method="customerRemoteMethod"
+        multiple:false
+        clearable
+        filterable
+        remote
+        reserve-keyword
+        placeholder="客户名称"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in customerOptions"
+          :key="item.name"
+          :label="item.name"
+          :value="item.name"
+        />
+      </el-select>
       <el-input
         v-model="query.values"
         clearable
@@ -122,6 +141,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import { getSalesReportSummaries } from '@/api/chemicalFiberDeliveryDetail'
+import { getCustomerList } from '@/api/customer'
 import initData from '@/mixins/initData'
 import { parseTimeToDate } from '@/utils/index'
 export default {
@@ -129,18 +149,23 @@ export default {
   data() {
     return {
       dateQuery: [],
-      dialogVisible: false,
+      dialogVisible: false,customerOptions: [],
       queryTypeOptions: [
         { key: 'customerName', display_name: '客户名称' }
       ],
       queryTypeOption: [
+        { key: 'scanNumber', display_name: '销售单号' },
+        { key: 'prodName', display_name: '产品名称' },
         { key: 'prodColor', display_name: '产品颜色' },
         { key: 'prodFineness', display_name: '产品纤度' }
       ],
       sums: [],
       chemicalFiberDeliveryDetails: [],
       tempName: '客户名称',
-      detailsTitle: ''
+      detailsTitle: '',
+      customerQuery: {
+        name
+      }
     }
   },
   created() {
@@ -149,6 +174,13 @@ export default {
     })
     var start = new Date(new Date(new Date().toLocaleDateString()))
     this.dateQuery = [start, new Date(start.getTime() + 24 * 60 * 60 * 1000)]
+  },
+  wathc:{
+    arr: function() {
+      this.$nextTick(function(){
+        this.customerRemoteMethod(query)
+      })
+    }
   },
   methods: {
     parseTimeToDate,
@@ -170,6 +202,7 @@ export default {
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
       this.tempGetSalesReportSummaries()
+      this.customerRemoteMethod();
       return true
     },
     getSummaries() {
@@ -184,6 +217,21 @@ export default {
       this.dialogVisible = true
       this.chemicalFiberDeliveryDetails = data.chemicalFiberDeliveryDetails
       this.detailsTitle = data.scanNumber + ' -- ' + (data.customerName === null ? '' : data.customerName) + ' 详情'
+    },
+    customerRemoteMethod(query) {
+        this.customerQuery.name = query
+        this.customerOptions = []
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerLoading = false
+          this.customerQuery.name = ''
+          this.customerList = res
+          this.customerOptions = this.customerList.filter(item => {
+            console.log(item)
+            return item.name.toLowerCase()
+              .indexOf(item.name.toLowerCase()) > -1
+          })
+        })
+
     }
   }
 }

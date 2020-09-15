@@ -33,9 +33,14 @@
         style="width: 130px"
       >
         <el-option key="RK" label="入仓" value="RK"/>
+        <el-option key="TB" label="托板入仓" value="TB"/>
         <el-option key="SH" label="出仓" value="SH"/>
         <el-option key="TK" label="返仓" value="TK"/>
         <el-option key="TH" label="退货" value="TH"/>
+        <el-option key="TZ+" label="托板+" value="TZ+"/>
+        <el-option key="TZ-" label="托板-" value="TZ-"/>
+        <el-option key="SH+" label="出仓+" value="SH+"/>
+        <el-option key="RK-" label="出仓-" value="RK-"/>
       </el-select>
       <el-date-picker
         v-model="dateQuery"
@@ -94,17 +99,18 @@
         </template>
       </el-table-column>
       <el-table-column prop="labelNumber" label="条码号"/>
+      <el-table-column prop="prodName" label="产品名称"/>
+      <el-table-column prop="prodColor" label="产品颜色"/>
+      <el-table-column prop="prodFineness" label="产品纤度"/>
+      <el-table-column prop="number" label="订单编号"/>
+      <el-table-column prop="customerCode" label="客户编号"/>
       <el-table-column prop="factPerBagNumber" label="每包个数"/>
       <el-table-column :formatter="kgformatter" prop="netWeight" label="净重"/>
       <el-table-column :formatter="kgformatter" prop="tare" label="皮重"/>
       <el-table-column :formatter="kgformatter" prop="grossWeight" label="毛重"/>
       <el-table-column prop="shifts" label="班次"/>
       <el-table-column prop="packer" label="包装员"/>
-      <el-table-column prop="number" label="订单编号"/>
-      <el-table-column prop="customerCode" label="客户编号"/>
-      <el-table-column prop="prodName" label="产品名称"/>
-      <el-table-column prop="prodColor" label="产品颜色"/>
-      <el-table-column prop="prodFineness" label="产品纤度"/>
+
       <!-- <el-table-column v-if="checkPermission(['admin','viewScanRecord:edit','viewScanRecord:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','viewScanRecord:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
@@ -164,6 +170,10 @@ export default {
         'TK': 'warning',
         'TH': 'danger',
         'TH': 'success',
+        'TZ+': '',
+        'TZ-': 'success',
+        'SH+': '',
+        'Rk-': 'success',
       },
       scanValue: {
         'RK': '入仓',
@@ -171,7 +181,10 @@ export default {
         'TK': '返仓',
         'TH': '退货',
         'TB': '托板入库',
-        'TZ': '托板调整'
+        'TZ+': '托板+',
+        'TZ-': '托板-',
+        'SH+': '出仓+',
+        'RK-': '出仓-'
 
       }
     }

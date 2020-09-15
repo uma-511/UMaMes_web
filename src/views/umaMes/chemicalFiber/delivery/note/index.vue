@@ -68,14 +68,14 @@
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerCode" label="客户编号"/>
-      <el-table-column prop="customerAddress" label="客户地址"/>
+     <!-- <el-table-column prop="customerAddress" label="客户地址"/>-->
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
       <el-table-column prop="totalCost" label="总成本"/>
       <el-table-column prop="totalPrice" label="总价"/>
       <el-table-column prop="remark" label="备注"/>
-      <el-table-column prop="seller" label="业务员"/>
-      <el-table-column prop="storeKeeper" label="仓管员"/>
+     <!-- <el-table-column prop="seller" label="业务员"/>
+      <el-table-column prop="storeKeeper" label="仓管员"/>-->
       <el-table-column prop="createDate" label="制单日期">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createDate) }}</span>
@@ -430,6 +430,50 @@ export default {
           return
         }
         const values = data.map(item => Number(item[column.property]))
+        if (index === 2) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += "KG"
+        }
+        if (index === 3) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index]
+        }
+        if (index === 4) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index]
+        }
+        if (index === 7) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
         if (index === 9) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)

@@ -39,3 +39,10 @@ export function getSummaryData(data) {
     data
   })
 }
+
+export function getShifts() {
+  return request({
+    url: 'api/chemicalFiberLabel/getShifts',
+    method: 'post'
+  })
+}

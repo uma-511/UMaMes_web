@@ -3,8 +3,22 @@
     <!--工具栏-->
     <div class="head-container">
       <!-- 搜索 -->
-      <el-input
+      <el-select
         v-model="query.value"
+        clearable
+        placeholder="班次"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in customerOptions"
+          :key="item.shifts"
+          :label="item.shifts"
+          :value="item.shifts"
+        />
+      </el-select>
+      <el-input
+        v-model="query.values"
         clearable
         placeholder="输入搜索内容"
         style="width: 200px;"
@@ -12,7 +26,7 @@
         @keyup.enter.native="toQuery"
       />
       <el-select
-        v-model="query.type"
+        v-model="query.types"
         clearable
         placeholder="类型"
         class="filter-item"
@@ -173,14 +187,16 @@
 <script>
 import checkPermission from '@/utils/permission'
 import { getProductionReportSummaries, exportPoundExcelProduct} from '@/api/chemicalFiberProduction'
+import { getShifts } from '@/api/chemicalFiberLabel'
 import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
 import initData from '@/mixins/initData'
 export default {
   mixins: [initData],
   data() {
     return {
-      dateQuery: [],
+      dateQuery: [],customerOptions: [],
       queryTypeOptions: [
+        { key: 'machineNumber', display_name: '机台' },
         { key: 'prodColor', display_name: '产品颜色' },
         { key: 'prodFineness', display_name: '产品纤度' }
       ],
@@ -203,9 +219,12 @@ export default {
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
-      const type = query.type
+      const types = query.types
+      const values = query.values
+      const type = 'shifts'
       const value = query.value
       const dateQuery = this.dateQuery
+      if (types && values) { this.params[types] = values }
       if (type && value) { this.params[type] = value }
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
@@ -219,6 +238,7 @@ export default {
         return false
       }
       this.tempGetProductionReportSummaries()
+      this.shiftsRemoteMethod()
       return true
     },
     getSummaries() {
@@ -235,6 +255,16 @@ export default {
         downloadFile(result, '导出列表', 'xls')
       }).catch(() => {
         this.detailLoading = false
+      })
+    },
+    shiftsRemoteMethod() {
+      this.customerOptions = []
+      getShifts().then(res => {
+        this.customerList = res
+        this.customerOptions = this.customerList.filter(item => {
+          return item.shifts.toLowerCase()
+            .indexOf(item.shifts.toLowerCase()) > -1
+        })
       })
     }
   }
