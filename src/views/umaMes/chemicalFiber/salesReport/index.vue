@@ -11,6 +11,28 @@
         class="filter-item"
         @keyup.enter.native="toQuery"
       />
+      <el-input
+        v-model="query.values"
+        clearable
+        placeholder="输入搜索内容"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="toQuery"
+      />
+      <el-select
+        v-model="query.types"
+        clearable
+        placeholder="类型"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in queryTypeOption"
+          :key="item.key"
+          :label="item.display_name"
+          :value="item.key"
+        />
+      </el-select>
       <el-date-picker
         v-model="dateQuery"
         class="el-range-editor--small filter-item"
@@ -111,6 +133,10 @@ export default {
       queryTypeOptions: [
         { key: 'customerName', display_name: '客户名称' }
       ],
+      queryTypeOption: [
+        { key: 'prodColor', display_name: '产品颜色' },
+        { key: 'prodFineness', display_name: '产品纤度' }
+      ],
       sums: [],
       chemicalFiberDeliveryDetails: [],
       tempName: '客户名称',
@@ -134,6 +160,9 @@ export default {
       const query = this.query
       const type = 'customerName'
       const value = query.value
+      const types = query.types
+      const values = query.values
+      if (types && values) { this.params[types] = values }
       const dateQuery = this.dateQuery
       if (type && value) { this.params[type] = value }
       if (dateQuery) {
