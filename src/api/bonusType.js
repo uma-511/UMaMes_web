@@ -39,3 +39,34 @@ export function getCycleMenusTree() {
     method: 'get'
   })
 }
+
+// 获取岗位的菜单树
+export function getBonusJobsTree() {
+  return request({
+    url: 'api/bonusType/getBonusJobsTree',
+    method: 'get'
+  })
+}
+
+export function get(id) {
+  return request({
+    url: 'api/bonusType/' + id,
+    method: 'get'
+  })
+}
+
+export function editCycle(data) {
+  return request({
+    url: 'api/bonusType/cycle',
+    method: 'put',
+    data
+  })
+}
+
+export function editBonusJob(data) {
+  return request({
+    url: 'api/bonusType/job',
+    method: 'put',
+    data
+  })
+}

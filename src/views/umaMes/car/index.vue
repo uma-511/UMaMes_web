@@ -63,7 +63,7 @@
       <eForm ref="form" :is-add="isAdd"/>
       <!--表格渲染-->
       <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-        <el-table-column prop="id" label="id"/>
+        <el-table-column prop="id" label="序号"/>
         <el-table-column prop="carNumber" label="车牌号"/>
         <el-table-column prop="carType" label="车辆类型"/>
         <el-table-column prop="carDirector" label="负责人"/>
@@ -80,17 +80,25 @@
         </el-table-column>
         <el-table-column prop="enable" label="状态">
           <template slot-scope="scope">
-            <div v-if="scope.row.enable == false">
+            <div v-if="parseTimeToDate(scope.row.lastTrial) < parseTimeToDate(new Date())">
               <el-tag
                 type="info"
                 size="medium"
-              >已失效</el-tag>
+              >已超期</el-tag>
             </div>
-            <div v-if="scope.row.enable == true">
-              <el-tag
-                type="success"
-                size="medium"
-              >正常</el-tag>
+            <div v-else>
+              <div v-if="scope.row.enable == false">
+                <el-tag
+                  type="info"
+                  size="medium"
+                >已失效</el-tag>
+              </div>
+              <div v-if="scope.row.enable == true">
+                <el-tag
+                  type="success"
+                  size="medium"
+                >正常</el-tag>
+              </div>
             </div>
           </template>
         </el-table-column>

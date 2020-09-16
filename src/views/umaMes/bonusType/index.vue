@@ -28,19 +28,34 @@
           <div slot="header" class="clearfix">
             <span class="role-span">类型列表</span>
           </div>
-          <el-table v-loading="loading" :data="data" size="small" style="width: 100%;" @current-change="handleCurrentChange">
+          <el-table v-loading="loading" :data="data" size="small" style=" width: 100%;" @current-change="handleCurrentChange">
             <el-table-column prop="type" label="奖金类别"/>
             <el-table-column prop="price" label="金额"/>
-            <el-table-column prop="createTime" label="创建日期">
+            <!--<el-table-column prop="createTime" label="创建日期">
               <template slot-scope="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
-            </el-table-column>
-            <el-table-column prop="enable" label="状态"/>
-            <el-table-column v-if="checkPermission(['admin','bonusType:edit','bonusType:del'])" label="操作" width="150px" align="center">
+            </el-table-column>-->
+            <el-table-column prop="enable" label="状态">
               <template slot-scope="scope">
-                <el-button v-permission="['admin','bonusType:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
-                <el-popover
+                <div v-if="scope.row.enable == false">
+                  <el-tag
+                    type="info"
+                    size="medium"
+                  >已失效</el-tag>
+                </div>
+                <div v-if="scope.row.enable == true">
+                  <el-tag
+                    type="success"
+                    size="medium"
+                  >正常</el-tag>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="150px" align="center">
+              <template slot-scope="scope">
+                <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+                <!--<el-popover
                   v-permission="['admin','bonusType:del']"
                   :ref="scope.row.id"
                   placement="top"
@@ -51,7 +66,7 @@
                     <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
                   </div>
                   <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
-                </el-popover>
+                </el-popover>-->
               </template>
             </el-table-column>
           </el-table>
@@ -65,7 +80,7 @@
             @current-change="pageChange"/>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="7">
+      <el-col :xs="12" :sm="12" :md="4" :lg="4" :xl="1">
         <el-card class="box-card" shadow="never">
           <div slot="header" class="clearfix">
             <el-tooltip class="item" effect="dark" content="选择指定类型分配周期" placement="top">
@@ -73,18 +88,44 @@
             </el-tooltip>
             <el-button
               :disabled="!showButton"
-              :loading="menuLoading"
+              :loading="cycleLoading"
               icon="el-icon-check"
               size="mini"
               style="float: right; padding: 6px 9px"
               type="primary"
-              @click="saveMenu">保存</el-button>
+              @click="saveCycle">保存</el-button>
           </div>
           <el-tree
-            ref="menu"
-            :data="menus"
-            :default-checked-keys="menuIds"
+            ref="cycle"
+            :data="cycleTree"
+            :default-checked-keys="cycleIds"
             :props="defaultProps"
+            check-strictly
+            accordion
+            show-checkbox
+            node-key="id"/>
+        </el-card>
+      </el-col>
+      <el-col :xs="12" :sm="12" :md="4" :lg="4" :xl="7">
+        <el-card class="box-card" shadow="never">
+          <div slot="header" class="clearfix">
+            <el-tooltip class="item" effect="dark" content="选择指定类型分配周期" placement="top">
+              <span class="role-span">岗位分配</span>
+            </el-tooltip>
+            <el-button
+              :disabled="!showButton"
+              :loading="bonusJobLoading"
+              icon="el-icon-check"
+              size="mini"
+              style="float: right; padding: 6px 9px"
+              type="primary"
+              @click="saveBonusJob">保存</el-button>
+          </div>
+          <el-tree
+            ref="bonusJob"
+            :data="bonusJobTree"
+            :default-checked-keys="bonusJobIds"
+            :props="defaultJobProps"
             check-strictly
             accordion
             show-checkbox
@@ -98,8 +139,8 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadBonusType, getCycleMenusTree } from '@/api/bonusType'
-import { parseTime, downloadFile } from '@/utils/index'
+import { del, getCycleMenusTree, getBonusJobsTree, editCycle, editBonusJob, get } from '@/api/bonusType'
+import { parseTime } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -109,15 +150,27 @@ export default {
       defaultProps: {
         label: 'label'
       },
+      defaultJobProps: {
+        label: 'label'
+      },
+      cycleTree: [],
+      bonusJobTree: [],
       delLoading: false,
-      currentId: 0, menuLoading: false, showButton: false, menus: [], menuIds: [],
+      currentId: 0,
+      cycleLoading: false,
+      bonusJobLoading: false,
+      showButton: false,
+      bonusJobs: [],
+      bonusJobIds: [],
+      cycleIds: [],
       queryTypeOptions: [
         { key: 'type', display_name: '奖金类别' }
       ]
     }
   },
   created() {
-    this.getMenus()
+    this.getCycleTree()
+    this.getJobTree()
     this.$nextTick(() => {
       this.init()
     })
@@ -134,66 +187,112 @@ export default {
       const value = query.value
       if (type && value) { this.params[type] = value }
       // 清空菜单的选中
-      this.$refs.menu.setCheckedKeys([])
+      this.$refs.cycle.setCheckedKeys([])
+      this.$refs.bonusJob.setCheckedKeys([])
       return true
     },
     handleCurrentChange(val) {
       if (val) {
         const _this = this
         // 清空菜单的选中
-        this.$refs.menu.setCheckedKeys([])
+        this.$refs.cycle.setCheckedKeys([])
+        this.$refs.bonusJob.setCheckedKeys([])
         // 保存当前的类型id
         this.currentId = val.id
         // 点击后显示按钮
         this.showButton = true
         // 初始化
-        this.menuIds = []
+        this.cycleIds = []
+        this.bonusJobIds = []
         // 菜单数据需要特殊处理
-        val.menus.forEach(function(data, index) {
-          _this.menuIds.push(data.id)
+        val.cycles.forEach(function(data, index) {
+          _this.cycleIds.push(data.id)
+        })
+        val.bonusJobs.forEach(function(data, index) {
+          _this.bonusJobIds.push(data.id)
         })
       }
     },
-    saveMenu() {
-      this.menuLoading = true
-      const role = { id: this.currentId, menus: [] }
+    saveCycle() {
+      this.cycleLoading = true
+      const bonusType = { id: this.currentId, cycles: [] }
       // 得到半选的父节点数据，保存起来
-      this.$refs.menu.getHalfCheckedNodes().forEach(function(data, index) {
-        const menu = { id: data.id }
-        role.menus.push(menu)
+      this.$refs.cycle.getHalfCheckedNodes().forEach(function(data, index) {
+        const cycle = { id: data.id }
+        bonusType.cycles.push(cycle)
       })
       // 得到已选中的 key 值
-      this.$refs.menu.getCheckedKeys().forEach(function(data, index) {
-        const menu = { id: data }
-        role.menus.push(menu)
+      this.$refs.cycle.getCheckedKeys().forEach(function(data, index) {
+        const cycle = { id: data }
+        bonusType.cycles.push(cycle)
       })
-      /*editCycleMenu(role).then(res => {
+      editCycle(bonusType).then(res => {
         this.$notify({
           title: '保存成功',
           type: 'success',
           duration: 2500
         })
-        this.menuLoading = false
-        this.update()
+        this.cycleLoading = false
+        this.updateCycle()
       }).catch(err => {
-        this.menuLoading = false
+        this.cycleLoading = false
         console.log(err.response.data.message)
-      })*/
+      })
     },
-    update() {
+    updateCycle() {
       // 无刷新更新 表格数据
       get(this.currentId).then(res => {
         for (let i = 0; i < this.data.length; i++) {
           if (res.id === this.data[i].id) {
-            this.data[i] = res
-            break
+            this.data[i].cycles = res.cycles
           }
         }
       })
     },
-    getMenus() {
+    saveBonusJob() {
+      this.bonusJobLoading = true
+      const bonusType = { id: this.currentId, bonusJobs: [] }
+      // 得到半选的父节点数据，保存起来
+      this.$refs.bonusJob.getHalfCheckedNodes().forEach(function(data, index) {
+        const job = { id: data.id }
+        bonusType.bonusJobs.push(job)
+      })
+      // 得到已选中的 key 值
+      this.$refs.bonusJob.getCheckedKeys().forEach(function(data, index) {
+        const job = { id: data }
+        bonusType.bonusJobs.push(job)
+      })
+      editBonusJob(bonusType).then(res => {
+        this.$notify({
+          title: '保存成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.bonusJobLoading = false
+        this.updateBonusJob()
+      }).catch(err => {
+        this.bonusJobLoading = false
+        console.log(err.response.data.message)
+      })
+    },
+    updateBonusJob() {
+      // 无刷新更新 表格数据
+      get(this.currentId).then(res => {
+        for (let i = 0; i < this.data.length; i++) {
+          if (res.id === this.data[i].id) {
+            this.data[i].bonusJobs = res.bonusJobs
+          }
+        }
+      })
+    },
+    getCycleTree() {
       getCycleMenusTree().then(res => {
-        this.menus = res
+        this.cycleTree = res
+      })
+    },
+    getJobTree() {
+      getBonusJobsTree().then(res => {
+        this.bonusJobTree = res
       })
     },
     subDelete(id) {
@@ -229,17 +328,6 @@ export default {
         enable: data.enable
       }
       _this.dialog = true
-    },
-    // 导出
-    download() {
-      this.beforeInit()
-      this.downloadLoading = true
-      downloadBonusType(this.params).then(result => {
-        downloadFile(result, 'BonusType列表', 'xlsx')
-        this.downloadLoading = false
-      }).catch(() => {
-        this.downloadLoading = false
-      })
     }
   }
 }
