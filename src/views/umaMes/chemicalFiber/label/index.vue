@@ -164,7 +164,7 @@ export default {
         { key: 'machine', display_name: '机台号' }
       ],
       typeMapping: {
-        0: '',
+        0: 'warning',
         1: 'success',
         2: '',
         3: 'info',
