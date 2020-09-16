@@ -670,7 +670,6 @@ export default {
       }
     },
     addAll() {
-      this.typeButton = 'success'
       if (this.form.supplierName == '') {
         this.$notify({
           title: '请填写供应商',
@@ -692,7 +691,7 @@ export default {
         return
       }else if (this.isAnd == 2) {
         for (var i = 0; i < this.detalList.length; i++) {
-          if (this.detalList[i].warehousingNumber == '' || this.detalList[i].warehousingNumber == 0) {
+          if (this.detalList[i].warehousingNumber == '' || this.detalList[i].warehousingNumber == 0 || this.detalList[i].warehousingNumber == null) {
             this.$notify({
               title: '请填写数量',
               type: 'warning',
@@ -701,6 +700,7 @@ export default {
             return
           }
         }
+        this.typeButton = 'success'
         warehousingEdit(this.detalList).then(res => {
           this.$notify({
             title: '修改成功',
@@ -764,6 +764,16 @@ export default {
         })
         return
       }
+      for (var i = 0; i < this.detalList.length; i++) {
+        if (this.detalList[i].warehousingNumber == '' || this.detalList[i].warehousingNumber == 0 || this.detalList[i].warehousingNumber == null) {
+          this.$notify({
+            title: '请填写数量',
+            type: 'warning',
+            duration: 2500
+          })
+          return
+        }
+      }
       warehousing(this.detalList).then(res => {
         this.sutmitDetailLoading = false
         this.$refs[id].doClose()
@@ -806,6 +816,7 @@ export default {
     },
     sum(data) {
       data.totalPrice = (data.warehousingNumber * data.price).toFixed(2)
+      this.buttonType()
     },
     buttonType(){
       this.typeButton = 'danger'

@@ -25,6 +25,13 @@
           :value="item.key"
         />
       </el-select>
+      <el-date-picker
+        v-model="dateQuery"
+        size="mini"
+        class="el-range-editor--small filter-item"
+        type="month"
+        placeholder="选择月份"
+      />
       <el-button
         class="filter-item"
         size="mini"
@@ -86,20 +93,12 @@
       </el-table-column>
       <el-table-column prop="totalArrears" label="总欠金额"/>
       <el-table-column
-        v-if="
-          checkPermission([
-            'admin',
-            'umaChemicalFiberStatement:edit',
-            'umaChemicalFiberStatement:del'
-          ])
-        "
         label="操作"
         width="150px"
         align="center"
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['admin', 'umaChemicalFiberStatement:edit']"
             size="mini"
             type="primary"
             icon="el-icon-edit"
@@ -150,7 +149,7 @@ export default {
   mixins: [initData],
   data() {
     return {
-      delLoading: false,
+      delLoading: false,dateQuery: '',
       queryTypeOptions: [
         { key: 'accountCode', display_name: '对账单号' },
         { key: 'customerName', display_name: '客户名称' }
@@ -172,12 +171,16 @@ export default {
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
+      const dateQuery = this.dateQuery
       const type = query.type
       const value = query.value
-      const date = new Date()
-      const createDate = date.getTime();
-      this.params['createDate'] = createDate
+      /*const date = new Date()*/
+     /* const createDate = date.getTime();*/
+      /*this.params['createDate'] = createDate*/
       if (type && value) { this.params[type] = value }
+      if (dateQuery) {
+        this.params['createDate'] = dateQuery.getTime()
+      }
       return true
     },
     subDelete(id) {

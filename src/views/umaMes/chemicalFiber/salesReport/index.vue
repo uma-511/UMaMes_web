@@ -26,6 +26,9 @@
         icon="el-icon-search"
         @click="toQuery"
       >搜索</el-button>
+      <el-tag class="filter-item" type="info">应收金额 {{ sumTotalCost }} 元</el-tag>
+      <el-tag class="filter-item" type="info">实收金额 {{ sumTotalPrice }} 元</el-tag>
+      <el-tag class="filter-item" type="success">损数 {{ sumRemainder }} 元</el-tag>
     </div>
     <el-table
       v-loading="loading"
@@ -231,6 +234,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import { getSalesReportSummaries, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
+import { getSummaryData } from '@/api/chemicalFiberDeliveryNote'
 import initData from '@/mixins/initData'
 import { parseTimeToDate } from '@/utils/index'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
@@ -242,6 +246,7 @@ export default {
       dialogVisible: false,
       loadingDateil: false,
       loading: false,dialog: false,loadingPay: false,
+      sumTotalCost: 0, sumTotalPrice: 0,sumRemainder: 0,
       queryTypeOptions: [
         { key: 'customerName', display_name: '客户名称' }
       ],
@@ -288,6 +293,7 @@ export default {
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
       this.tempGetSalesReportSummaries()
+      this.getSummaryData(this.params)
       return true
     },
     getSummaries() {
@@ -296,6 +302,13 @@ export default {
     tempGetSalesReportSummaries() {
       getSalesReportSummaries(this.params).then(res => {
         this.sums = res.data
+      })
+    },
+    getSummaryData(params) {
+      getSummaryData(params).then(res => {
+        this.sumTotalCost = res.data.sumTotalCost
+        this.sumTotalPrice = res.data.sumTotalPrice
+        this.sumRemainder = res.data.sumRemainder
       })
     },
     getDataSummaries(param) {
