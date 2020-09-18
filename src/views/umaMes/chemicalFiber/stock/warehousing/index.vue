@@ -173,6 +173,27 @@
             <!--<el-form-item label="供应商" >
               <el-input v-model="form.supplierName" :disabled="form.warehousingStatus == 2?true:false" style="width: 150px;" @input="buttonType"/>
             </el-form-item>-->
+            <el-form-item label="客户编号">
+              <el-select
+                v-model="form.supplierCoed"
+                :loading="customerLoading"
+                :remote-method="customerCodeMethod"
+                multiple:false
+                :disabled="form.warehousingStatus == 2?true:false"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="输入编号关键词"
+                style="width: 150px;"
+              >
+                <el-option
+                  v-for="item in customerOptions"
+                  :key="item.name"
+                  :label="item.code"
+                  :value="item.name"
+                />
+              </el-select>
+            </el-form-item>
             <el-form-item label="客户名称">
               <el-select
                 v-model="form.supplierName"
@@ -886,6 +907,25 @@ export default {
           this.customerList = res
           this.customerOptions = this.customerList.filter(item => {
             return item.name.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
+    },
+    customerCodeMethod(query) {
+      this.customerCodeLoading = false
+      if (query !== '') {
+        this.customerCodeLoading = true
+        this.customerQuery.code = query
+        this.customerCodeOptions = []
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerCodeLoading = false
+          this.customerList = res
+          this.customerQuery.code = ''
+          this.customerCodeOptions = this.customerList.filter(item => {
+            return item.code.toLowerCase()
               .indexOf(query.toLowerCase()) > -1
           })
         })
