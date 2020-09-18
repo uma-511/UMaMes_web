@@ -81,7 +81,7 @@
       <!-- <el-table-column prop="number" label="编号" align="center"/> -->
       <el-table-column prop="color" label="日期" align="center">
         <template slot-scope="scope">
-          <span>{{ parseTimeToDate(scope.row.create_date) }}</span>
+          <span>{{ parseTimeToDate(scope.row.print_time) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="color" label="生产单号" align="center">

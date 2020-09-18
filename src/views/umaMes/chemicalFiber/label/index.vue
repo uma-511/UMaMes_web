@@ -102,9 +102,9 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="printTime" label="打印时间">
+      <el-table-column prop="printTime" label="打印日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.printTime) }}</span>
+          <span>{{ parseTimeToDate(scope.row.printTime) }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column v-if="checkPermission(['admin','chemicalFiberLabel:edit','chemicalFiberLabel:del'])" label="操作" width="150px" align="center">
@@ -141,7 +141,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberLabel, getSummaryData } from '@/api/chemicalFiberLabel'
-import { parseTime, downloadFile } from '@/utils/index'
+import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -189,6 +189,7 @@ export default {
   },
   methods: {
     parseTime,
+    parseTimeToDate,
     checkPermission,
     beforeInit() {
       this.url = 'api/chemicalFiberLabel'
