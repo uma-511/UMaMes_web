@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function add(data) {
   return request({
-    url: 'api/car',
+    url: 'api/attenceType',
     method: 'post',
     data
   })
@@ -10,14 +10,14 @@ export function add(data) {
 
 export function del(id) {
   return request({
-    url: 'api/car/' + id,
+    url: 'api/attenceType/' + id,
     method: 'delete'
   })
 }
 
-export function getCarList(data) {
+export function getAttenceTypesList(data) {
   return request({
-    url: 'api/car/getCarList',
+    url: 'api/attenceType/getAttenceTypesList',
     method: 'post',
     data
   })
@@ -25,15 +25,15 @@ export function getCarList(data) {
 
 export function edit(data) {
   return request({
-    url: 'api/car',
+    url: 'api/attenceType',
     method: 'put',
     data
   })
 }
 
-export function downloadCar(params) {
+export function downloadAttenceType(params) {
   return request({
-    url: 'api/car/download',
+    url: 'api/attenceType/download',
     method: 'get',
     params,
     responseType: 'blob'

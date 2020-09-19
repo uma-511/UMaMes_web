@@ -54,16 +54,16 @@
       <el-table-column prop="address" label="客户地址"/>
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
-      <el-table-column prop="account" label="用户余额"/>
+      <el-table-column prop="account" label="预付额度"/>
       <el-table-column prop="totalArrears" label="上期欠款"/>
       <el-table-column prop="currentArrears" label="本月欠款"/>
       <el-table-column prop="remark" label="备注"/>
-      <el-table-column prop="createDate" label="创建日期">
+      <!--<el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createUser" label="创建人"/>
+      <el-table-column prop="createUser" label="创建人"/>-->
       <el-table-column
         v-if="checkPermission(['admin','customer:edit','customer:del'])"
         label="操作"

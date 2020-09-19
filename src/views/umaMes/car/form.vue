@@ -1,10 +1,10 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="550px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
-      <el-form-item label="车牌号" >
+      <el-form-item label="车牌号" prop="carNumber">
         <el-input v-model="form.carNumber" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="车辆类型" >
+      <el-form-item label="车辆类型" prop="carType">
         <el-select
           v-model="form.carType"
           placeholder="请选择车辆类型"
@@ -22,8 +22,8 @@
           v-model="form.carDirector"
           :loading="userLoading"
           :remote-method="transporterRemoteMethod"
-          multiple:false
           filterable
+          allow-create
           remote
           reserve-keyword
           placeholder="输入负责人关键字"
@@ -52,13 +52,24 @@
         </el-select>
       </el-form-item>
       <el-form-item label="上次审核日期" >
-        <el-date-picker v-model="form.lastTrial" type="datetime" style="width: 370px;"/>
+        <el-date-picker v-model="form.lastTrial" type="date" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="预计审核日期" >
-        <el-date-picker :disabled="true" v-model="form.expectDate" type="datetime" style="width: 370px;"/>
+        <el-date-picker :disabled="true" v-model="form.expectDate" type="date" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-popover
+        :ref="form.id"
+        placement="top"
+        width="180">
+        <p>确定删除本条数据吗？</p>
+        <div style="text-align: right; margin: 0">
+          <el-button size="mini" type="text" @click="$refs[id].doClose()">取消</el-button>
+          <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(form.id)">确定</el-button>
+        </div>
+        <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
+      </el-popover>
       <el-button type="text" @click="cancel">取消</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
     </div>
@@ -66,8 +77,9 @@
 </template>
 
 <script>
-import { add, edit } from '@/api/car'
+import { add, edit, del } from '@/api/car'
 import { getUserListByDeptId } from '@/api/user'
+import { parseTimeToDate } from '@/utils/index'
 export default {
   props: {
     isAdd: {
@@ -91,6 +103,16 @@ export default {
       userLoading: false,
       userOptions: [],
       rules: {
+        carNumber: [
+          {
+            required: true, message: '请输入车牌号码', trigger: 'blur'
+          }
+        ],
+        carType: [
+          {
+            required: true, message: '请输入车辆类型', trigger: 'blur'
+          }
+        ]
       },
       option: [
         {
@@ -119,8 +141,26 @@ export default {
     }
   },
   methods: {
+    parseTimeToDate,
     cancel() {
       this.resetForm()
+    },
+    subDelete(id) {
+      del(id).then(res => {
+        this.resetForm()
+        this.$refs[id].doClose()
+        this.$parent.dleChangePage()
+        this.$parent.init()
+        this.$notify({
+          title: '删除成功',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.delLoading = false
+        this.$refs[id].doClose()
+        console.log(err.response.data.message)
+      })
     },
     // 清空下拉框
     cleanUpOptions() {
@@ -142,10 +182,14 @@ export default {
       })
     },
     doSubmit() {
-      this.loading = true
-      if (this.isAdd) {
-        this.doAdd()
-      } else this.doEdit()
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          if (this.isAdd) {
+            this.doAdd()
+          } else this.doEdit()
+        }
+      })
     },
     doAdd() {
       add(this.form).then(res => {

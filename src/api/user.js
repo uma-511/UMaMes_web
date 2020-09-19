@@ -59,3 +59,19 @@ export function getUserListByDeptId(params) {
     params
   })
 }
+
+export function getUserListByRealName(params) {
+  return request({
+    url: 'api/users/getUserListByRealName',
+    method: 'post',
+    params
+  })
+}
+
+export function getPermissionByUserId(params) {
+  return request({
+    url: 'api/users/getPermissionByUserId',
+    method: 'post',
+    params
+  })
+}

@@ -80,13 +80,12 @@
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerCode" label="客户编号"/>
-      <el-table-column prop="customerAddress" label="客户地址"/>
+      <el-table-column show-overflow-tooltip="true" prop="customerAddress" label="客户地址"/>
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
       <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="totalPrice" label="总金额"/>
       <el-table-column prop="seller" label="业务员"/>
-      <el-table-column prop="storeKeeper" label="仓管员"/>
       <el-table-column prop="createDate" label="制单日期">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createDate) }}</span>
@@ -226,7 +225,6 @@
                 :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="customerCodeLoading"
                 :remote-method="customerCodeMethod"
-                multiple:false
                 filterable
                 remote
                 reserve-keyword
@@ -248,7 +246,6 @@
                 :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="customerLoading"
                 :remote-method="customerRemoteMethod"
-                multiple:false
                 filterable
                 remote
                 reserve-keyword
@@ -278,30 +275,6 @@
             <el-form-item label="客户地址" >
               <el-input v-model="form.customerAddress" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 382px;" @input="buttonType"/>
             </el-form-item>
-            <el-form-item label="仓管人员">
-              <el-select
-                v-model="form.storeKeeper"
-                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
-                :loading="userLoading"
-                :remote-method="storeKeeperRemoteMethod"
-                multiple:false
-                filterable
-                remote
-                reserve-keyword
-                placeholder="输入仓管员关键词"
-                style="width: 150px;"
-                @change="buttonType"
-                @focus="cleanUpOptions"
-              >
-                <el-option
-                  v-for="item in userOptions"
-                  :key="item.realname"
-                  :label="item.realname"
-                  :value="item.realname"
-                  @blur="userOptions"
-                />
-              </el-select>
-            </el-form-item>
             <el-form-item label="业务人员" >
               <el-select
                 v-model="form.seller"
@@ -325,6 +298,21 @@
                 />
               </el-select>
             </el-form-item>
+            <el-form-item label="发票类型" >
+              <el-select
+                v-model="form.invoiceType"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                placeholder="选择发票类型"
+                style="width: 156px;"
+              >
+                <el-option
+                  v-for="item in localInvoiceOption"
+                  :key="item.key"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
             <el-form-item label="订单号码" >
               <el-input :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
@@ -339,13 +327,12 @@
                 :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
-                multiple:false
                 filterable
                 remote
                 reserve-keyword
                 placeholder="输入主司机关键词"
                 style="width: 157px;"
-                @change="buttonType"
+                @change="checkDriverDeputy($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -363,13 +350,12 @@
                 :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
-                multiple:false
                 filterable
                 remote
                 reserve-keyword
                 placeholder="输入装卸员1关键词"
                 style="width: 156px;"
-                @change="buttonType"
+                @change="checkLoader2($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -381,19 +367,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="发票类型" >
-              <el-select
-                v-model="form.invoiceType"
-                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
-                placeholder="选择发票类型"
-                style="width: 156px;"
-              >
-                <el-option
-                  v-for="item in localInvoiceOption"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
+            <el-form-item label="发票号码" >
+              <el-input v-model="form.invoiceNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="付款方式" >
               <el-input v-model="form.payment" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
@@ -402,7 +377,27 @@
           <el-form :inline="true" size="mini"/>
           <el-form :inline="true" size="mini">
             <el-form-item label="车 牌 号" >
-              <el-input v-model="form.carNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 158px;" @input="buttonType"/>
+              <el-select
+                v-model="form.carNumber"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                :loading="carLoading"
+                :remote-method="carRemoteMethod"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="输入车牌关键词"
+                style="width: 156px;"
+                @change="buttonType"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in carOptions"
+                  :key="item.carNumber"
+                  :label="item.carNumber"
+                  :value="item.carNumber"
+                  @blur="carOptions"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="副 司 机" >
               <el-select
@@ -410,13 +405,12 @@
                 :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
-                multiple:false
                 filterable
                 remote
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 158px;"
-                @change="buttonType"
+                @change="checkDriverMain($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -434,13 +428,12 @@
                 :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
-                multiple:false
                 filterable
                 remote
                 reserve-keyword
                 placeholder="输入装卸员2关键词"
                 style="width: 156px;"
-                @change="buttonType"
+                @change="checkLoader1"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -462,6 +455,54 @@
           <el-form :inline="true" size="mini">
             <el-form-item label="单据应收账款" >
               <el-input v-model="form.balance" :disabled="true" style="width: 150px;" @input="buttonType"/>
+            </el-form-item>
+            <el-form-item label="发货地" >
+              <el-select
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                v-model="form.startPlace"
+                :loading="customerLoading"
+                :remote-method="customerRemoteMethod"
+                filterable
+                allow-create
+                remote
+                reserve-keyword
+                placeholder="输入发货地关键词"
+                style="width: 150px;"
+                @visible-change="$forceUpdate()"
+                @focus="cleanUpOptions"
+                @change="buttonType"
+              >
+                <el-option
+                  v-for="item in customerOptions"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="目的地" >
+              <el-select
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                v-model="form.endPlace"
+                :loading="customerLoading"
+                :remote-method="customerRemoteMethod"
+                filterable
+                allow-create
+                remote
+                reserve-keyword
+                placeholder="输入目的地关键词"
+                style="width: 150px;"
+                @visible-change="$forceUpdate()"
+                @focus="cleanUpOptions"
+                @change="buttonType"
+              >
+                <el-option
+                  v-for="item in customerOptions"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="备 注" >
               <el-input v-model="form.remark" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 403px;" @input="buttonType"/>
@@ -664,9 +705,39 @@
             <el-input v-model="payForm.amount" style="width: 370px;"/>
           </el-form-item>
           <div style="text-align: right; margin: 0">
-            <el-button :loading="delLoading" type="warning" style="margin-right: 400px" size="mini" @click="finalPay" >完结结款</el-button>
+            <el-popover
+              :ref="finalPayRef"
+              placement="top"
+            >
+              <p>是否确认完结结款</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="popoverClose(finalayRef)">取消</el-button>
+                <el-button
+                  :loading="sutmitDetailLoading"
+                  type="primary"
+                  size="mini"
+                  @click="finalPay"
+                >确定</el-button>
+              </div>
+              <el-button slot="reference" type="warning" size="mini" style="margin-right: 100%;vertical-align: bottom">完结结款</el-button>
+            </el-popover>
             <el-button size="mini" type="text" @click="payDialog = false">取消</el-button>
-            <el-button :loading="delLoading" type="primary" size="mini" @click="doPay">结款</el-button>
+            <el-popover
+              :ref="doPayRef"
+              placement="top"
+            >
+              <p>是否确认结款</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="popoverClose(doPayRef)">取消</el-button>
+                <el-button
+                  :loading="sutmitDetailLoading"
+                  type="primary"
+                  size="mini"
+                  @click="doPay"
+                >确定</el-button>
+              </div>
+              <el-button slot="reference" type="primary" size="mini">结款</el-button>
+            </el-popover>
           </div>
         </el-form>
       </el-dialog>
@@ -678,17 +749,20 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
-import { edit, editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
+import { editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
-import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/customer'
-import { getSelectMap, getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
+import { getCustomerList, getCustomerById } from '@/api/customer'
+import { getCarList } from '@/api/car'
+import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
+import Config from '@/config'
+import EllipsisTooltip from '@/views/components/EllipsisTooltip.vue'
 import eForm from './form'
 export default {
-  components: { eForm },
+  components: { eForm, EllipsisTooltip },
   mixins: [initData],
   data() {
     return {
@@ -702,13 +776,18 @@ export default {
       detailLoading: false,
       payDetailLoading: false,
       sutmitDetailLoading: false,
+      finalPayRef: '',
+      doPayRef: '',
       customerLoading: false,
       userLoading: false,
+      carLoading: false,
       customerCodeLoading: false,
       addTableFrom: false,
       payDialog: false,
       isAdd: '',
       customerOptions: [],
+      carOptions: [],
+      carList: '',
       customerCodeOptions: [],
       userOptions: [],
       invoiceOption: [],
@@ -753,7 +832,10 @@ export default {
         invalid: '',
         remainder: '',
         invoiceType: '',
-        enable: ''
+        invoiceNumber: '',
+        enable: '',
+        startPlace: '',
+        endPlace: ''
       },
       customerForm: {
         id: '',
@@ -1023,6 +1105,7 @@ export default {
       this.dialogVisible = true
       this.detailLoading = false
       this.form.enable = true
+      this.form.startPlace = Config.globalCompanyName
       this.form.noteStatus = 1
       this.customerForm.currentArrears = ''
       this.customerForm.totalArrears = ''
@@ -1075,6 +1158,7 @@ export default {
       }
     },
     doPay() {
+      this.$refs[this.doPayRef].doClose()
       this.payForm = {
         customerId: this.form.customerId,
         customerName: this.form.customerName,
@@ -1082,9 +1166,17 @@ export default {
         payDate: this.payForm.payDate,
         amount: this.payForm.amount
       }
-      if (!this.payForm.amount || this.payForm.amount === '' || this.payForm.amount === '0' ) {
+      if (!this.payForm.amount || this.payForm.amount === '' || this.payForm.amount === '0') {
         this.$notify({
           title: '请填写金额',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0') {
+        this.$notify({
+          title: '客户余额为0，无法执行该操作',
           type: 'warning',
           duration: 2500
         })
@@ -1108,6 +1200,7 @@ export default {
       this.dialogVisible = false
     },
     finalPay() {
+      this.$refs[this.finalPayRef].doClose()
       this.payForm = {
         customerId: this.form.customerId,
         customerName: this.form.customerName,
@@ -1118,6 +1211,14 @@ export default {
       if (!this.payForm.amount || this.payForm.amount === '') {
         this.$notify({
           title: '请填写金额',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0') {
+        this.$notify({
+          title: '客户余额为0，无法执行该操作',
           type: 'warning',
           duration: 2500
         })
@@ -1236,6 +1337,14 @@ export default {
       if (this.form.customerId !== '') {
         this.id = this.form.customerId
       }
+      if (this.form.startPlace == this.form.endPlace) {
+        this.$notify({
+          title: '发货地不能与目的地相同',
+          type: 'success',
+          duration: 2500
+        })
+        return
+      }
       this.customerForm = {
         id: this.form.id,
         scanNumber: this.form.scanNumber,
@@ -1267,8 +1376,11 @@ export default {
         account: this.form.account,
         totalCost: this.sumTotalQuantity,
         invoiceType: this.form.invoiceType,
+        invoiceNumber: this.form.invoiceNumber,
         totalArrears: this.customerForm.totalArrears,
-        currentArrears: this.customerForm.currentArrears
+        currentArrears: this.customerForm.currentArrears,
+        startPlace: this.form.startPlace,
+        endPlace: this.form.endPlace
       }
       console.log(this.sumTotalQuantity)
       if (this.isAdd == 1) {
@@ -1362,7 +1474,10 @@ export default {
         remainder: data.remainder,
         account: data.account,
         invoiceType: data.invoiceType,
-        enable: data.enable
+        invoiceNumber: data.invoiceNumber,
+        enable: data.enable,
+        startPlace: data.startPlace,
+        endPlace: data.endPlace
       }
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
@@ -1483,6 +1598,54 @@ export default {
       data.totalPrice = (data.totalNumber * data.sellingPrice).toFixed(2)
       data.realPrice = (data.realQuantity * data.sellingPrice).toFixed(2)
       this.detailLoading = false
+    },
+    checkDriverDeputy(data) {
+      if (data == this.form.driverDeputy) {
+        this.form.driverMain = ''
+        this.$notify({
+          title: '司机不能重复选择',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.typeButton = 'danger'
+    },
+    checkDriverMain(data) {
+      if (data == this.form.driverMain) {
+        this.form.driverDeputy = ''
+        this.$notify({
+          title: '司机不能重复选择',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.typeButton = 'danger'
+    },
+    checkLoader2(data) {
+      if (data == this.form.loaderTwo) {
+        this.form.loaderOne = ''
+        this.$notify({
+          title: '装卸员不能重复选择',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.typeButton = 'danger'
+    },
+    checkLoader1(data) {
+      if (data == this.form.loaderOne) {
+        this.form.loaderTwo = ''
+        this.$notify({
+          title: '司装卸员不能重复选择',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.typeButton = 'danger'
     },
     // 改变保存按钮的状态方法
     buttonType() {
@@ -1651,6 +1814,7 @@ export default {
         this.form.customerAddress = this.customerLists[0].address
         this.form.customerId = this.customerLists[0].id
         this.id = this.customerLists[0].id
+        this.form.endPlace = this.customerLists[0].name
         this.customerQueryCode.code = ''
         this.customerForm.totalArrears = this.customerLists[0].totalArrears
         this.customerForm.currentArrears = this.customerLists[0].currentArrears
@@ -1668,6 +1832,7 @@ export default {
         this.form.contactPhone = this.customerLists[0].contactPhone
         this.form.customerAddress = this.customerLists[0].address
         this.form.customerId = this.customerLists[0].id
+        this.form.endPlace = this.customerLists[0].name
         this.id = this.customerLists[0].id
         this.customerQueryName.name = ''
         this.customerForm.totalArrears = this.customerLists[0].totalArrears
@@ -1679,6 +1844,8 @@ export default {
     cleanUpOptions() {
       this.userOptions = []
       this.prodOptions = []
+      this.customerOptions = []
+      this.caroptions = []
     },
     // 查询客户名称的下拉列表
     customerRemoteMethod(query) {
@@ -1808,6 +1975,18 @@ export default {
         this.prodList = res
       })
     },
+    carRemoteMethod(query) {
+      const params = { carNumber: query }
+      this.carLoading = true
+      getCarList(params)
+        .then(res => {
+          this.carLoading = false
+          this.carList = res
+          this.carOptions = this.carList.filter(item => {
+            return item
+          })
+        })
+    },
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
       // 运输部deptId为18
@@ -1885,6 +2064,16 @@ export default {
 </script>
 
 <style>
+  .tooltip-wrap {
+    height: 16px;
+    display: inline-block;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+  }
   .el-aside {
     background-color: #d3dce6;
     color: #333;

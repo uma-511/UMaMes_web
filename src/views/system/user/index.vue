@@ -51,7 +51,7 @@
         </div>
         <!--表格渲染-->
         <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-          <el-table-column prop="username" label="用户名"/>
+          <el-table-column prop="username" label="账号"/>
           <el-table-column prop="realname" label="用户名"/>
           <el-table-column prop="phone" label="电话"/>
           <el-table-column :show-overflow-tooltip="true" prop="email" label="邮箱"/>

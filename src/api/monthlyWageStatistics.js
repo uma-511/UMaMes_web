@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function add(data) {
   return request({
-    url: 'api/car',
+    url: 'api/monthlyWageStatistics',
     method: 'post',
     data
   })
@@ -10,32 +10,31 @@ export function add(data) {
 
 export function del(id) {
   return request({
-    url: 'api/car/' + id,
+    url: 'api/monthlyWageStatistics/' + id,
     method: 'delete'
-  })
-}
-
-export function getCarList(data) {
-  return request({
-    url: 'api/car/getCarList',
-    method: 'post',
-    data
   })
 }
 
 export function edit(data) {
   return request({
-    url: 'api/car',
+    url: 'api/monthlyWageStatistics',
     method: 'put',
     data
   })
 }
 
-export function downloadCar(params) {
+export function downloadMonthlyWageStatistics(params) {
   return request({
-    url: 'api/car/download',
+    url: 'api/monthlyWageStatistics/download',
     method: 'get',
     params,
     responseType: 'blob'
+  })
+}
+
+export function generateWage() {
+  return request({
+    url: 'api/monthlyWageStatistics/generateWage',
+    method: 'get'
   })
 }

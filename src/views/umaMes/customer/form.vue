@@ -2,12 +2,12 @@
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
       <el-form-item label="客户编号" prop="code">
-        <el-input v-model="form.code" style="width: 370px;" maxlength="10"/>
+        <el-input v-model="form.code" style="width: 370px;" maxlength="10" @input="validateCode"/>
       </el-form-item>
       <el-form-item label="客户名称" prop="name">
         <el-input v-model="form.name" style="width: 370px;" maxlength="50"/>
       </el-form-item>
-      <el-form-item label="客户全称" prop="name">
+      <el-form-item label="客户全称">
         <el-input v-model="form.fullName" style="width: 370px;" maxlength="50"/>
       </el-form-item>
       <el-form-item label="客户地址" prop="address">
@@ -74,8 +74,8 @@ export default {
           {
             required: true, message: '请输入客户编号', trigger: 'blur'
           }
-        ],
-        address: [
+        ]
+        /*address: [
           {
             required: true, message: '请输入客户地址', trigger: 'blur'
           }
@@ -89,7 +89,7 @@ export default {
           {
             required: true, message: '请输入客户联系电话', trigger: 'blur'
           }
-        ]
+        ]*/
       }
     }
   },
@@ -106,6 +106,13 @@ export default {
           } else this.doEdit()
         }
       })
+    },
+    validateCode() {
+      var numReg = /^[A-Za-z0-9]+$/
+      var numRe = new RegExp(numReg)
+      if (!numRe.test(this.form.code)) {
+        this.form.code = this.form.code.replace(/^[\u4e00-\u9fa5]*/g, '')
+      }
     },
     doAdd() {
       add(this.form).then(res => {

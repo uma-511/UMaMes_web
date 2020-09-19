@@ -140,7 +140,7 @@
 </template>
 
 <script>
-import { add, edit, doFinish } from '@/api/receipt'
+import { add, edit } from '@/api/receipt'
 import { getAccountList } from '@/api/accountName'
 import { getBookAccountList } from '@/api/bookAccountType'
 import { getCustomerList } from '@/api/customer'
@@ -384,7 +384,7 @@ export default {
         customerName: '',
         type: '',
         recivedAccount: '',
-        recivedDate: '',
+        recivedDate: new Date(),
         projectType: '',
         operator: '',
         amountOfMoney: '',
