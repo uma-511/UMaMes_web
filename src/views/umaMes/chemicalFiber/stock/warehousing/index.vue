@@ -165,17 +165,14 @@
         <el-form ref="form1" :model="form" size="mini" label-width="80px" >
           <el-form :inline="true" size="mini">
             <el-form-item label="入库单号" >
-              <el-input v-model="form.scanNumber" :disabled="true" style="width: 150px;" @input="buttonType"/>
-            </el-form-item>
-            <el-form-item label="批号" >
-              <el-input v-model="form.batchNumber" type="number" :disabled="form.warehousingStatus == 2?true:false" maxlength="17" style="width: 150px;" @input="buttonType"/>
+              <el-input v-model="form.scanNumber" :disabled="true" style="width: 120px;" @input="buttonType"/>
             </el-form-item>
             <!--<el-form-item label="供应商" >
               <el-input v-model="form.supplierName" :disabled="form.warehousingStatus == 2?true:false" style="width: 150px;" @input="buttonType"/>
             </el-form-item>-->
             <el-form-item label="客户编号">
               <el-select
-                v-model="form.supplierCoed"
+                v-model="form.supplierCode"
                 :loading="customerLoading"
                 :remote-method="customerCodeMethod"
                 multiple:false
@@ -184,13 +181,14 @@
                 remote
                 reserve-keyword
                 placeholder="输入编号关键词"
-                style="width: 150px;"
+                style="width: 100px;"
+                @change="setCustomerId($event)"
               >
                 <el-option
-                  v-for="item in customerOptions"
-                  :key="item.name"
+                  v-for="item in customerCodeOptions"
+                  :key="item.code"
                   :label="item.code"
-                  :value="item.name"
+                  :value="item.code"
                 />
               </el-select>
             </el-form-item>
@@ -205,18 +203,22 @@
                 remote
                 reserve-keyword
                 placeholder="输入客户关键词"
-                style="width: 150px;"
+                style="width: 100px;"
+                @change="setCustomerId($event)"
               >
                 <el-option
                   v-for="item in customerOptions"
-                  :key="item.name"
+                  :key="item.id"
                   :label="item.name"
                   :value="item.name"
                 />
               </el-select>
             </el-form-item>
+            <el-form-item label="批号" >
+              <el-input v-model="form.batchNumber" type="number" :disabled="form.warehousingStatus == 2?true:false" maxlength="17" style="width: 100px;" @input="buttonType"/>
+            </el-form-item>
             <el-form-item label="入库日期" >
-              <el-date-picker v-model="form.warehousingDate" :disabled="form.warehousingStatus == 2?true:false"s type="date" placeholder="选择日期时间" style="width: 150px;" maxlength="15" @change="buttonType"/>
+              <el-date-picker v-model="form.warehousingDate" :disabled="form.warehousingStatus == 2?true:false"s type="date" placeholder="选择日期时间" style="width: 130px;" maxlength="15" @change="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -234,7 +236,7 @@
                 reserve-keyword
                 placeholder="输入主司机关键词"
                 style="width: 157px;"
-                @change="buttonType"
+                @change="isEscort($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -504,6 +506,7 @@ export default {
       loading: false,dialog: false,detalList:[],userLoading: false,prodOptions: [],addTableFrom: false,isAnd: '',
       userOptions: [],typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
       dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,customerOptions: [],
+      customerCodeOptions: [],customerLoading:false,
       form: {
         id: '',
         createUser: '',
@@ -520,7 +523,8 @@ export default {
         escortOne: '',
         escortTwo: '',
         carNumber: '',
-        invalid: ''
+        invalid: '',
+        supplierCode: ''
       },
       tableForm: {
         prodModel: '',
@@ -606,7 +610,8 @@ export default {
         escortOne: data.escortOne,
         escortTwo: data.escortTwo,
         carNumber: data.carNumber,
-        invalid: data.invalid
+        invalid: data.invalid,
+        supplierCode: data.supplierCode
       }
       this.tableDetailList(data)
       this.dialog = true
@@ -842,6 +847,13 @@ export default {
     buttonType(){
       this.typeButton = 'danger'
     },
+    isEscort(quer) {
+      console.log(quer)
+      console.log(this.form.escortOne)
+      if (quer === this.form.escortOne || quer === this.form.escortTwo) {
+        this.form.driverMain == ''
+      }
+    },
     tableDetailList(data) {
       this.detaLoading = true
       this.detalList = []
@@ -895,25 +907,7 @@ export default {
         })
       })
     },
-    // 查询客户名称的下拉列表
-    customerRemoteMethod(query) {
-      if (query !== '') {
-        this.customerLoading = true
-        this.customerQuery.name = query
-        this.customerOptions = []
-        getCustomerList(this.customerQuery).then(res => {
-          this.customerLoading = false
-          this.customerQuery.name = ''
-          this.customerList = res
-          this.customerOptions = this.customerList.filter(item => {
-            return item.name.toLowerCase()
-              .indexOf(query.toLowerCase()) > -1
-          })
-        })
-      } else {
-        this.customerOptions = []
-      }
-    },
+    // 查询客户编号的下拉列表
     customerCodeMethod(query) {
       this.customerCodeLoading = false
       if (query !== '') {
@@ -923,15 +917,49 @@ export default {
         getCustomerList(this.customerQuery).then(res => {
           this.customerCodeLoading = false
           this.customerList = res
+          this.typeButton = 'danger'
           this.customerQuery.code = ''
           this.customerCodeOptions = this.customerList.filter(item => {
-            return item.code.toLowerCase()
-              .indexOf(query.toLowerCase()) > -1
+            return item
           })
         })
       } else {
         this.customerOptions = []
       }
+    },
+    // 查询客户名称的下拉列表
+    customerRemoteMethod(query) {
+      if (query !== '') {
+        this.customerLoading = true
+        this.customerQuery.name = query
+        this.customerOptions = []
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerLoading = false
+          this.customerQuery.name = ''
+          this.typeButton = 'danger'
+          this.customerList = res
+          this.customerOptions = this.customerList.filter(item => {
+            return item
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
+    },
+    // 输入客户名称自动填入客户编号
+    setCustomerId(event) {
+      let obj = []
+      obj = this.customerOptions.find((item) => {
+        return item.name === event
+      })
+      if (obj == [] || obj == null) {
+        obj = this.customerCodeOptions.find((item) => {
+          return item.code === event
+        })
+      }
+      this.form.supplierId = obj.id
+      this.form.supplierName = obj.name
+      this.form.supplierCode = obj.code
     },
     resetForm() {
       this.form = {
