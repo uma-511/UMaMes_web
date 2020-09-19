@@ -851,8 +851,15 @@ export default {
       console.log(quer)
       console.log(this.form.escortOne)
       if (quer === this.form.escortOne || quer === this.form.escortTwo) {
-        this.form.driverMain == ''
+        this.$notify({
+          title: '司机与押运重复',
+          type: 'warning',
+          duration: 2500
+        })
+        this.form.driverMain = ''
+        return
       }
+      this.typeButton = 'danger'
     },
     tableDetailList(data) {
       this.detaLoading = true
