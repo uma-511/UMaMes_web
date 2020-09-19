@@ -371,7 +371,27 @@
               <el-input v-model="form.invoiceNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="付款方式" >
-              <el-input v-model="form.payment" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
+              <el-select
+                v-model="form.payment"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                :loading="carLoading"
+                :remote-method="accountRemoteMethod"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="输入付款方式关键词"
+                style="width: 156px;"
+                @change="buttonType"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in accountOptions"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name"
+                  @blur="carOptions"
+                />
+              </el-select>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini"/>
@@ -528,13 +548,13 @@
             width="50px"/>
           <el-table-column prop="prodModel" label="产品编号" align="center" width="100px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
-          <el-table-column prop="unit" label="单位" width="100px" align="center"/>
-          <el-table-column prop="totalNumber" label="计划数量" width="100px" align="center">
+          <el-table-column prop="unit" label="单位" width="50px" align="center"/>
+          <el-table-column prop="totalNumber" label="计划数量" width="125px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.totalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="realQuantity" label="实收数量" width="100px" align="center">
+          <el-table-column prop="realQuantity" label="实收数量" width="125px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.realQuantity" :disabled="form.noteStatus == 4 || form.noteStatus == 5 || form.noteStatus == 6?true : false" :min="0" type="number" @input = "sum(scope.row)" />
             </template>
@@ -756,6 +776,7 @@ import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerById } from '@/api/customer'
 import { getCarList } from '@/api/car'
+import { getAccountList } from '@/api/accountName'
 import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
 import Config from '@/config'
@@ -781,13 +802,16 @@ export default {
       customerLoading: false,
       userLoading: false,
       carLoading: false,
+      accountLoading: false,
       customerCodeLoading: false,
       addTableFrom: false,
       payDialog: false,
       isAdd: '',
       customerOptions: [],
       carOptions: [],
+      accountOptions: [],
       carList: '',
+      accountList: '',
       customerCodeOptions: [],
       userOptions: [],
       invoiceOption: [],
@@ -1107,6 +1131,7 @@ export default {
       this.form.enable = true
       this.form.startPlace = Config.globalCompanyName
       this.form.noteStatus = 1
+      this.form.invoiceType = '不开发票'
       this.customerForm.currentArrears = ''
       this.customerForm.totalArrears = ''
       this.detailList = []
@@ -1603,7 +1628,16 @@ export default {
       if (data == this.form.driverDeputy) {
         this.form.driverMain = ''
         this.$notify({
-          title: '司机不能重复选择',
+          title: '司机、押运不能重复选择',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      if (data == this.form.loaderOne || data == this.form.loaderTwo) {
+        this.form.driverMain = ''
+        this.$notify({
+          title: '司机、押运不能重复选择',
           type: 'warning',
           duration: 2500
         })
@@ -1621,6 +1655,15 @@ export default {
         })
         return
       }
+      if (data == this.form.loaderOne || data == this.form.loaderTwo) {
+        this.form.driverDeputy = ''
+        this.$notify({
+          title: '司机、押运不能重复选择',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.typeButton = 'danger'
     },
     checkLoader2(data) {
@@ -1633,6 +1676,15 @@ export default {
         })
         return
       }
+      if (data == this.form.driverMain || data == this.form.driverDeputy) {
+        this.form.loaderOne = ''
+        this.$notify({
+          title: '司机、押运不能重复选择',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.typeButton = 'danger'
     },
     checkLoader1(data) {
@@ -1640,6 +1692,15 @@ export default {
         this.form.loaderTwo = ''
         this.$notify({
           title: '司装卸员不能重复选择',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      if (data == this.form.driverMain || data == this.form.driverDeputy) {
+        this.form.loaderTwo = ''
+        this.$notify({
+          title: '司机、押运不能重复选择',
           type: 'warning',
           duration: 2500
         })
@@ -1845,7 +1906,8 @@ export default {
       this.userOptions = []
       this.prodOptions = []
       this.customerOptions = []
-      this.caroptions = []
+      this.carOptions = []
+      this.accountOptions = []
     },
     // 查询客户名称的下拉列表
     customerRemoteMethod(query) {
@@ -1933,7 +1995,8 @@ export default {
         scanNumber: this.form.scanNumber,
         unit: row.prodUnit
       }
-      this.detailList.forEach((item) => {
+      //产品重复选择
+      /*this.detailList.forEach((item) => {
         if (item.prodName === row.prodName && item.unit === row.prodUnit) {
           this.$notify({
             title: '有相同记录，无法添加',
@@ -1942,7 +2005,7 @@ export default {
           })
           throw Error()
         }
-      })
+      })*/
       addTableRow(this.tableForm).then(res => {
         this.$notify({
           title: '添加成功',
@@ -1983,6 +2046,18 @@ export default {
           this.carLoading = false
           this.carList = res
           this.carOptions = this.carList.filter(item => {
+            return item
+          })
+        })
+    },
+    accountRemoteMethod(query) {
+      const params = { name: query }
+      this.accountLoading = true
+      getAccountList(params)
+        .then(res => {
+          this.accountLoading = false
+          this.accountList = res
+          this.accountOptions = this.accountList.filter(item => {
             return item
           })
         })

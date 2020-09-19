@@ -77,7 +77,7 @@
       <el-table-column prop="createUser" label="制单人"/>
       <el-table-column prop="createDate" label="制单日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createDate) }}</span>
+          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="noteStatus" label="状态">
@@ -249,6 +249,8 @@ export default {
     },
     add() {
       this.isAdd = true
+      this.$refs.form.form.type = '主营业务收入'
+      this.$refs.form.form.projectType = '日常'
       this.$refs.form.dialog = true
     },
     edit(data) {

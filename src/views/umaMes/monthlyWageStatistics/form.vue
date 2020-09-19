@@ -1,6 +1,6 @@
 <template>
-  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="520px">
-    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
+  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="570px">
+    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
       <el-form-item label="姓名" >
         <el-input :disabled="true" v-model="form.personName" style="width: 370px;"/>
       </el-form-item>
@@ -44,8 +44,11 @@
         <el-input v-model="form.attendanceReal" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="请假" >
-        <el-input v-model="form.leave" style="width: 370px;"/>
+        <el-input v-model="form.leaveCount" style="width: 370px;"/>
       </el-form-item>
+      <!--<el-form-item label="休息" >
+        <el-input v-model="form.restDay" style="width: 370px;"/>
+      </el-form-item>-->
       <el-form-item label="缺卡" >
         <el-input v-model="form.lackCard" style="width: 370px;"/>
       </el-form-item>
@@ -53,10 +56,10 @@
         <el-input v-model="form.violationOfSafety" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="日期" >
-        <el-date-picker v-model="form.dateTime" type="datetime" style="width: 370px;"/>
+        <el-date-picker :disabled="true" v-model="form.dateTime" type="month" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="实发工资" >
-        <el-input v-model="form.netSalary" style="width: 370px;"/>
+        <el-input :disabled="true" v-model="form.netSalary" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -94,8 +97,9 @@ export default {
         wagesPayable: '',
         attendance: '',
         attendanceReal: '',
-        leave: '',
+        leaveCount: '',
         lackCard: '',
+        restDay: '',
         violationOfSafety: '',
         dateTime: '',
         netSalary: ''
@@ -163,8 +167,9 @@ export default {
         wagesPayable: '',
         attendance: '',
         attendanceReal: '',
-        leave: '',
+        leaveCount: '',
         lackCard: '',
+        restDay: '',
         violationOfSafety: '',
         dateTime: '',
         netSalary: ''

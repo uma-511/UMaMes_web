@@ -172,9 +172,6 @@ export default {
     add() {
       this.isAdd = true
       this.$refs.form.dialog = true
-      this.$refs.form.form.address = '*****'
-      this.$refs.form.form.contacts = '*****'
-      this.$refs.form.form.contactPhone = '*****'
     },
     edit(data) {
       this.isAdd = false

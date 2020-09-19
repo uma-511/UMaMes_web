@@ -41,7 +41,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;" @row-click="edit">
       <el-table-column prop="personName" label="姓名"/>
       <el-table-column prop="dept" label="部门"/>
       <el-table-column prop="job" label="岗位"/>
@@ -56,16 +56,39 @@
       <el-table-column prop="wagesPayable" label="应发工资"/>
       <el-table-column prop="attendance" label="出勤天数"/>
       <el-table-column prop="attendanceReal" label="实际出勤"/>
-      <el-table-column prop="leave" label="请假"/>
+      <el-table-column prop="leaveCount" label="请假"/>
       <el-table-column prop="lackCard" label="缺卡"/>
       <el-table-column prop="violationOfSafety" label="违反安全"/>
       <el-table-column prop="dateTime" label="日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.dateTime) }}</span>
+          <span>{{ parseTimeToDates(scope.row.dateTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="netSalary" label="实发工资"/>
-      <el-table-column v-if="checkPermission(['admin','monthlyWageStatistics:edit','monthlyWageStatistics:del'])" label="操作" width="150px" align="center">
+      <el-table-column prop="status" label="状态">
+        <template slot-scope="scope">
+          <!--待确认-->
+          <div v-if="scope.row.status == 0">
+            <el-tag
+              size="medium"
+            >{{ statusValue[0] }}</el-tag>
+          </div>
+          <!--待发放-->
+          <div v-if="scope.row.status == 1">
+            <el-tag
+              size="medium"
+            >{{ statusValue[1] }}</el-tag>
+          </div>
+          <!--已发放-->
+          <div v-if="scope.row.status == 2">
+            <el-tag
+              type="warning"
+              size="medium"
+            >{{ statusValue[2] }}</el-tag>
+          </div>
+        </template>
+      </el-table-column>
+      <!--<el-table-column v-if="checkPermission(['admin','monthlyWageStatistics:edit','monthlyWageStatistics:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','monthlyWageStatistics:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
@@ -81,7 +104,7 @@
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
           </el-popover>
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
     <!--分页组件-->
     <el-pagination
@@ -98,7 +121,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadMonthlyWageStatistics, generateWage } from '@/api/monthlyWageStatistics'
-import { parseTime, downloadFile } from '@/utils/index'
+import { parseTimeToDates, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -106,6 +129,11 @@ export default {
   data() {
     return {
       delLoading: false,
+      statusValue: {
+        0: '待确认',
+        1: '待发放',
+        2: '已发放'
+      },
       queryTypeOptions: [
         { key: 'personName', display_name: '姓名' },
         { key: 'dept', display_name: '部门' },
@@ -119,7 +147,7 @@ export default {
     })
   },
   methods: {
-    parseTime,
+    parseTimeToDates,
     checkPermission,
     beforeInit() {
       this.url = 'api/monthlyWageStatistics'
@@ -180,8 +208,9 @@ export default {
         wagesPayable: data.wagesPayable,
         attendance: data.attendance,
         attendanceReal: data.attendanceReal,
-        leave: data.leave,
+        leaveCount: data.leaveCount,
         lackCard: data.lackCard,
+        restDay: data.restDay,
         violationOfSafety: data.violationOfSafety,
         dateTime: data.dateTime,
         netSalary: data.netSalary

@@ -24,14 +24,14 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="制单日期" >
+      <el-form-item label="记录日期" >
         <el-date-picker v-model="form.attenceDate" type="date" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="类型" >
         <el-select
           v-model="form.attenceType"
           :loading="attenceTypeLoading"
-          placeholder="请选择收款类型"
+          placeholder="请选择类型"
           style="width: 370px;"
           @focus="attenceTypeRemoteMethod">
           <el-option
@@ -42,14 +42,27 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="安全类型" >
+        <el-select
+          v-model="form.safeType"
+          placeholder="请选择安全类型"
+          style="width: 370px;">
+          <el-option
+            v-for="item in safeTypeOption"
+            :key="item.key"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="天数" >
         <el-input v-model="form.day" style="width: 370px;"/>
       </el-form-item>
+      <el-form-item label="金额" >
+        <el-input v-model="form.price" style="width: 370px;"/>
+      </el-form-item>
       <el-form-item label="备注" >
         <el-input v-model="form.remark" style="width: 370px;"/>
-      </el-form-item>
-      <el-form-item label="创建日期" >
-        <el-date-picker v-model="form.createDate" type="date" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -78,6 +91,63 @@ export default {
       userOptions: [],
       attenceTypeLoading: false,
       attenceTypeOptions: [],
+      safeTypeOption: [
+        {
+          label: '不按规定穿戴劳保用品',
+          value: '不按规定穿戴劳保用品'
+        }, {
+          label: '抽酸溢出槽罐',
+          value: '抽酸溢出槽罐'
+        }, {
+          label: '违反安全出车',
+          value: '违反安全出车'
+        }, {
+          label: '没有协调卸货擅自回公司',
+          value: '没有协调卸货擅自回公司'
+        }, {
+          label: '分装不检查造成漏酸',
+          value: '分装不检查造成漏酸'
+        }, {
+          label: '个人驾驶违章',
+          value: '个人驾驶违章'
+        }, {
+          label: '暴力驾驶',
+          value: '暴力驾驶'
+        }, {
+          label: '疲劳驾驶',
+          value: '疲劳驾驶'
+        }, {
+          label: '驾驶时打电话',
+          value: '驾驶时打电话'
+        }, {
+          label: '驾驶时抽烟',
+          value: '驾驶时抽烟'
+        }, {
+          label: '擅自离岗造成车辆或财产损失',
+          value: '擅自离岗造成车辆或财产损失'
+        }, {
+          label: '产品处理不当造成环境污染',
+          value: '产品处理不当造成环境污染'
+        }, {
+          label: '不按污水排放指标操作',
+          value: '不按污水排放指标操作'
+        }, {
+          label: '未及时做好防盗巡查及签到',
+          value: '未及时做好防盗巡查及签到'
+        }, {
+          label: '厂区内吸烟',
+          value: '厂区内吸烟'
+        }, {
+          label: '不及时打卡签字',
+          value: '不及时打卡签字'
+        }, {
+          label: '严重损害公司形象',
+          value: '严重损害公司形象'
+        }, {
+          label: '向客户索要好处费',
+          value: '向客户索要好处费'
+        }
+      ],
       form: {
         id: '',
         personName: '',
@@ -87,6 +157,9 @@ export default {
         day: '',
         remark: '',
         createDate: '',
+        serialNumber: '',
+        safeType: '',
+        price: '',
         enable: ''
       },
       rules: {
@@ -180,6 +253,9 @@ export default {
         day: '',
         remark: '',
         createDate: '',
+        serialNumber: '',
+        safeType: '',
+        price: '',
         enable: ''
       }
     }

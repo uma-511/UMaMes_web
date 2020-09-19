@@ -22,16 +22,19 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+      <el-table-column prop="serialNumber" label="流水号"/>
       <el-table-column prop="personName" label="人员姓名"/>
-      <el-table-column prop="attenceDate" label="制单日期">
+      <el-table-column prop="attenceDate" label="记录日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.attenceDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="attenceType" label="类型"/>
+      <el-table-column prop="safeType" label="安全类型"/>
       <el-table-column prop="day" label="天数"/>
+      <el-table-column prop="price" label="金额"/>
       <el-table-column prop="remark" label="备注"/>
-      <el-table-column prop="enable" label="状态"/>
+      <!--<el-table-column prop="enable" label="状态"/>-->
       <el-table-column v-if="checkPermission(['admin','workAttendance:edit','workAttendance:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','workAttendance:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
@@ -134,6 +137,10 @@ export default {
         day: data.day,
         remark: data.remark,
         createDate: data.createDate,
+        serialNumber: data.serialNumber,
+        safeType: data.safeType,
+        price: data.price,
+        status: data.status,
         enable: data.enable
       }
       _this.dialog = true
