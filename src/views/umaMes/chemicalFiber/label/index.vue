@@ -104,7 +104,7 @@
       </el-table-column>
       <el-table-column prop="printTime" label="打印日期">
         <template slot-scope="scope">
-          <span>{{ parseTimeToDate(scope.row.printTime) }}</span>
+          <span>{{ parseTime(scope.row.printTime) }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column v-if="checkPermission(['admin','chemicalFiberLabel:edit','chemicalFiberLabel:del'])" label="操作" width="150px" align="center">
