@@ -259,7 +259,7 @@
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 157px;"
-                @change="buttonType"
+                @change="isEscort($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -287,7 +287,7 @@
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 157px;"
-                @change="buttonType"
+                @change="isDriver($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -310,7 +310,7 @@
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 157px;"
-                @change="buttonType"
+                @change="isDriver($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -323,7 +323,29 @@
               </el-select>
             </el-form-item>
             <el-form-item label="车牌号" >
-              <el-input v-model="form.carNumber" :disabled="form.warehousingStatus == 2?true:false" style="width: 150px;" @input="buttonType"/>
+              <el-select
+                v-model="form.carNumber"
+                :loading="carLoading"
+                :remote-method="carMethod"
+                multiple:false
+                :disabled="form.warehousingStatus == 2?true:false"
+                filterable
+                remote
+                clearable
+                reserve-keyword
+                placeholder="输入车牌关键词"
+                style="width: 157px;"
+                @change="buttonType"
+                @focus="cleanUpOptions"
+              >
+                <el-option
+                  v-for="item in carOptions"
+                  :key="item.carNumber"
+                  :label="item.carNumber"
+                  :value="item.carNumber"
+                  @blur="carOptions"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="单据备注" >
               <el-input v-model="form.remark" :disabled="form.warehousingStatus == 2?true:false" style="width: 150px;" @input="buttonType"/>
@@ -494,6 +516,7 @@ import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/custom
 import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
 import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { getProdList } from '@/api/chemicalFiberProduct'
+import { getCarList } from '@/api/car'
 import { add, edit, warehousing, delWarehousing } from '@/api/chemicalFiberStockWarehousing'
 import { warehousingDetali, warehousingDetaliList, warehousingEdit, delDetail } from '@/api/chemicalFiberStockWarehousingDetail'
 import { getUserListByDeptId } from '@/api/user'
@@ -504,9 +527,9 @@ export default {
   data() {
     return{
       loading: false,dialog: false,detalList:[],userLoading: false,prodOptions: [],addTableFrom: false,isAnd: '',
-      userOptions: [],typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
+      typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
       dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,customerOptions: [],
-      customerCodeOptions: [],customerLoading:false,
+      customerCodeOptions: [],customerLoading:false,carOptions: [],carLoading: false,
       form: {
         id: '',
         createUser: '',
@@ -560,6 +583,9 @@ export default {
         name: '',
         code: ''
       },
+      carQuery: {
+        carNumber: ''
+      }
 
 
     }
@@ -613,6 +639,9 @@ export default {
         invalid: data.invalid,
         supplierCode: data.supplierCode
       }
+      if (this.form.warehousingStatus == 1) {
+        this.form.warehousingDate = new Date()
+      }
       this.tableDetailList(data)
       this.dialog = true
       this.init()
@@ -648,6 +677,7 @@ export default {
     cleanUpOptions() {
       this.userOptions = []
       this.prodOptions = []
+      this.carOptions = []
     },
     fullWithProd(event) {
       const params = { name: event }
@@ -848,15 +878,37 @@ export default {
       this.typeButton = 'danger'
     },
     isEscort(quer) {
-      console.log(quer)
-      console.log(this.form.escortOne)
       if (quer === this.form.escortOne || quer === this.form.escortTwo) {
         this.$notify({
           title: '司机与押运重复',
           type: 'warning',
           duration: 2500
         })
-        this.form.driverMain = ''
+        if (this.form.driverMain === quer) {
+          this.form.driverMain = ''
+        }
+        if (this.form.driverDeputy === quer) {
+          this.form.driverDeputy = ''
+
+        }
+        return
+      }
+      this.typeButton = 'danger'
+    },
+    isDriver(quer) {
+      if (quer === this.form.driverMain || quer === this.form.driverDeputy) {
+        this.$notify({
+          title: '司机与押运重复',
+          type: 'warning',
+          duration: 2500
+        })
+        if (this.form.escortOne === quer) {
+          this.form.escortOne = ''
+        }
+        if (this.form.escortTwo === quer) {
+          this.form.escortTwo = ''
+
+        }
         return
       }
       this.typeButton = 'danger'
@@ -913,6 +965,26 @@ export default {
             .indexOf(query.toLowerCase()) > -1
         })
       })
+    },
+    // 查询车牌号的下拉列表
+    carMethod(query) {
+      this.customerCodeLoading = false
+      if (query !== '') {
+        this.carLoading = true
+        this.carQuery.carNumber = query
+        this.carOptions = []
+        getCarList(this.carQuery).then(res => {
+          this.carLoading = false
+          this.carList = res
+          this.typeButton = 'danger'
+          this.carQuery.code = ''
+          this.carOptions = this.carList.filter(item => {
+            return item
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
     },
     // 查询客户编号的下拉列表
     customerCodeMethod(query) {
