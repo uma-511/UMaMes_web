@@ -173,7 +173,7 @@ export default {
     checkPermission,
     beforeInit() {
       this.url = 'api/chemicalFiberProductionReport'
-      const sort = 'id,desc'
+      const sort = 'id,asc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
       const types = query.types
