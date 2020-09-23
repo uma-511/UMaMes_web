@@ -97,7 +97,7 @@
       <el-table-column prop="warehousingFactPerBagNumber" label="入库个数" align="center"/>
       <el-table-column prop="warehousingNetWeight" label="入库净重(kg)" align="center"/>
       <el-table-column prop="warehousingGrossWeight" label="入库毛重(kg)" align="center"/>
-      <el-table-column prop="toVoidFactPerBagNumber" label="作废包数" align="center"/>
+      <el-table-column prop="toVoidPacketNumber" label="作废包数" align="center"/>
       <!--<el-table-column prop="in_stock_prop" label="在库包数比例" align="center">
         <template slot-scope="scope">
           <span style="color:#E6A23C;">{{ scope.row.in_stock_prop }}%</span>
