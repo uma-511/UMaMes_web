@@ -59,6 +59,7 @@
         <el-table-column prop="scanNumber" label="入库单号"/>
         <el-table-column prop="supplierName" label="供应商名称"/>
         <el-table-column prop="batchNumber" label="批号"/>
+        <el-table-column prop="tonAndBranch" label="批号"/>
         <el-table-column prop="totalPrice" label="总金额"/>
         <el-table-column prop="createDate" label="制单日期">
           <template slot-scope="scope">
