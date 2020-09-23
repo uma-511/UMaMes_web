@@ -98,9 +98,6 @@
       <el-table-column prop="warehousingNetWeight" label="入库净重(kg)" align="center"/>
       <el-table-column prop="warehousingGrossWeight" label="入库毛重(kg)" align="center"/>
       <el-table-column prop="toVoidPacketNumber" label="作废包数" align="center"/>
-      <el-table-column prop="toVoidFactPerBagNumber" label="作废包数" align="center"/>
-      <el-table-column prop="toVoidNetWeight" label="作废包数" align="center"/>
-      <el-table-column prop="toVoidGrossWeight" label="作废包数" align="center"/>
       <!--<el-table-column prop="in_stock_prop" label="在库包数比例" align="center">
         <template slot-scope="scope">
           <span style="color:#E6A23C;">{{ scope.row.in_stock_prop }}%</span>
@@ -176,7 +173,7 @@ export default {
     checkPermission,
     beforeInit() {
       this.url = 'api/chemicalFiberProductionReport'
-      const sort = 'id,desc'
+      const sort = 'id,asc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
       const types = query.types
