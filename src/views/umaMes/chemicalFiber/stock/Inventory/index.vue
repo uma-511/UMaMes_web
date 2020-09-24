@@ -9,6 +9,10 @@
       start-placeholder="开始日期"
       end-placeholder="结束日期"
     />
+    <el-checkbox
+      v-model="showUnEnable"
+      @change="toQuery"
+    >查询失效单</el-checkbox>
     <el-button
       class="filter-item"
       size="mini"
@@ -42,17 +46,25 @@
         <el-table-column prop="lnventoryLossStr" label="盘亏数量"/>
         <el-table-column prop="warehousingStatus" label="状态">
           <template slot-scope="scope">
-            <div v-if="scope.row.lnventoryStatus == 1">
+            <div v-if="scope.row.invalid == 1">
               <el-tag
-                type="danger"
+                type="info"
                 size="medium"
-              >{{ statusValue[1] }}</el-tag>
+              >{{ statusValue[0] }}</el-tag>
             </div>
-            <div v-if="scope.row.lnventoryStatus == 2">
-              <el-tag
-                type="success"
-                size="medium"
-              >{{ statusValue[2] }}</el-tag>
+            <div v-else>
+              <div v-if="scope.row.lnventoryStatus == 1">
+                <el-tag
+                  type="danger"
+                  size="medium"
+                >{{ statusValue[1] }}</el-tag>
+              </div>
+              <div v-if="scope.row.lnventoryStatus == 2">
+                <el-tag
+                  type="success"
+                  size="medium"
+                >{{ statusValue[2] }}</el-tag>
+              </div>
             </div>
           </template>
         </el-table-column>
@@ -70,6 +82,7 @@
         >
           <template slot-scope="scope">
             <el-button
+              v-if="scope.row.invalid == 0"
               size="mini"
               type="success"
               icon="el-icon-tickets"
@@ -77,7 +90,7 @@
               @click.stop
             >编辑</el-button>
             <el-popover
-              v-if="scope.$index == 0"
+              v-if="scope.$index == 0 && scope.row.invalid == 0"
               :ref="scope.row.id"
               placement="top"
             >
@@ -212,7 +225,21 @@ export default {
         lnventoryNumber: '',
         lnventoryLoss: '',
         lnventorySurplus: '',
+        invalid: ''
       },
+      /*dataList: {
+        createDate: '',
+        id: '',
+        lnventoryLoss: '',
+        lnventoryLossStr: '',
+        lnventoryName: '',
+        lnventoryNumber: '',
+        lnventoryStatus: '',
+        lnventorySurplus: '',
+        lnventorySurplusStr: '',
+        lnventoryUser: '',
+        invalid: ''
+      },*/
       statusValue: {
         0: '已失效',
         1: '未平衡',
@@ -233,8 +260,8 @@ export default {
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort}
       const dateQuery = this.dateQuery
-      const checkInvalidQurey = this.checkInvalidQuery
-      this.params['queryWithInvalid'] = checkInvalidQurey
+      const checkEnables = this.showUnEnable
+      this.params['queryWithInvalid'] = checkEnables
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
@@ -348,6 +375,7 @@ export default {
           this.detalList = res
           this.detaLoading = false
           this.lnventoryStatus = 1
+          this.isAnd = 2;
           this.init()
           this.$notify({
             title: '保存成功',

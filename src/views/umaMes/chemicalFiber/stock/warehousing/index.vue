@@ -56,23 +56,23 @@
         size="small"
         style="width: 100%;"
       >
-        <el-table-column prop="scanNumber" label="入库单号"/>
-        <el-table-column prop="supplierName" label="供应商名称"/>
-        <el-table-column prop="batchNumber" label="批号"/>
-        <el-table-column prop="tonAndBranch" label="批号"/>
-        <el-table-column prop="totalPrice" label="总金额"/>
-        <el-table-column prop="createDate" label="制单日期">
+        <el-table-column prop="scanNumber" label="入库单号"align="center"/>
+        <el-table-column prop="supplierName" label="供应商名称"align="center"/>
+        <el-table-column prop="batchNumber" label="批号"align="center"/>
+        <el-table-column prop="tonAndBranch" label="数量"align="center"/>
+        <el-table-column prop="totalPrice" label="总金额"align="center"/>
+        <el-table-column prop="createDate" label="制单日期"align="center">
           <template slot-scope="scope">
             <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="warehousingDate" label="入库日期">
+        <el-table-column prop="warehousingDate" label="入库日期"align="center">
           <template slot-scope="scope">
             <span>{{ parseTimeToDate(scope.row.warehousingDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createUser" label="制单人"/>
-        <el-table-column prop="warehousingStatus" label="状态">
+        <el-table-column prop="createUser" label="制单人"align="center"/>
+        <el-table-column prop="warehousingStatus" label="状态"align="center">
           <template slot-scope="scope">
             <div v-if="scope.row.warehousingStatus == 1">
               <el-tag
@@ -460,8 +460,8 @@
         width="40%"
         title="添加产品" >
         <el-form :model="tableForm" size="mini" label-width="80px" >
-          <el-form-item label="产品搜索" >
-            <el-select
+          <!--<el-form-item label="产品搜索" >-->
+            <!--<el-select
               v-model="form.searchName"
               :loading="userLoading"
               :remote-method="prodRemoteMethod"
@@ -480,13 +480,56 @@
                 :value="item.name"
                 @blur="prodOptions"
               />
-            </el-select>
+            </el-select>-->
           </el-form-item>
           <el-form-item label="产品型号" >
-            <el-input v-model="tableForm.prodModel" :disabled="true" style="width: 370px;"/>
+            <!--<el-input v-model="tableForm.prodModel" :disabled="true" style="width: 370px;"/>-->
+            <el-select
+              v-model="tableForm.prodModel"
+              :loading="userLoading"
+              :remote-method="prodCodeRemoteMethod"
+              multiple:false
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入产品型号/名称关键词"
+              style="width: 200px;"
+              @change="setProdId($event)"
+              @focus="cleanUpOptions"
+            >
+              <el-option
+                v-for="item in prodModelOptions"
+                :key="item.id"
+                :label="item.model"
+                :value="item.model"
+                @blur="prodModelOptions"
+              />
+            </el-select>
+
           </el-form-item>
           <el-form-item label="产品名称" >
-            <el-input v-model="tableForm.prodName" :disabled="true" style="width: 370px;"/>
+            <!--<el-input v-model="tableForm.prodName" :disabled="true" style="width: 370px;"/>-->
+            <el-select
+              v-model="tableForm.prodName"
+              :loading="userLoading"
+              :remote-method="prodRemoteMethod"
+              multiple:false
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入产品型号/名称关键词"
+              style="width: 200px;"
+              @change="setProdId($event)"
+              @focus="cleanUpOptions"
+            >
+              <el-option
+                v-for="item in prodOptions"
+                :key="item.id"
+                :label="item.name"
+                :value="item.name"
+                @blur="prodOptions"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="产品名称" >
             <template slot-scope="scope">
@@ -530,7 +573,7 @@ export default {
       loading: false,dialog: false,detalList:[],userLoading: false,prodOptions: [],addTableFrom: false,isAnd: '',
       typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
       dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,customerOptions: [],
-      customerCodeOptions: [],customerLoading:false,carOptions: [],carLoading: false,
+      customerCodeOptions: [],customerLoading:false,carOptions: [],carLoading: false,prodModelOptions: [],
       form: {
         id: '',
         createUser: '',
@@ -675,9 +718,20 @@ export default {
         })
       })
     },
+    prodCodeRemoteMethod(query) {
+      const params = { model: query }
+      getProdList(params).then(res => {
+        this.userLoading = false
+        this.prodList = res
+        this.prodModelOptions = this.prodList.filter(item => {
+          return item.model
+        })
+      })
+    },
     cleanUpOptions() {
       this.userOptions = []
       this.prodOptions = []
+      this.prodModelOptions = []
       this.carOptions = []
     },
     fullWithProd(event) {
@@ -1040,6 +1094,19 @@ export default {
       this.form.supplierId = obj.id
       this.form.supplierName = obj.name
       this.form.supplierCode = obj.code
+    },
+    setProdId(event) {
+      let obj = []
+      obj = this.prodOptions.find((item) => {
+        return item.name === event
+      })
+      if (obj == [] || obj == null) {
+        obj = this.prodModelOptions.find((item) => {
+          return item.model === event
+        })
+      }
+      this.tableForm.prodName = obj.name
+      this.tableForm.prodModel = obj.model
     },
     resetForm() {
       this.form = {

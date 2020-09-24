@@ -104,8 +104,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="customerName" label="客户" align="center"/>
-      <el-table-column prop="totalCost" label="应收金额" align="center"/>
-      <el-table-column prop="totalPrice" label="实收金额" align="center"/>
+      <el-table-column prop="totalPrice" label="应收金额" align="center"/>
+      <el-table-column prop="totalCost" label="实收金额" align="center"/>
       <el-table-column prop="remainder" label="损数" align="center"/>
       <el-table-column prop="createUser" label="制单人" align="center"/>
       <el-table-column prop="createDate" label="制单日期" align="center">
