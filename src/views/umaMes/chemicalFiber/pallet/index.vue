@@ -48,7 +48,17 @@
                max-height="530"
                @row-click="detailList($event)"
                 >
+      <el-table-column
+        type="index"
+        width="50"
+        label="编号"
+        align="center"/>
       <el-table-column prop="palletNumber" width="125px" label="托板号"/>
+      <el-table-column prop="createDate" width="135px" label="单据时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createDate) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="prodModel" label="料号"/>
       <el-table-column prop="prodName" label="品名"/>
       <el-table-column prop="prodColor" label="色号"/>
@@ -58,8 +68,8 @@
       <el-table-column :formatter="kgformatter" width="55px" prop="netWeight" label="净重"/>
       <el-table-column prop="tare" width="55px" label="皮重"/>
       <el-table-column prop="grossWeight" width="55px" label="毛重"/>
-      <el-table-column prop="totalBag" label="出库包数"/>
-      <el-table-column prop="totalNumber" label="出库个数"/>
+      <el-table-column prop="warehousingBag" label="出库包数"/>
+      <el-table-column prop="warehousingNumber" label="出库个数"/>
       <el-table-column prop="packer" label="包装员"/>
       <el-table-column prop="printStatus" label="打印状态">
         <template slot-scope="scope">
@@ -129,6 +139,11 @@
               :data="dataList"
               size="small"
               max-height="530">
+      <el-table-column
+        type="index"
+        width="50"
+        label="编号"
+        align="center"/>
       <el-table-column prop="labelNumber" width="125px" label="条码号" />
       <el-table-column prop="prodModel" label="料号"/>
       <el-table-column prop="prodName" label="品名"/>
