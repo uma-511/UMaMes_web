@@ -114,7 +114,7 @@
 
 <script>
 import initData from '@/mixins/initData'
-import { parseTime, parseTimeToDate, downloadChemicalFiberLabel} from '@/utils/index'
+import { parseTime, parseTimeToDate, downloadChemicalFiberLabel,downloadFile} from '@/utils/index'
 import { getSummaryData, download} from '@/api/chemicalFiberWarehousingReort'
 export default {
   mixins: [initData],
@@ -134,6 +134,8 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
+    var start = new Date(new Date(new Date().toLocaleDateString()))
+    this.dateQuery = [start, new Date(start.getTime() + 24 * 60 * 60 * 1000)]
   },
   methods: {
     parseTime,
