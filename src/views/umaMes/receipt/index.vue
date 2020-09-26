@@ -112,8 +112,8 @@
       <!--<el-table-column prop="status" label="状态"/>-->
       <el-table-column v-if="checkPermission(['admin','receipt:edit','receipt:del'])" label="操作" width="230px" align="center">
         <template slot-scope="scope">
-         <!-- <el-button v-permission="['admin','receipt:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
-          <el-popover
+          <el-button v-permission="['admin','receipt:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+          <!--<el-popover
             :ref="scope.row.status"
             placement="top"
           >
@@ -271,7 +271,8 @@ export default {
         createUser: data.createUser,
         createDate: data.createDate,
         status: data.status,
-        customerId: data.customerId
+        customerId: data.customerId,
+        customerCode: data.customerCode
       }
       _this.dialog = true
     },

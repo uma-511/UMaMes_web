@@ -69,6 +69,15 @@
                 @change="changeEnabled(scope.row, scope.row.enabled,)"/>
             </template>
           </el-table-column>
+          <el-table-column label="是否职员" align="center">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="scope.row.isWorker"
+                active-color="#409EFF"
+                inactive-color="#F56C6C"
+                @change="changeIsWorker(scope.row.id)"/>
+            </template>
+          </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="createTime" label="创建日期">
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -108,7 +117,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadUser, edit } from '@/api/user'
+import { del, downloadUser, edit, changeIsWorker} from '@/api/user'
 import { getDepts } from '@/api/dept'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
@@ -261,6 +270,18 @@ export default {
         })
       }).catch(() => {
         data.enabled = !data.enabled
+      })
+    },
+    // 改变职工状态
+    changeIsWorker(data) {
+      changeIsWorker(data).then(res => {
+        this.$notify({
+          title: '员工标识修改成功',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(() => {
+        data.isWorker = !data.isWorker
       })
     }
   }

@@ -49,19 +49,19 @@
         </el-select>
       </el-form-item>
       <el-form-item label="桶数" >
-        <el-input v-model="form.number" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
+        <el-input v-model="form.number" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="calPrice"/>
       </el-form-item>
-      <el-form-item label="规格(公斤)" >
-        <el-input v-model="form.specifications" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
-      </el-form-item>
+      <!--<el-form-item label="规格(公斤)" >
+        <el-input v-model="form.specifications" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="calWeight($event)"/>
+      </el-form-item>-->
       <el-form-item label="吨数" >
-        <el-input v-model="form.weight" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
+        <el-input v-model="form.weight" :disabled="true" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="单价(元)" >
-        <el-input v-model="form.unitPrice" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
+        <el-input v-model="form.unitPrice" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="calPrice"/>
       </el-form-item>
       <el-form-item label="金额" >
-        <el-input v-model="form.price" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
+        <el-input v-model="form.price" :disabled="true" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -116,6 +116,10 @@ export default {
       if (this.isAdd) {
         this.doAdd()
       } else this.doEdit()
+    },
+    calPrice() {
+      this.form.weight = (this.form.number / 1000).toFixed(2)
+      this.form.price = (this.form.weight * this.form.unitPrice).toFixed(2)
     },
     // 清空下拉框
     cleanUpOptions() {

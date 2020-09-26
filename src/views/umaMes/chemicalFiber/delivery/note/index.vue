@@ -179,6 +179,14 @@
             @click="doInvalid(scope.row.id)"
             @click.stop
           >设为失效</el-button>
+          <el-button
+            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+            size="mini"
+            type="warning"
+            icon="el-icon-tickets"
+            @click="reRecived(scope.row.id)"
+            @click.stop
+          >重新签收</el-button>
           <!-- <el-popover
             v-permission="['admin','chemicalFiberDeliveryNote:del']"
             :ref="scope.row.id"
@@ -313,7 +321,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="订单号码" >
+            <el-form-item label="订单号码1" >
               <el-input :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
@@ -726,12 +734,12 @@
           </el-form-item>
           <div style="text-align: right; margin: 0">
             <el-popover
-              :ref="finalPayRef"
+              :ref="'final' +payForm.name"
               placement="top"
             >
               <p>是否确认完结结款</p>
               <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="popoverClose(finalayRef)">取消</el-button>
+                <el-button size="mini" type="text" @click="popoverClose('final' +payForm.name)">取消</el-button>
                 <el-button
                   :loading="sutmitDetailLoading"
                   type="primary"
@@ -743,12 +751,12 @@
             </el-popover>
             <el-button size="mini" type="text" @click="payDialog = false">取消</el-button>
             <el-popover
-              :ref="doPayRef"
+              :ref="'pay' +payForm.name"
               placement="top"
             >
               <p>是否确认结款</p>
               <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="popoverClose(doPayRef)">取消</el-button>
+                <el-button size="mini" type="text" @click="popoverClose('pay' +payForm.name)">取消</el-button>
                 <el-button
                   :loading="sutmitDetailLoading"
                   type="primary"
@@ -769,7 +777,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, sendOut, recived } from '@/api/chemicalFiberDeliveryNote'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, sendOut, recived, reRecived } from '@/api/chemicalFiberDeliveryNote'
 import { editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
@@ -797,8 +805,8 @@ export default {
       detailLoading: false,
       payDetailLoading: false,
       sutmitDetailLoading: false,
-      finalPayRef: '',
       doPayRef: '',
+      fPayRef: '',
       customerLoading: false,
       userLoading: false,
       carLoading: false,
@@ -1183,7 +1191,7 @@ export default {
       }
     },
     doPay() {
-      this.$refs[this.doPayRef].doClose()
+      this.$refs['pay' + this.payForm.name].doClose()
       this.payForm = {
         customerId: this.form.customerId,
         customerName: this.form.customerName,
@@ -1225,7 +1233,7 @@ export default {
       this.dialogVisible = false
     },
     finalPay() {
-      this.$refs[this.finalPayRef].doClose()
+      this.$refs['final' + this.payForm.name].doClose()
       this.payForm = {
         customerId: this.form.customerId,
         customerName: this.form.customerName,
@@ -1579,6 +1587,22 @@ export default {
       }).catch(err => {
         this.sutmitDetailLoading = false
         console.log(err.response.data.message)
+      })
+    },
+    reRecived(id) {
+      reRecived(id).then(res => {
+        this.sutmitDetailLoading = false
+        this.$refs[this.form.id].doClose()
+        this.dialogVisible = false
+        this.init()
+        this.$notify({
+          title: '设置成功',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
+        this.sutmitDetailLoading = false
+        console.log(err.response)
       })
     },
     unInvalid(id) {

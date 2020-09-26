@@ -52,6 +52,16 @@ export function updateEmail(code, data) {
   })
 }
 
+
+
+export function changeIsWorker(id) {
+  return request({
+    url: 'api/users/changeIsWorker/' + id,
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
 export function getUserListByDeptId(params) {
   return request({
     url: 'api/users/getUserListByDeptId',

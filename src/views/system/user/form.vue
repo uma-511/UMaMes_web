@@ -2,7 +2,7 @@
   <el-dialog :visible.sync="dialog" :close-on-click-modal="false" :before-close="cancel" :title="isAdd ? '新增用户' : '编辑用户'" append-to-body width="570px">
     <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="66px">
       <el-form-item label="账号" prop="username">
-        <el-input v-model="form.username"/>
+        <el-input v-model="form.username" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"/>
       </el-form-item>
       <el-form-item label="用户名" prop="realname">
         <el-input v-model="form.realname"/>
@@ -10,10 +10,17 @@
       <el-form-item label="状态" prop="enabled">
         <el-radio v-for="item in dicts" :key="item.id" v-model="form.enabled" :label="item.value">{{ item.label }}</el-radio>
       </el-form-item>
+      <el-form-item label="职员" prop="isWorker">
+        <el-radio
+          v-for="item in isWorkOptions"
+          v-model="form.isWorker"
+          :key="item.id"
+          :label="item.value">{{ item.label }}</el-radio>
+      </el-form-item>
       <el-form-item label="电话" prop="phone">
         <el-input v-model.number="form.phone" />
       </el-form-item>
-      <el-form-item label="邮箱" prop="email">
+      <el-form-item label="邮箱">
         <el-input v-model="form.email" />
       </el-form-item>
       <el-form-item label="部门">
@@ -77,7 +84,7 @@ export default {
       }
     }
     return {
-      dialog: false, loading: false, form: { username: '', realname: '', email: '', enabled: 'false', roles: [], job: { id: '' }, dept: { id: '' }, phone: null },
+      dialog: false, loading: false, form: { username: '', realname: '', email: '', enabled: 'false', isWorker: 'true', roles: [], job: { id: '' }, dept: { id: '' }, phone: null },
       roleIds: [], roles: [], depts: [], deptId: null, jobId: null, jobs: [], level: 3,
       rules: {
         username: [
@@ -88,17 +95,22 @@ export default {
           { required: true, message: '请输入登录名', trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
         ],
-        email: [
-          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, trigger: 'blur', validator: validPhone }
-        ],
         enabled: [
           { required: true, message: '状态不能为空', trigger: 'blur' }
+        ],
+        isWorker: [
+          { required: true, message: '职员标记不能为空', trigger: 'blur' }
         ]
-      }
+      },
+      isWorkOptions: [
+        {
+          label: '是',
+          value: 'true'
+        }, {
+          label: '否',
+          value: 'false'
+        }
+      ]
     }
   },
   methods: {
@@ -179,7 +191,7 @@ export default {
       this.deptId = null
       this.jobId = null
       this.roleIds = []
-      this.form = { username: '', realname: '', email: '', enabled: 'true', roles: [], job: { id: '' }, dept: { id: '' }, phone: null }
+      this.form = { username: '', realname: '', email: '', enabled: 'true', roles: [], job: { id: '' }, dept: { id: '' }, phone: null, isWorker: '' }
     },
     getRoles() {
       getAll().then(res => {

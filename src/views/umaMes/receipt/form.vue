@@ -392,7 +392,8 @@ export default {
         remark: '',
         createUser: '',
         createDate: '',
-        status: ''
+        status: '',
+        customerCode: ''
       }
     }
   }

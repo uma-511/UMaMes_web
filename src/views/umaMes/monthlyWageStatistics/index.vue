@@ -42,6 +42,11 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;" @row-click="edit">
+      <el-table-column prop="dateTime" label="日期">
+        <template slot-scope="scope">
+          <span>{{ parseTimeToDates(scope.row.dateTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="personName" label="姓名"/>
       <el-table-column prop="dept" label="部门"/>
       <el-table-column prop="job" label="岗位"/>
@@ -59,11 +64,6 @@
       <el-table-column prop="leaveCount" label="请假"/>
       <el-table-column prop="lackCard" label="缺卡"/>
       <el-table-column prop="violationOfSafety" label="违反安全"/>
-      <el-table-column prop="dateTime" label="日期">
-        <template slot-scope="scope">
-          <span>{{ parseTimeToDates(scope.row.dateTime) }}</span>
-        </template>
-      </el-table-column>
       <el-table-column prop="netSalary" label="实发工资"/>
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
@@ -162,10 +162,9 @@ export default {
     generateWage() {
       generateWage().then(
         res => {
-
+          this.init()
         }
       )
-      this.init()
     },
     subDelete(id) {
       this.delLoading = true

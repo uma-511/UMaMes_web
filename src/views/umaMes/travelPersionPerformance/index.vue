@@ -3,10 +3,12 @@
     <!--工具栏-->
     <div class="head-container">
       <!-- 搜索 -->
-      <el-input v-model="query.value" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
-      <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
+      <el-input v-model="queryValue" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
+      <el-select v-model="queryType" clearable placeholder="类型" class="filter-item" style="width: 130px">
         <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select>
+
+      <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
       <el-checkbox
         v-model="showUnEnable"
         label="查询失效单"
@@ -28,7 +30,8 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="scanNumber" label="订单号"/>
+      <!--流水单号非中文-->
+      <el-table-column prop="scanNumber" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" label="流水单号"/>
       <el-table-column prop="personName" label="责任人"/>
       <el-table-column prop="permission" label="职位"/>
       <el-table-column prop="mileageFee" label="里程费"/>
@@ -100,8 +103,11 @@ export default {
     return {
       delLoading: false,
       showUnEnable: false,
+      queryValue: '',
+      queryType: 'personName',
       queryTypeOptions: [
-        { key: 'personName', display_name: '责任人' }
+        { key: 'personName', display_name: '责任人' },
+        { key: 'scanNumber', display_name: '单号' }
       ]
     }
   },
@@ -117,12 +123,9 @@ export default {
       this.url = 'api/travelPersionPerformance'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
-      const query = this.query
-      const type = query.type
-      const value = query.value
       const checkEnables = this.showUnEnable
       this.params['showUnEnable'] = checkEnables
-      if (type && value) { this.params[type] = value }
+      if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       return true
     },
     subDelete(id) {

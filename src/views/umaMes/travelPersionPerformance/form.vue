@@ -1,8 +1,8 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="订单号" >
-        <el-input :disabled="!isAdd" v-model="form.scanNumber" type="number" style="width: 370px;"/>
+      <el-form-item label="流水单号" >
+        <el-input :disabled="!isAdd" v-model="form.scanNumber" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="责任人" >
         <el-select

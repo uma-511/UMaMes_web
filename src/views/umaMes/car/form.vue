@@ -59,7 +59,8 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-popover
+      <el-button :loading="loading" type="primary" @click="subThenCreate">确认并继续新增</el-button>
+      <!--<el-popover
         :ref="form.id"
         placement="top"
         width="180">
@@ -69,7 +70,7 @@
           <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(form.id)">确定</el-button>
         </div>
         <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
-      </el-popover>
+      </el-popover>-->
       <el-button type="text" @click="cancel">取消</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
     </div>
@@ -165,6 +166,31 @@ export default {
     // 清空下拉框
     cleanUpOptions() {
       this.userOptions = []
+    },
+    subThenCreate() {
+      add(this.form).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.loading = false
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
+      this.form = {
+        id: '',
+        carNumber: '',
+        carType: '',
+        carDirector: '',
+        trialCycle: '',
+        lastTrial: '',
+        expectDate: '',
+        enable: '',
+        userOptions: ''
+      }
     },
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {

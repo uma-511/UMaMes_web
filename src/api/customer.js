@@ -23,6 +23,14 @@ export function edit(data) {
   })
 }
 
+export function changeOverArrears(data) {
+  return request({
+    url: 'api/customer/changeOverArrears',
+    method: 'post',
+    data
+  })
+}
+
 export function downloadCustomer(params) {
   return request({
     url: 'api/customer/download',

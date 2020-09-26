@@ -27,7 +27,7 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="id" label="id"/>
+      <el-table-column prop="id" label="序号"/>
       <el-table-column prop="name" label="账户名称"/>
       <el-table-column prop="createTime" label="创建时间">
         <template slot-scope="scope">
@@ -35,7 +35,6 @@
         </template>
       </el-table-column>
       <el-table-column prop="createUser" label="创建用户"/>
-      <el-table-column prop="enable" label="是否可用"/>
       <el-table-column v-if="checkPermission(['admin','accountName:edit','accountName:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','accountName:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>

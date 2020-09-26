@@ -17,14 +17,14 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="id" label="id"/>
+      <el-table-column prop="id" label="序号"/>
       <el-table-column prop="name" label="收款类型"/>
       <el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="enable" label="是否可用"/>
+      <!--<el-table-column prop="enable" label="是否可用"/>-->
       <el-table-column prop="createUser" label="创建用户"/>
       <el-table-column v-if="checkPermission(['admin','receiptType:edit','receiptType:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">

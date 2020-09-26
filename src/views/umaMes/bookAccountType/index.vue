@@ -27,14 +27,13 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="id" label="id"/>
+      <el-table-column prop="id" label="序号"/>
       <el-table-column prop="name" label="记账项目"/>
       <el-table-column prop="createTime" label="创建日期">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="enable" label="是否可用"/>
       <el-table-column v-if="checkPermission(['admin','bookAccountType:edit','bookAccountType:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','bookAccountType:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>

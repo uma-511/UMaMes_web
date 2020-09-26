@@ -80,7 +80,7 @@
         </el-table-column>
         <el-table-column prop="enable" label="状态">
           <template slot-scope="scope">
-            <div v-if="parseTimeToDate(scope.row.lastTrial) < parseTimeToDate(new Date())">
+            <div v-if="parseTimeToDate(scope.row.expectDate) < parseTimeToDate(new Date())">
               <el-tag
                 type="info"
                 size="medium"

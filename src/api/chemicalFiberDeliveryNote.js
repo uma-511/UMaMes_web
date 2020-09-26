@@ -80,6 +80,13 @@ export function recived(id) {
   })
 }
 
+export function reRecived(id) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/reRecived/' + id,
+    method: 'get'
+  })
+}
+
 export function exportPoundExcel(data) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/exportPoundExcel',
