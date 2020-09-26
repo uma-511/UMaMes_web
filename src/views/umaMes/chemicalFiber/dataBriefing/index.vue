@@ -31,11 +31,11 @@
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">库存吨数</div>
-              <count-to :start-val="0" :end-val="count.stockTonNumber" :duration="3600" class="card-panel-num"/>
+              <count-to :start-val="0" :end-val="count.stockTonNumber" :duration="3600" :decimals ="2" class="card-panel-num"/>
             </div>
             <div class="card-panel-description" style="width:300px;">
               <div class="card-panel-text">库存支数</div>
-              <count-to :start-val="0" :end-val="count.stockBranchNumber" :duration="3600" class="card-panel-num"/>
+              <count-to :start-val="0" :end-val="count.stockBranchNumber" :duration="3600" :decimals ="2" class="card-panel-num"/>
             </div>
           </div>
         </el-col>
@@ -46,15 +46,15 @@
             </div>
             <div class="card-panel-description" >
               <div class="card-panel-text">入库支数</div>
-              <count-to :start-val="0" :end-val="count.warehousingBranchNumber" :duration="3000" class="card-panel-num"/>
+              <count-to :start-val="0" :end-val="count.warehousingBranchNumber" :duration="3000" :decimals ="2" class="card-panel-num"/>
             </div>
             <div class="card-panel-description" style="width:150px;">
               <div class="card-panel-text">入库吨数</div>
-              <count-to :start-val="0" :end-val="count.warehousingTonNumber" :duration="3000" class="card-panel-num"/>
+              <count-to :start-val="0" :end-val="count.warehousingTonNumber" :duration="3000" :decimals ="2"  class="card-panel-num"/>
             </div>
             <div class="card-panel-description" style="width:150px;">
               <div class="card-panel-text">入库单数</div>
-              <count-to :start-val="0" :end-val="count.warehousingNumber" :duration="2600" class="card-panel-num"/>
+              <count-to :start-val="0" :end-val="count.warehousingNumber" :duration="2600" :decimals ="2" class="card-panel-num"/>
             </div>
             <!--<div class="card-panel-description">
               <div class="card-panel-text">库存支数</div>
@@ -71,7 +71,7 @@
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">送货单数</div>
-              <count-to :start-val="0" :end-val="count.deliveryNumber" :duration="3200" class="card-panel-num"/>
+              <count-to :start-val="0" :end-val="count.deliveryNumber" :duration="3200" :decimals ="2" class="card-panel-num"/>
             </div>
           </div>
         </el-col>
@@ -82,7 +82,7 @@
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">送货金额</div>
-              <count-to :start-val="0" :end-val="count.deliveryTotalNumber" :duration="3600" class="card-panel-num"/>
+              <count-to :start-val="0" :end-val="count.deliveryTotalNumber" :duration="3600" :decimals ="2" class="card-panel-num"/>
             </div>
           </div>
         </el-col>
@@ -93,7 +93,7 @@
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">送货吨数</div>
-              <count-to :start-val="0" :end-val="count.deliveryTonNumber" :duration="3600" class="card-panel-num"/>
+              <count-to :start-val="0" :end-val="count.deliveryTonNumber" :duration="3600" :decimals ="2" class="card-panel-num"/>
             </div>
           </div>
         </el-col>
@@ -104,7 +104,7 @@
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">送货支数</div>
-              <count-to :start-val="0" :end-val="count.deliveryBranchNumber" :duration="3600" class="card-panel-num"/>
+              <count-to :start-val="0" :end-val="count.deliveryBranchNumber" :duration="3600" :decimals ="2" class="card-panel-num"/>
             </div>
           </div>
         </el-col>

@@ -69,7 +69,7 @@
       <!--<el-table-column prop="tonNumber" label="吨数量"/>-->
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          <div v-if="scope.row.min == 0 && scope.row.max == 0 || scope.row.min == undefined  || scope.row.max == undefined ">
+          <div v-if="scope.row.min == undefined  && scope.row.max == undefined || scope.row.min == 0 && scope.row.max == 0  ">
             <el-tag
               :type="stockMapping[0]"
               size="medium"
