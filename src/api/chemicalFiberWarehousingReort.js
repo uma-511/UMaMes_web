@@ -14,3 +14,11 @@ export function getSummaryData(data) {
     data
   })
 }
+export function download(params) {
+  return request({
+    url: 'api/chemicalFiberWarehousingReort/download',
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
