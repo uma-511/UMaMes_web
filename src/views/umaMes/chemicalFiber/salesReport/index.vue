@@ -26,8 +26,8 @@
         icon="el-icon-search"
         @click="toQuery"
       >搜索</el-button>
-      <el-tag class="filter-item" type="info">应收金额 {{ sumTotalCost }} 元</el-tag>
-      <el-tag class="filter-item" type="info">实收金额 {{ sumTotalPrice }} 元</el-tag>
+      <el-tag class="filter-item" type="info">应收金额 {{ sumTotalPrice }} 元</el-tag>
+      <el-tag class="filter-item" type="info">实收金额 {{ sumTotalCost }} 元</el-tag>
       <el-tag class="filter-item" type="success">损数 {{ sumRemainder }} 元</el-tag>
     </div>
     <el-table
@@ -280,7 +280,7 @@ export default {
     parseTimeToDate,
     checkPermission,
     beforeInit() {
-      this.url = 'api/chemicalFiberDeliveryNote'
+      this.url = 'api/chemicalFiberDeliveryNote/getSalesReport'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
