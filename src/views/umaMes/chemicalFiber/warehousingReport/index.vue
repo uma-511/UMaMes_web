@@ -180,7 +180,7 @@ export default {
         this.downloadLoading = false
         this.dialogVisible = false
         this.init()
-        downloadChemicalFiberLabel(result, '导出', 'xls')
+        downloadFile(result, '导出', 'xls')
       })
     }
   }
