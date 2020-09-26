@@ -40,6 +40,7 @@
       icon="el-icon-search"
       @click="toQuery"
     >搜索</el-button>
+    <el-button :loading="downloadLoading" size="mini" type="success" @click="exportWarehousing()">导出</el-button>
     <el-tag class="filter-item" type="info">总支数 {{ sum}} 支</el-tag>
     <el-tag class="filter-item" type="info">总吨数 {{ sumTon }} T</el-tag>
     <el-tag class="filter-item" type="success">总金额 {{ sumtotalPrice }} 元</el-tag>
@@ -113,8 +114,8 @@
 
 <script>
 import initData from '@/mixins/initData'
-import { parseTime, parseTimeToDate} from '@/utils/index'
-import { getSummaryData } from '@/api/chemicalFiberWarehousingReort'
+import { parseTime, parseTimeToDate, downloadChemicalFiberLabel} from '@/utils/index'
+import { getSummaryData, download} from '@/api/chemicalFiberWarehousingReort'
 export default {
   mixins: [initData],
   data() {
@@ -172,6 +173,15 @@ export default {
         this.sum = res.data.sum
       })
 
+    },
+    exportWarehousing() {
+      this.downloadLoading = true
+      download(this.params).then(result => {
+        this.downloadLoading = false
+        this.dialogVisible = false
+        this.init()
+        downloadChemicalFiberLabel(result, '导出', 'xls')
+      })
     }
   }
 }
