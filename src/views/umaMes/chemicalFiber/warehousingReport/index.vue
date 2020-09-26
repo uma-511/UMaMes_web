@@ -177,6 +177,7 @@ export default {
 
     },
     exportWarehousing() {
+      this.init()
       this.downloadLoading = true
       download(this.params).then(result => {
         this.downloadLoading = false
