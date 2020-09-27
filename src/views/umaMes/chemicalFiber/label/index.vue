@@ -38,6 +38,7 @@
         <el-option key="3" label="已作废" value="3"/>
         <el-option key="4" label="已返仓" value="4"/>
         <el-option key="5" label="已退货" value="5"/>
+        <el-option key="5" label="托板入库" value="9"/>
       </el-select>
       <el-date-picker
         v-model="dateQuery"
