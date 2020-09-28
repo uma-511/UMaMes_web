@@ -67,8 +67,7 @@ export function doInvalid(id) {
 export function unInvalid(id) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/unInvalid/' + id,
-    method: 'get',
-    responseType: 'blob'
+    method: 'get'
   })
 }
 

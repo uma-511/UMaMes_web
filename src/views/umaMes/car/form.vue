@@ -59,7 +59,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button :loading="loading" type="primary" @click="subThenCreate">确认并继续新增</el-button>
+      <el-button v-if="isAdd" :loading="loading" type="primary" @click="subThenCreate">确认并继续新增</el-button>
       <!--<el-popover
         :ref="form.id"
         placement="top"

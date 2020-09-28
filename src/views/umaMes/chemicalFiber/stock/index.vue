@@ -65,21 +65,27 @@
       <el-table-column prop="prodModel" label="产品编号"/>
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodUnit" label="计量单位"/>
-      <el-table-column prop="totalNumber" :filter-method = "screen"  label="数量"/>
+      <el-table-column :filter-method = "screen" prop="totalNumber" label="数量"/>
       <!--<el-table-column prop="tonNumber" label="吨数量"/>-->
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          <div v-if="scope.row.min == undefined  && scope.row.max == undefined || scope.row.min == 0 && scope.row.max == 0  ">
+          <div v-if="scope.row.totalNumber <= scope.row.min">
             <el-tag
-              :type="stockMapping[0]"
+              :type="stockMapping[2]"
               size="medium"
-            >{{ stockValue[0] }}</el-tag>
+            >{{ stockValue[2] }}</el-tag>
           </div>
           <div v-else-if="scope.row.totalNumber <= scope.row.min">
             <el-tag
               :type="stockMapping[2]"
               size="medium"
             >{{ stockValue[2] }}</el-tag>
+          </div>
+          <div v-else-if="scope.row.min == undefined && scope.row.max == undefined || scope.row.min == 0 && scope.row.max == 0">
+            <el-tag
+              :type="stockMapping[0]"
+              size="medium"
+            >{{ stockValue[0] }}</el-tag>
           </div>
           <div v-else-if=" scope.row.totalNumber >= scope.row.max">
             <el-tag

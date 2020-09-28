@@ -51,9 +51,9 @@
       <el-form-item label="桶数" >
         <el-input v-model="form.number" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="calPrice"/>
       </el-form-item>
-      <!--<el-form-item label="规格(公斤)" >
-        <el-input v-model="form.specifications" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="calWeight($event)"/>
-      </el-form-item>-->
+      <el-form-item label="规格(公斤)" >
+        <el-input v-model="form.specifications" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="calPrice"/>
+      </el-form-item>
       <el-form-item label="吨数" >
         <el-input v-model="form.weight" :disabled="true" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
       </el-form-item>
@@ -118,7 +118,7 @@ export default {
       } else this.doEdit()
     },
     calPrice() {
-      this.form.weight = (this.form.number / 1000).toFixed(2)
+      this.form.weight = (this.form.number * this.form.specifications / 1000).toFixed(2)
       this.form.price = (this.form.weight * this.form.unitPrice).toFixed(2)
     },
     // 清空下拉框

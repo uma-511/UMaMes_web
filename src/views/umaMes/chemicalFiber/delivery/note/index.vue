@@ -80,7 +80,6 @@
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerCode" label="客户编号"/>
-      <el-table-column show-overflow-tooltip="true" prop="customerAddress" label="客户地址"/>
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
       <el-table-column prop="remark" label="备注"/>
@@ -159,34 +158,76 @@
             @click="detail(scope.row)"
             @click.stop
           >详情</el-button>
-          <el-button
-            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            v-if="scope.row.enable == false "
-            :style="{ display: hideInvalidButton }"
-            size="mini"
-            type="primary"
-            icon="el-icon-tickets"
-            @click="unInvalid(scope.row.id)"
-            @click.stop
-          >设为生效</el-button>
-          <el-button
-            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            v-if="scope.row.enable == true"
-            :style="{ display: hideInvalidButton }"
-            size="mini"
-            type="warning"
-            icon="el-icon-tickets"
-            @click="doInvalid(scope.row.id)"
-            @click.stop
-          >设为失效</el-button>
-          <el-button
-            v-permission="['admin','chemicalFiberDeliveryNote:edit']"
-            size="mini"
-            type="warning"
-            icon="el-icon-tickets"
-            @click="reRecived(scope.row.id)"
-            @click.stop
-          >重新签收</el-button>
+          <el-popover
+            :ref="'doInvalidRef' + scope.row.id"
+            placement="top"
+          >
+            <p v-if="scope.row.enable == true">是否确设置为失效</p>
+            <p v-if="scope.row.enable == false">是否确设置为生效</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="$refs['doInvalidRef' + scope.row.id].doClose()">取消</el-button>
+              <el-button
+                v-if="scope.row.enable == true"
+                :loading="sutmitDetailLoading"
+                type="primary"
+                size="mini"
+                @click="doInvalid(scope.row.id)"
+              >确定</el-button>
+              <el-button
+                v-if="scope.row.enable == false"
+                :loading="sutmitDetailLoading"
+                type="primary"
+                size="mini"
+                @click="unInvalid(scope.row.id)"
+              >确定</el-button>
+            </div>
+            <el-button
+              v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+              v-if="scope.row.enable == true"
+              slot="reference"
+              :style="{ display: hideInvalidButton }"
+              size="mini"
+              type="warning"
+              icon="el-icon-tickets"
+              @click.stop
+            >设为失效</el-button>
+            <el-button
+              v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+              v-if="scope.row.enable == false"
+              slot="reference"
+              :style="{ display: hideInvalidButton }"
+              size="mini"
+              type="warning"
+              icon="el-icon-tickets"
+              @click.stop
+            >设为生效</el-button>
+          </el-popover>
+
+          <el-popover
+            :ref="'reRecived' + scope.row.id"
+            placement="top"
+          >
+            <p>是否重置签收</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="$refs['reRecived' + scope.row.id].doClose()">取消</el-button>
+              <el-button
+                :loading="sutmitDetailLoading"
+                type="primary"
+                size="mini"
+                @click="reRecived(scope.row.id)"
+              >确定</el-button>
+            </div>
+            <el-button
+              v-permission="['admin','chemicalFiberDeliveryNote:edit']"
+              v-if="scope.row.enable == true"
+              slot="reference"
+              :style="{ display: hideInvalidButton }"
+              size="mini"
+              type="warning"
+              icon="el-icon-tickets"
+              @click.stop
+            >重新签收</el-button>
+          </el-popover>
           <!-- <el-popover
             v-permission="['admin','chemicalFiberDeliveryNote:del']"
             :ref="scope.row.id"
@@ -312,6 +353,7 @@
                 :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
                 placeholder="选择发票类型"
                 style="width: 156px;"
+                @change="handelSelectChange"
               >
                 <el-option
                   v-for="item in localInvoiceOption"
@@ -321,8 +363,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="订单号码1" >
-              <el-input :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
+            <el-form-item label="订单号码" >
+              <el-input v-model="form.externalNumber" :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true" style="width: 150px;" @input="buttonType"/>
             </el-form-item>
           </el-form>
           <el-form :inline="true" size="mini">
@@ -382,15 +424,9 @@
               <el-select
                 v-model="form.payment"
                 :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
-                :loading="carLoading"
-                :remote-method="accountRemoteMethod"
-                filterable
-                remote
-                reserve-keyword
-                placeholder="输入付款方式关键词"
+                placeholder="选择付款方式"
                 style="width: 156px;"
                 @change="buttonType"
-                @focus="cleanUpOptions"
               >
                 <el-option
                   v-for="item in accountOptions"
@@ -571,7 +607,7 @@
             <template slot-scope="scope">
               <el-input
                 v-model="scope.row.sellingPrice"
-                :disabled="form.noteStatus == 1 || form.noteStatus == 2?false : true"
+                :disabled="form.noteStatus == 1 || form.noteStatus == 2 || form.noteStatus == 3?false : true"
                 :min="0"
                 type="number"
                 class = "login-form-input"
@@ -795,6 +831,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      unInvalidVisible: false,
       dateQuery: '',
       hideInvalidButton: 'none',
       checkInvalidQuery: false,
@@ -867,7 +904,8 @@ export default {
         invoiceNumber: '',
         enable: '',
         startPlace: '',
-        endPlace: ''
+        endPlace: '',
+        externalNumber: ''
       },
       customerForm: {
         id: '',
@@ -898,7 +936,8 @@ export default {
         noteStatus: '',
         account: '',
         totalArrears: '',
-        currentArrears: ''
+        currentArrears: '',
+        externalNumber: ''
       },
       payForm: {
         id: '',
@@ -1413,7 +1452,8 @@ export default {
         totalArrears: this.customerForm.totalArrears,
         currentArrears: this.customerForm.currentArrears,
         startPlace: this.form.startPlace,
-        endPlace: this.form.endPlace
+        endPlace: this.form.endPlace,
+        externalNumber: this.form.externalNumber
       }
       console.log(this.sumTotalQuantity)
       if (this.isAdd == 1) {
@@ -1510,8 +1550,18 @@ export default {
         invoiceNumber: data.invoiceNumber,
         enable: data.enable,
         startPlace: data.startPlace,
-        endPlace: data.endPlace
+        endPlace: data.endPlace,
+        externalNumber: data.externalNumber
       }
+      // 初始化付款方式下拉列表
+      const accountListParams = {}
+      getAccountList(accountListParams).then(res => {
+        this.accountLoading = false
+        this.accountList = res
+        this.accountOptions = this.accountList.filter(item => {
+          return item
+        })
+      })
       // 查询详情列表数据
       var params = { 'scanNumber': data.scanNumber }
       getChemicalFiberDeliveryDetailsList(params).then(res => {
@@ -1576,8 +1626,9 @@ export default {
     doInvalid(id) {
       doInvalid(id).then(res => {
         this.sutmitDetailLoading = false
-        this.$refs[this.form.id].doClose()
+        this.$refs['doInvalidRef' + id].doClose()
         this.dialogVisible = false
+        this.hideInvalidButton = 'none'
         this.init()
         this.$notify({
           title: '状态设置为失效',
@@ -1586,14 +1637,15 @@ export default {
         })
       }).catch(err => {
         this.sutmitDetailLoading = false
-        console.log(err.response.data.message)
+        console.log(err.response)
       })
     },
     reRecived(id) {
       reRecived(id).then(res => {
         this.sutmitDetailLoading = false
-        this.$refs[this.form.id].doClose()
+        this.$refs['reRecived' + id].doClose()
         this.dialogVisible = false
+        this.hideInvalidButton = 'none'
         this.init()
         this.$notify({
           title: '设置成功',
@@ -1602,13 +1654,15 @@ export default {
         })
       }).catch(err => {
         this.sutmitDetailLoading = false
-        console.log(err.response)
+        console.log(err.response.data.message)
       })
     },
     unInvalid(id) {
       this.sutmitDetailLoading = true
       unInvalid(id).then(res => {
         this.sutmitDetailLoading = false
+        this.$refs['doInvalidRef' + id].doClose()
+        this.hideInvalidButton = 'none'
         this.init()
         this.$notify({
           title: '状态设置为生效',
@@ -1710,6 +1764,9 @@ export default {
         return
       }
       this.typeButton = 'danger'
+    },
+    handelSelectChange() {
+      this.$forceUpdate()
     },
     checkLoader1(data) {
       if (data == this.form.loaderOne) {
@@ -2019,8 +2076,8 @@ export default {
         scanNumber: this.form.scanNumber,
         unit: row.prodUnit
       }
-      //产品重复选择
-      /*this.detailList.forEach((item) => {
+      // 产品重复选择
+      /* this.detailList.forEach((item) => {
         if (item.prodName === row.prodName && item.unit === row.prodUnit) {
           this.$notify({
             title: '有相同记录，无法添加',

@@ -47,6 +47,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-if="isAdd" :loading="loading" type="primary" @click="subThenCreate">确认并新增</el-button>
       <el-button type="text" @click="cancel">取消</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
     </div>
@@ -74,7 +75,7 @@ export default {
     }
   },
   data() {
-    const validPhone = (rule, value, callback) => {
+    /* const validPhone = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请输入电话号码'))
       } else if (!this.isvalidPhone(value)) {
@@ -82,7 +83,7 @@ export default {
       } else {
         callback()
       }
-    }
+    }*/
     return {
       dialog: false, loading: false, form: { username: '', realname: '', email: '', enabled: 'false', isWorker: 'true', roles: [], job: { id: '' }, dept: { id: '' }, phone: null },
       roleIds: [], roles: [], depts: [], deptId: null, jobId: null, jobs: [], level: 3,
@@ -148,6 +149,57 @@ export default {
             if (this.isAdd) {
               this.doAdd()
             } else this.doEdit()
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    subThenCreate() {
+      this.form.dept.id = this.deptId
+      this.form.job.id = this.jobId
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.deptId === null || this.deptId === undefined) {
+            this.$message({
+              message: '部门不能为空',
+              type: 'warning'
+            })
+          } else if (this.jobId === null) {
+            this.$message({
+              message: '岗位不能为空',
+              type: 'warning'
+            })
+          } else if (this.roleIds.length === 0) {
+            this.$message({
+              message: '角色不能为空',
+              type: 'warning'
+            })
+          } else {
+            this.loading = true
+            this.form.roles = []
+            const _this = this
+            this.roleIds.forEach(function(data, index) {
+              const role = { id: data }
+              _this.form.roles.push(role)
+            })
+            add(this.form).then(res => {
+              this.$notify({
+                title: '添加成功',
+                message: '默认密码：123456',
+                type: 'success',
+                duration: 2500
+              })
+              this.loading = false
+              this.$parent.init()
+            }).catch(err => {
+              this.loading = false
+              console.log(err.response.data.message)
+            })
+            this.deptId = null
+            this.jobId = null
+            this.roleIds = []
+            this.form = { username: '', realname: '', email: '', enabled: 'true', roles: [], job: { id: '' }, dept: { id: '' }, phone: null, isWorker: '' }
           }
         } else {
           return false
