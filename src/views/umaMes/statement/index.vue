@@ -85,13 +85,22 @@
       <el-table-column prop="customerName" label="客户名称"/>
       <!-- <el-table-column prop="contacts" label="客户联系人"/>
       <el-table-column prop="contactPhone" label="客户联系电话"/>-->
-      <el-table-column prop="receivable" label="应收金额"/>
-      <el-table-column prop="accumulatedArrears" label="上期欠款">
+      <el-table-column prop="receivable" label="应收金额">
         <template slot-scope="scope">
-          <span>{{ parses(scope.row) }}</span>
+          <span>{{ scope.row.receivable | rounding}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="totalArrears" label="总欠金额"/>
+      <el-table-column prop="accumulatedArrears" label="上期欠款">
+        <template slot-scope="scope">
+          <span>{{ parses(scope.row) |  rounding}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="totalArrears" label="总欠金额">
+        <template slot-scope="scope">
+          <span>{{ scope.row.totalArrears | rounding}}</span>
+        </template>
+      </el-table-column>
+      </el-table-column>
       <el-table-column
         label="操作"
         width="150px"
@@ -156,6 +165,11 @@ export default {
         // { key: 'contacts', display_name: '客户联系人' },
         // { key: 'contactPhone', display_name: '客户联系电话' }
       ],
+    }
+  },
+  filters: {
+    rounding (value) {
+      return value.toFixed(2)
     }
   },
   created() {

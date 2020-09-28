@@ -40,6 +40,7 @@
       icon="el-icon-search"
       @click="toQuery"
     >搜索</el-button>
+    <el-button :loading="downloadLoading" size="mini" type="success" @click="exportWarehousing()">导出</el-button>
     <el-tag class="filter-item" type="info">总支数 {{ sum}} 支</el-tag>
     <el-tag class="filter-item" type="info">总吨数 {{ sumTon }} T</el-tag>
     <el-tag class="filter-item" type="success">总金额 {{ sumtotalPrice }} 元</el-tag>
@@ -113,13 +114,14 @@
 
 <script>
 import initData from '@/mixins/initData'
-import { parseTime, parseTimeToDate} from '@/utils/index'
-import { getSummaryData } from '@/api/chemicalFiberWarehousingReort'
+import { parseTime, parseTimeToDate, downloadChemicalFiberLabel,downloadFile} from '@/utils/index'
+import { getSummaryData, download} from '@/api/chemicalFiberWarehousingReort'
 export default {
   mixins: [initData],
   data() {
     return {
-      dateQuery: '',checkInvalidQuery: false,sumtotalPrice: 0,sumTon: 0,sum: 0,
+      dateQuery: '',checkInvalidQuery: false,sumtotalPrice: 0,sumTon: 0,sum: 0,startTime: '',
+      endTime: '',
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '入库单号' },
         { key: 'prodName', display_name: '产品名称' },
@@ -133,6 +135,11 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
+    this.getCurrentMonthFirst()
+    this.getCurrentMonthLast()
+    this.dateQuery = [new Date(this.startTime), new Date(this.endTime)];
+    /*var start = new Date(new Date(new Date().toLocaleDateString()))
+    this.dateQuery = [start, new Date(start.getTime() + 24 * 60 * 60 * 1000)]*/
   },
   methods: {
     parseTime,
@@ -153,6 +160,13 @@ export default {
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
+      } else {
+          this.$notify({
+            title: '警告',
+            message: '请选择时间',
+            type: 'warning'
+          })
+          return false
       }
       this.getSummaryData(this.params)
       /*const query = this.query
@@ -172,6 +186,51 @@ export default {
         this.sum = res.data.sum
       })
 
+    },
+    exportWarehousing() {
+      if (!this.dateQuery) {
+        this.$notify({
+          title: '警告',
+          message: '请选择时间',
+          type: 'warning'
+        })
+        this.downloadLoading = false
+        return
+      }
+      this.init()
+      this.downloadLoading = true
+      download(this.params).then(result => {
+        this.downloadLoading = false
+        this.dialogVisible = false
+        this.init()
+        downloadFile(result, '导出', 'xls')
+      })
+    },
+    /*getdateValue (val) {
+      this.startTime = val
+      this.getbalanceIndexData()
+    },
+    getdateVal (val) {
+      this.endTime = val
+      this.getbalanceIndexData()
+    },*/
+
+    getCurrentMonthFirst () {
+      var date = new Date()
+      date.setDate(1)
+      var month = parseInt(date.getMonth() + 1)
+      var day = date.getDate()
+      if (month < 10)  month = '0' + month
+      if (day < 10)  day = '0' + day
+      this.startTime = date.getFullYear() + '-' + month + '-' + day
+    },
+    getCurrentMonthLast () {
+      var date = new Date()
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      month = month < 10 ? '0' + month : month
+      var day = new Date(year, month, 0)
+      this.endTime = year + '-' + month + '-' + day.getDate()
     }
   }
 }

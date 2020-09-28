@@ -40,7 +40,6 @@
       icon="el-icon-search"
       @click="toQuery"
     >搜索</el-button>
-    <el-button :loading="downloadLoading" type="primary" @click="exportWarehousing()">导出</el-button>
     <div style="display: inline-block;margin: 0px 2px;">
       <el-button
         class="filter-item"
@@ -558,7 +557,7 @@
 <script>
 import initData from '@/mixins/initData'
 import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/customer'
-import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
+import { parseTime, downloadFile, downloadFileWhithScanNumber, parseTimeToDate } from '@/utils/index'
 import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { getProdList } from '@/api/chemicalFiberProduct'
 import { getCarList } from '@/api/car'
@@ -1106,25 +1105,10 @@ export default {
           return item.model === event
         })
       }
+      this.tableForm.prodId = obj.id
       this.tableForm.prodName = obj.name
       this.tableForm.prodModel = obj.model
     },
-    exportWarehousing() {
-      this.downloadLoading = true
-      downloadWarehousing(this.params).then(result => {
-        this.downloadLoading = false
-        this.dialogVisible = false
-        this.init()
-        downloadFileWhithScanNumber(result, this.form.scanNumber + '送货单导出', 'xls')
-      }).catch(() => {
-        this.downloadLoading = false
-        this.$notify({
-          title: '请保存产品信息',
-          type: 'warning',
-          duration: 2500
-        })
-      })
-    }
     resetForm() {
       this.form = {
         id: '',
