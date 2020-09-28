@@ -45,7 +45,7 @@
       <el-table
         v-loading="loading"
         :data="data"
-        :summary-method="getDataSummaries"
+        :summary-method="getSummaries"
         size="small"
         border
         max-height="530"
@@ -104,12 +104,13 @@
 import initData from '@/mixins/initData'
 import checkPermission from '@/utils/permission'
 import { parseTimeToDate } from '@/utils/index'
+import { getSalesSummaries } from '@/api/chemicalFiberSalesList/getSalesSummaries'
 export default {
   mixins: [initData],
   data() {
     return {
       loading: false, dateQuery: '',checkInvalidQuery: false,sumtotalPrice: 0,sumTon: 0,sum: 0,startTime: '',
-      endTime: '',
+      endTime: '',sums: [],
     }
   },
   created() {
@@ -143,11 +144,20 @@ export default {
         })
         return false
       }
+      this.tempGetProductionReportSummaries()
       /*this.tempGetSalesReportSummaries()
       this.getSummaryData(this.params)*/
       return true
     },
-    getDataSummaries(param) {
+    getSummaries() {
+      return this.sums
+    },
+    tempGetProductionReportSummaries() {
+      getSalesSummaries(this.params).then(res => {
+        this.sums = res.data
+      })
+    },
+    /*getDataSummaries(param) {
       const { columns, data } = param
       const sums = []
       columns.forEach((column, index) => {
@@ -213,7 +223,7 @@ export default {
         }
       })
       return sums
-    },
+    },*/
     getCurrentMonthFirst () {
       var date = new Date()
       date.setDate(1)
