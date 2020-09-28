@@ -1105,6 +1105,7 @@ export default {
           return item.model === event
         })
       }
+      this.tableForm.prodId = obj.id
       this.tableForm.prodName = obj.name
       this.tableForm.prodModel = obj.model
     },
