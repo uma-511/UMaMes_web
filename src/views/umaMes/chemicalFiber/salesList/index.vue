@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-input
+    <!--<el-input
       v-model="query.value"
       clearable
       size="mini"
@@ -23,7 +23,7 @@
         :label="item.display_name"
         :value="item.key"
       />
-    </el-select>
+    </el-select>-->
     <el-date-picker
       v-model="dateQuery"
       size="mini"
@@ -104,7 +104,7 @@
 import initData from '@/mixins/initData'
 import checkPermission from '@/utils/permission'
 import { parseTimeToDate } from '@/utils/index'
-import { getSalesSummaries } from '@/api/chemicalFiberSalesList/getSalesSummaries'
+import { getSalesSummaries } from '@/api/chemicalFiberSalesList'
 export default {
   mixins: [initData],
   data() {

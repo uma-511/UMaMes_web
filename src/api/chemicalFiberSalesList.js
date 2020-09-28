@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getSalesSummaries(data) {
   return request({
-    url: 'api/chemicalFiberProduction/getSalesSummaries',
+    url: 'api/chemicalFiberSalesList/getSalesSummaries',
     method: 'post',
     data
   })
