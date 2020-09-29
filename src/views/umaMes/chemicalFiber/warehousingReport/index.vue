@@ -72,7 +72,7 @@
         <el-table-column prop="createUser" label="制单人"/>
         <el-table-column prop="createDate" label="制单时间">
           <template slot-scope="scope">
-            <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+            <span>{{ parseTime(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
         <!--<el-table-column prop="warehousingStatus" label="状态">
