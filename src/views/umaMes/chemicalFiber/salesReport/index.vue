@@ -273,8 +273,9 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
-    var start = new Date(new Date(new Date().toLocaleDateString()))
-    this.dateQuery = [start, new Date(start.getTime() + 24 * 60 * 60 * 1000)]
+    this.getCurrentMonthFirst()
+    this.getCurrentMonthLast()
+    this.dateQuery = [new Date(this.startTime), new Date(this.endTime)];
   },
   methods: {
     parseTimeToDate,
@@ -372,6 +373,24 @@ export default {
         this.paydateil = res
         this.loadingPay = false
       })
+    },
+
+    getCurrentMonthFirst () {
+      var date = new Date()
+      date.setDate(1)
+      var month = parseInt(date.getMonth() + 1)
+      var day = date.getDate()
+      if (month < 10)  month = '0' + month
+      if (day < 10)  day = '0' + day
+      this.startTime = date.getFullYear() + '-' + month + '-' + day
+    },
+    getCurrentMonthLast () {
+      var date = new Date()
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      month = month < 10 ? '0' + month : month
+      var day = new Date(year, month, 0)
+      this.endTime = year + '-' + month + '-' + day.getDate()
     }
    /* details(data) {
       this.dialogVisible = true
