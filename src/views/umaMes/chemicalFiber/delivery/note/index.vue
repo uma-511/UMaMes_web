@@ -87,7 +87,7 @@
       <el-table-column prop="seller" label="业务员"/>
       <el-table-column prop="createDate" label="制单日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createDate) }}</span>
+          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="createUser" label="制单人"/>
@@ -145,8 +145,8 @@
       </el-table-column>
       <el-table-column
         v-if="checkPermission(['admin','chemicalFiberDeliveryNote:edit','chemicalFiberDeliveryNote:del'])"
+        width="280px"
         label="操作"
-        width="240px"
         align="center"
       >
         <template slot-scope="scope">
@@ -162,14 +162,14 @@
             :ref="'doInvalidRef' + scope.row.id"
             placement="top"
           >
-            <p v-if="scope.row.enable == true">是否确设置为失效</p>
-            <p v-if="scope.row.enable == false">是否确设置为生效</p>
+            <p v-if="scope.row.enable == true">是否删除</p>
+            <p v-if="scope.row.enable == false">是否恢复</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="$refs['doInvalidRef' + scope.row.id].doClose()">取消</el-button>
               <el-button
                 v-if="scope.row.enable == true"
                 :loading="sutmitDetailLoading"
-                type="primary"
+                type="danger"
                 size="mini"
                 @click="doInvalid(scope.row.id)"
               >确定</el-button>
@@ -190,7 +190,7 @@
               type="warning"
               icon="el-icon-tickets"
               @click.stop
-            >设为失效</el-button>
+            >删除</el-button>
             <el-button
               v-permission="['admin','chemicalFiberDeliveryNote:edit']"
               v-if="scope.row.enable == false"
@@ -200,14 +200,14 @@
               type="warning"
               icon="el-icon-tickets"
               @click.stop
-            >设为生效</el-button>
+            >恢复</el-button>
           </el-popover>
 
           <el-popover
             :ref="'reRecived' + scope.row.id"
             placement="top"
           >
-            <p>是否重置签收</p>
+            <p>是否重新签收</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="$refs['reRecived' + scope.row.id].doClose()">取消</el-button>
               <el-button
@@ -226,7 +226,7 @@
               type="warning"
               icon="el-icon-tickets"
               @click.stop
-            >重新签收</el-button>
+            >重签</el-button>
           </el-popover>
           <!-- <el-popover
             v-permission="['admin','chemicalFiberDeliveryNote:del']"
@@ -726,11 +726,11 @@
       <el-dialog
         :visible.sync="addTableFrom"
         :append-to-body = "true"
-        width="450px"
+        width="550px"
         title="添加产品" >
         <el-input
           v-model="tableForm.innerName"
-          style="width: 400px"
+          style="width: 500px"
           placeholder="请输入产品关键词"
           @input="getProdList"
         />
@@ -744,11 +744,12 @@
           <el-table-column prop="prodModel" label="产品编号" align="center" width="150px"/>
           <el-table-column prop="prodName" label="产品名称" align="center" width="150px"/>
           <el-table-column prop="prodUnit" label="单位" align="center" width="100px"/>
+          <el-table-column prop="totalNumber" label="库存数量" align="center" width="100px"/>
         </el-table>
-        <div style="text-align: right; margin: 0">
+        <!--<div style="text-align: right; margin: 0">
           <el-button size="mini" type="text" @click="addTableFrom = false">取消</el-button>
           <el-button :loading="delLoading" type="primary" size="mini" @click="addTableRow">确定</el-button>
-        </div>
+        </div>-->
       </el-dialog>
       <el-dialog
         :visible.sync="payDialog"
@@ -815,7 +816,7 @@ import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, sendOut, recived, reRecived } from '@/api/chemicalFiberDeliveryNote'
 import { editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
-import { parseTime, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
+import { parseTimeToDate, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerById } from '@/api/customer'
@@ -1031,7 +1032,7 @@ export default {
     })
   },
   methods: {
-    parseTime,
+    parseTimeToDate,
     checkPermission,
     beforeInit() {
       this.url = 'api/chemicalFiberDeliveryNote'

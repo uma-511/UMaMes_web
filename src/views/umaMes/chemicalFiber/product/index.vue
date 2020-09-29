@@ -8,7 +8,7 @@
           <el-button size="mini" type="primary" icon="el-icon-plus" @click="addDepts">新增</el-button>
         </el-form>
         <!--<el-button size="mini" type="danger" icon="el-icon-delete" @click="editDepts">删除</el-button>-->
-        <div style="width:50px; height:30px;"></div>
+        <div style="width:50px; height:30px;"/>
         <el-tree :data="depts" :props="defaultProps" :expand-on-click-node="false" default-expand-all @node-click="handleNodeClick"/>
       </el-col>
       <el-col :xs="15" :sm="18" :md="20" :lg="20" :xl="20">
@@ -82,17 +82,6 @@
           @current-change="pageChange"/>
       </el-col>
     </el-row>
-    <!--<el-dialog-->
-      <!--:visible.sync="addDeptsLoading"-->
-      <!--:append-to-body = "true"-->
-      <!--width="20%"-->
-      <!--title="新增目录" >-->
-      <!--<el-form ref="form1" :model="form" size="mini" label-width="80px" >-->
-        <!--<el-input v-model="form.productMenusName" style="width: 150px;" />-->
-        <!--<el-button size="mini" type="primary" icon="el-icon-plus" @click="addFormDepts">添加</el-button>-->
-      <!--</el-form>-->
-
-    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -108,7 +97,7 @@ export default {
   mixins: [initData],
   data() {
     return {
-      delLoading: false, deptId: null,addDeptsLoading: false,
+      delLoading: false, deptId: null, addDeptsLoading: false,
       queryTypeOptions: [
         { key: 'model', display_name: '产品编号' },
         { key: 'name', display_name: '产品名称' },
@@ -120,7 +109,7 @@ export default {
         id: 'id',
         label: 'productMenusName'
       },
-      deptName:'',
+      deptName: '',
       form: {
         productMenusName: ''
       }
@@ -147,9 +136,9 @@ export default {
       return true
     },
     getMenutDatas() {
-      //const sort = 'id,desc'
+      // const sort = 'id,desc'
       const params = {}
-      //if (this.deptName) { params['name'] = this.deptName }
+      // if (this.deptName) { params['name'] = this.deptName }
       getMenu(params).then(res => {
         this.depts = res
       })
@@ -217,7 +206,6 @@ export default {
       _this.dialog = true
     },
     addDepts() {
-
       if (this.form.productMenusName == '') {
         this.$notify({
           title: '请填写目录名称',

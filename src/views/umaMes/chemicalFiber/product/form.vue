@@ -43,6 +43,7 @@
       </el-form-item> -->
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-if="isAdd" :loading="loading" type="primary" @click="subThenCreate">确认并继续新增</el-button>
       <el-button type="text" @click="cancel">取消</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
     </div>
@@ -125,6 +126,32 @@ export default {
         }
       })
     },
+    subThenCreate() {
+      add(this.form).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.loading = false
+        this.$parent.dleChangePage()
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
+      this.form = {
+        id: '',
+        model: '',
+        name: '',
+        color: '',
+        fineness: '',
+        createDate: '',
+        createUser: '',
+        delFlag: '',
+        unit: ''
+      }
+    },
     doAdd() {
       add(this.form).then(res => {
         this.resetForm()
@@ -134,6 +161,7 @@ export default {
           duration: 2500
         })
         this.loading = false
+        this.$parent.dleChangePage()
         this.$parent.init()
       }).catch(err => {
         this.loading = false
@@ -157,15 +185,15 @@ export default {
     },
     menusMethod(query) {
       this.menusLoading = false
-        this.menusLoading = true
-        this.menusQuery.id = query
-        this.menusOptions = []
-        getMenu(this.menusQuery).then(res => {
-          this.menusLoading = false
-          this.menusList = res
-          this.menusQuery.id = ''
-          this.menusOptions = this.menusList
-        })
+      this.menusLoading = true
+      this.menusQuery.id = query
+      this.menusOptions = []
+      getMenu(this.menusQuery).then(res => {
+        this.menusLoading = false
+        this.menusList = res
+        this.menusQuery.id = ''
+        this.menusOptions = this.menusList
+      })
     },
     menusName(e) {
       this.menusOptions.id = e
@@ -175,7 +203,6 @@ export default {
           this.form.menus = this.menusOptions[i].productMenusName
         }
       }
-      //this.form.menus = this.menusOptions[0].productMenusName
     },
     resetForm() {
       this.dialog = false

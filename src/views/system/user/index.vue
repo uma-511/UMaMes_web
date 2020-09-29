@@ -242,7 +242,7 @@ export default {
       _this.getDepts()
       _this.getRoleLevel()
       _this.roleIds = []
-      _this.form = { id: data.id, username: data.username, realname: data.realname, phone: data.phone, email: data.email, enabled: data.enabled.toString(), roles: [], dept: { id: data.dept.id }, job: { id: data.job.id }}
+      _this.form = { id: data.id, isWorker: data.isWorker.toString(), username: data.username, realname: data.realname, phone: data.phone, email: data.email, enabled: data.enabled.toString(), roles: [], dept: { id: data.dept.id }, job: { id: data.job.id }}
       data.roles.forEach(function(data, index) {
         _this.roleIds.push(data.id)
       })

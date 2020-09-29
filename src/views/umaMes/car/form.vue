@@ -23,6 +23,7 @@
           :loading="userLoading"
           :remote-method="transporterRemoteMethod"
           filterable
+          clearable
           allow-create
           remote
           reserve-keyword
@@ -169,13 +170,13 @@ export default {
     },
     subThenCreate() {
       add(this.form).then(res => {
+        this.$parent.init()
         this.$notify({
           title: '添加成功',
           type: 'success',
           duration: 2500
         })
         this.loading = false
-        this.$parent.init()
       }).catch(err => {
         this.loading = false
         console.log(err.response.data.message)
