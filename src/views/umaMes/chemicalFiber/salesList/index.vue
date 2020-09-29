@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <!--<el-input
+    <el-input
       v-model="query.value"
       clearable
       size="mini"
@@ -23,7 +23,7 @@
         :label="item.display_name"
         :value="item.key"
       />
-    </el-select>-->
+    </el-select>
     <el-date-picker
       v-model="dateQuery"
       size="mini"
@@ -111,6 +111,10 @@ export default {
     return {
       loading: false, dateQuery: '',checkInvalidQuery: false,sumtotalPrice: 0,sumTon: 0,sum: 0,startTime: '',
       endTime: '',sums: [],
+      queryTypeOptions: [
+        { key: 'customerName', display_name: '客户名称' },
+        { key: 'prodName', display_name: '产品名称' }
+      ]
     }
   },
   created() {
@@ -129,7 +133,7 @@ export default {
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
       const query = this.query
-      const type = 'customerName'
+      const type = query.type
       const value = query.value
       const dateQuery = this.dateQuery
       if (type && value) { this.params[type] = value }

@@ -33,6 +33,10 @@
       start-placeholder="开始日期"
       end-placeholder="结束日期"
     />
+    <el-checkbox
+      v-model="showUnEnable"
+      @change="toQuery"
+    >查询失效单</el-checkbox>
     <el-button
       class="filter-item"
       size="mini"
@@ -61,9 +65,9 @@
         <el-table-column prop="batchNumber" label="批号"align="center"/>
         <el-table-column prop="tonAndBranch" label="数量"align="center"/>
         <el-table-column prop="totalPrice" label="总金额"align="center"/>
-        <el-table-column prop="createDate" label="制单日期"align="center">
+        <el-table-column prop="createDate" label="制单时间"align="center">
           <template slot-scope="scope">
-            <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+            <span>{{ parseTime(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="warehousingDate" label="入库日期"align="center">
@@ -74,18 +78,28 @@
         <el-table-column prop="createUser" label="制单人"align="center"/>
         <el-table-column prop="warehousingStatus" label="状态"align="center">
           <template slot-scope="scope">
-            <div v-if="scope.row.warehousingStatus == 1">
-              <el-tag
-                type="danger"
-                size="medium"
-              >{{ statusValue[1] }}</el-tag>
+            <div v-if = "scope.row.invalid == 1">
+                <el-tag
+                  type="danger"
+                  size="medium"
+                >{{ statusValue[0] }}</el-tag>
             </div>
-            <div v-if="scope.row.warehousingStatus == 2">
-              <el-tag
-                type="success"
-                size="medium"
-              >{{ statusValue[2] }}</el-tag>
+            <div v-else>
+              <div v-if="scope.row.warehousingStatus == 1">
+                <el-tag
+                  type="danger"
+                  size="medium"
+                >{{ statusValue[1] }}</el-tag>
+              </div>
+              <div v-if="scope.row.warehousingStatus == 2">
+                <el-tag
+                  type="success"
+                  size="medium"
+                >{{ statusValue[2] }}</el-tag>
+              </div>
+
             </div>
+
           </template>
         </el-table-column>
         <el-table-column
@@ -102,6 +116,7 @@
               @click="edit(scope.row)"
             >编辑</el-button>-->
             <el-button
+              v-if = "scope.row.invalid == 0"
               size="mini"
               type="success"
               icon="el-icon-tickets"
@@ -109,6 +124,7 @@
               @click.stop
             >编辑</el-button>
             <el-popover
+              v-if = "scope.row.invalid == 0"
               :ref="scope.row.id"
               placement="top"
             >
@@ -216,7 +232,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="批号" >
-              <el-input v-model="form.batchNumber" type="number" :disabled="form.warehousingStatus == 2?true:false" maxlength="17" style="width: 100px;" @input="buttonType"/>
+              <el-input v-model="form.batchNumber" :disabled="form.warehousingStatus == 2?true:false" maxlength="17" style="width: 100px;" @input="buttonType"/>
             </el-form-item>
             <el-form-item label="入库日期" >
               <el-date-picker v-model="form.warehousingDate" :disabled="form.warehousingStatus == 2?true:false"s type="date" placeholder="选择日期时间" style="width: 130px;" maxlength="15" @change="buttonType"/>
@@ -237,7 +253,7 @@
                 reserve-keyword
                 placeholder="输入主司机关键词"
                 style="width: 157px;"
-                @change="isEscort($event)"
+                @change="isDriverMain($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -260,7 +276,7 @@
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 157px;"
-                @change="isEscort($event)"
+                @change="isDriverDeputy($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -288,7 +304,7 @@
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 157px;"
-                @change="isDriver($event)"
+                @change="isEscortOne($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -311,7 +327,7 @@
                 reserve-keyword
                 placeholder="输入副司机关键词"
                 style="width: 157px;"
-                @change="isDriver($event)"
+                @change="isEscortTwo($event)"
                 @focus="cleanUpOptions"
               >
                 <el-option
@@ -457,7 +473,7 @@
         :visible.sync="addTableFrom"
         :append-to-body = "true"
         :modal="true"
-        width="40%"
+        width="25%"
         title="添加产品" >
         <el-form :model="tableForm" size="mini" label-width="80px" >
           <!--<el-form-item label="产品搜索" >-->
@@ -544,8 +560,15 @@
               </el-select>
             </template>
           </el-form-item>
+          <el-form-item label="产品数量" >
+            <el-input v-model="tableForm.warehousingNumber" style="width: 100px;" @input="buttonType"/>
+          </el-form-item>
+          <el-form-item label="产品单价" >
+            <el-input v-model="tableForm.price" style="width: 100px;" @input="buttonType"/>
+          </el-form-item>
         </el-form>
         <div style="text-align: right; margin: 0">
+          <el-button type="primary" size="mini" @click="addWarehousingDetalis">添加并继续新增</el-button>
           <el-button size="mini" type="text" @click="addTableFrom = false">取消</el-button>
           <el-button type="primary" size="mini" @click="addWarehousingDetali">确定</el-button>
         </div>
@@ -574,6 +597,7 @@ export default {
       typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
       dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,customerOptions: [],
       customerCodeOptions: [],customerLoading:false,carOptions: [],carLoading: false,prodModelOptions: [],
+      showUnEnable: false,
       form: {
         id: '',
         createUser: '',
@@ -638,6 +662,8 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
+    var start = new Date(new Date(new Date().toLocaleDateString()))
+    this.dateQuery = [start, new Date(start.getTime() + 24 * 60 * 60 * 1000)]
   },
   methods: {
     parseTime,
@@ -650,9 +676,9 @@ export default {
       const type = query.type
       const value = query.value
       const dateQuery = this.dateQuery
-      const checkInvalidQurey = this.checkInvalidQuery
+      const checkEnables = this.showUnEnable
+      this.params['queryWithInvalid'] = checkEnables
       if (type && value) { this.params[type] = value }
-      this.params['queryWithInvalid'] = checkInvalidQurey
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
@@ -752,7 +778,10 @@ export default {
         prodId: this.tableForm.prodId,
         prodModel: this.tableForm.prodModel,
         unit: this.tableForm.unit,
-        createDate: this.form.createDate
+        createDate: this.form.createDate,
+        warehousingNumber: this.tableForm.warehousingNumber,
+        price: this.tableForm.price,
+        totalPrice: this.tableForm.warehousingNumber * this.tableForm.price
       }
       this.addTableFrom = true
       if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '' && !this.tableForm.unit == '') {
@@ -772,6 +801,57 @@ export default {
           console.log(err.response.data.message)
         })
         this.addTableFrom = false
+      } else {
+        this.$notify({
+          title: '请填写信息',
+          type: 'warning',
+          duration: 2500
+        })
+      }
+    },
+    addWarehousingDetalis() {
+      this.tableForm = {
+        warehousingId: this.form.id,
+        scanNumber: this.form.scanNumber,
+        prodName: this.tableForm.prodName,
+        prodId: this.tableForm.prodId,
+        prodModel: this.tableForm.prodModel,
+        unit: this.tableForm.unit,
+        createDate: this.form.createDate,
+        warehousingNumber: this.tableForm.warehousingNumber,
+        price: this.tableForm.price,
+        totalPrice: this.tableForm.warehousingNumber * this.tableForm.price
+      }
+      this.addTableFrom = true
+      if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '' && !this.tableForm.unit == '') {
+        warehousingDetali(this.tableForm).then(res => {
+          this.$notify({
+            title: '添加成功',
+            type: 'success',
+            duration: 2500
+          })
+          this.buttonType()
+          //this.detaLoading = true
+          this.tableDetailList(this.form)
+          //this.addTableFrom = false
+          this.tableForm = {
+            warehousingId: '',
+            scanNumber: '',
+            prodName: '',
+            prodId: '',
+            prodModel: '',
+            unit: '',
+            createDate: '',
+            warehousingNumber: '',
+            price: '',
+            totalPrice: ''
+          }
+          this.init()
+        }).catch(err => {
+          this.addTableFrom = false
+          console.log(err.response.data.message)
+        })
+        //this.addTableFrom = false
       } else {
         this.$notify({
           title: '请填写信息',
@@ -932,40 +1012,73 @@ export default {
     buttonType(){
       this.typeButton = 'danger'
     },
-    isEscort(quer) {
-      if (quer === this.form.escortOne || quer === this.form.escortTwo) {
-        this.$notify({
-          title: '司机与押运重复',
-          type: 'warning',
-          duration: 2500
-        })
-        if (this.form.driverMain === quer) {
-          this.form.driverMain = ''
+    isDriverMain(quer) {
+      if (quer != null && quer != '') {
+        if (quer === this.form.escortOne || quer === this.form.escortTwo || quer === this.form.driverDeputy) {
+          this.$notify({
+            title: '司机与押运重复',
+            type: 'warning',
+            duration: 2500
+          })
+          if (this.form.driverMain === quer) {
+            this.form.driverMain = ''
+          }
+          return
         }
-        if (this.form.driverDeputy === quer) {
-          this.form.driverDeputy = ''
-
-        }
-        return
       }
+
       this.typeButton = 'danger'
     },
-    isDriver(quer) {
-      if (quer === this.form.driverMain || quer === this.form.driverDeputy) {
-        this.$notify({
-          title: '司机与押运重复',
-          type: 'warning',
-          duration: 2500
-        })
-        if (this.form.escortOne === quer) {
-          this.form.escortOne = ''
+    isDriverDeputy(quer) {
+      if (quer != null && quer != '') {
+        if (quer === this.form.escortOne || quer === this.form.escortTwo || quer === this.form.driverMain) {
+          this.$notify({
+            title: '司机与押运重复',
+            type: 'warning',
+            duration: 2500
+          })
+          if (this.form.driverMain === quer) {
+            this.form.driverDeputy = ''
+          }
+          return
         }
-        if (this.form.escortTwo === quer) {
-          this.form.escortTwo = ''
-
-        }
-        return
       }
+
+      this.typeButton = 'danger'
+    },
+    isEscortOne(quer) {
+      console.log(quer)
+      if (quer != null && quer != '') {
+        if (quer === this.form.driverMain || quer === this.form.driverDeputy || quer === this.form.escortTwo) {
+          this.$notify({
+            title: '司机与押运重复',
+            type: 'warning',
+            duration: 2500
+          })
+          if (this.form.escortOne === quer) {
+            this.form.escortOne = ''
+          }
+          return
+        }
+      }
+
+      this.typeButton = 'danger'
+    },
+    isEscortTwo(quer) {
+      if (quer != null && quer != '') {
+        if (quer === this.form.driverMain || quer === this.form.driverDeputy || quer === this.form.escortOne) {
+          this.$notify({
+            title: '司机与押运重复',
+            type: 'warning',
+            duration: 2500
+          })
+          if (this.form.escortTwo === quer) {
+            this.form.escortTwo = ''
+          }
+          return
+        }
+      }
+
       this.typeButton = 'danger'
     },
     tableDetailList(data) {
