@@ -65,9 +65,9 @@
         <el-table-column prop="batchNumber" label="批号"align="center"/>
         <el-table-column prop="tonAndBranch" label="数量"align="center"/>
         <el-table-column prop="totalPrice" label="总金额"align="center"/>
-        <el-table-column prop="createDate" label="制单日期"align="center">
+        <el-table-column prop="createDate" label="制单时间"align="center">
           <template slot-scope="scope">
-            <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+            <span>{{ parseTime(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="warehousingDate" label="入库日期"align="center">
@@ -473,7 +473,7 @@
         :visible.sync="addTableFrom"
         :append-to-body = "true"
         :modal="true"
-        width="40%"
+        width="25%"
         title="添加产品" >
         <el-form :model="tableForm" size="mini" label-width="80px" >
           <!--<el-form-item label="产品搜索" >-->
@@ -560,8 +560,15 @@
               </el-select>
             </template>
           </el-form-item>
+          <el-form-item label="产品数量" >
+            <el-input v-model="tableForm.warehousingNumber" style="width: 100px;" @input="buttonType"/>
+          </el-form-item>
+          <el-form-item label="产品单价" >
+            <el-input v-model="tableForm.price" style="width: 100px;" @input="buttonType"/>
+          </el-form-item>
         </el-form>
         <div style="text-align: right; margin: 0">
+          <el-button type="primary" size="mini" @click="addWarehousingDetalis">添加并继续新增</el-button>
           <el-button size="mini" type="text" @click="addTableFrom = false">取消</el-button>
           <el-button type="primary" size="mini" @click="addWarehousingDetali">确定</el-button>
         </div>
@@ -771,7 +778,10 @@ export default {
         prodId: this.tableForm.prodId,
         prodModel: this.tableForm.prodModel,
         unit: this.tableForm.unit,
-        createDate: this.form.createDate
+        createDate: this.form.createDate,
+        warehousingNumber: this.tableForm.warehousingNumber,
+        price: this.tableForm.price,
+        totalPrice: this.tableForm.warehousingNumber * this.tableForm.price
       }
       this.addTableFrom = true
       if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '' && !this.tableForm.unit == '') {
@@ -791,6 +801,57 @@ export default {
           console.log(err.response.data.message)
         })
         this.addTableFrom = false
+      } else {
+        this.$notify({
+          title: '请填写信息',
+          type: 'warning',
+          duration: 2500
+        })
+      }
+    },
+    addWarehousingDetalis() {
+      this.tableForm = {
+        warehousingId: this.form.id,
+        scanNumber: this.form.scanNumber,
+        prodName: this.tableForm.prodName,
+        prodId: this.tableForm.prodId,
+        prodModel: this.tableForm.prodModel,
+        unit: this.tableForm.unit,
+        createDate: this.form.createDate,
+        warehousingNumber: this.tableForm.warehousingNumber,
+        price: this.tableForm.price,
+        totalPrice: this.tableForm.warehousingNumber * this.tableForm.price
+      }
+      this.addTableFrom = true
+      if (!this.tableForm.prodModel == '' && !this.tableForm.prodName == '' && !this.tableForm.unit == '') {
+        warehousingDetali(this.tableForm).then(res => {
+          this.$notify({
+            title: '添加成功',
+            type: 'success',
+            duration: 2500
+          })
+          this.buttonType()
+          //this.detaLoading = true
+          this.tableDetailList(this.form)
+          //this.addTableFrom = false
+          this.tableForm = {
+            warehousingId: '',
+            scanNumber: '',
+            prodName: '',
+            prodId: '',
+            prodModel: '',
+            unit: '',
+            createDate: '',
+            warehousingNumber: '',
+            price: '',
+            totalPrice: ''
+          }
+          this.init()
+        }).catch(err => {
+          this.addTableFrom = false
+          console.log(err.response.data.message)
+        })
+        //this.addTableFrom = false
       } else {
         this.$notify({
           title: '请填写信息',

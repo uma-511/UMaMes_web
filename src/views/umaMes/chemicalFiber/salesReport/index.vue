@@ -109,9 +109,9 @@
       <el-table-column prop="totalCost" label="实收金额" align="center"/>
       <el-table-column prop="remainder" label="损数" align="center"/>
       <el-table-column prop="createUser" label="制单人" align="center"/>
-      <el-table-column prop="createDate" label="制单日期" align="center">
+      <el-table-column prop="createDate" label="制单时间" align="center">
         <template slot-scope="scope">
-          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+          <span>{{ parseTime(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -239,7 +239,7 @@ import checkPermission from '@/utils/permission'
 import { getSalesReportSummaries, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { getSummaryData } from '@/api/chemicalFiberDeliveryNote'
 import initData from '@/mixins/initData'
-import { parseTimeToDate } from '@/utils/index'
+import { parseTimeToDate, parseTime } from '@/utils/index'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
 export default {
   mixins: [initData],
@@ -283,6 +283,7 @@ export default {
   methods: {
     parseTimeToDate,
     checkPermission,
+    parseTime,
     beforeInit() {
       this.url = 'api/chemicalFiberDeliveryNote/getSalesReport'
       const sort = 'id,desc'

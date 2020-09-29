@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <!--工具栏-->
+    <eForm ref="form" :is-add="isAdd"/>
     <el-row :gutter="20">
       <el-col :xs="9" :sm="6" :md="4" :lg="4" :xl="4">
         <el-form ref="form1" :model="form" size="mini" label-width="80px" >
@@ -41,8 +42,6 @@
           </div> -->
         </div>
         <!--表单组件-->
-        <eForm ref="form" :is-add="isAdd"/>
-        <!--表格渲染-->
         <el-table v-loading="loading" :data="data" stripe size="small" style="width: 100%;" @row-click="rowClicker">
           <el-table-column prop="model" label="产品编号"/>
           <el-table-column prop="name" label="产品名称"/>
@@ -53,10 +52,10 @@
           </el-table-column>
           <el-table-column prop="createUser" label="创建人"/>
           <!-- <el-table-column prop="delFlag" label="删除标识"/> -->
-          <el-table-column v-if="checkPermission(['admin','chemicalFiberProduct:edit','chemicalFiberProduct:del'])" label="操作" width="150px" align="center">
+          <!--<el-table-column v-if="checkPermission(['admin','chemicalFiberProduct:edit','chemicalFiberProduct:del'])" label="操作" width="150px" align="center">
             <template slot-scope="scope">
-              <!--<el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
-             -->
+              &lt;!&ndash;<el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+             &ndash;&gt;
               <el-popover
                 v-permission="['admin','chemicalFiberProduct:del']"
                 :ref="scope.row.id"
@@ -70,7 +69,7 @@
                 <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" @click.stop/>
               </el-popover>
             </template>
-          </el-table-column>
+          </el-table-column>-->
         </el-table>
         <!--分页组件-->
         <el-pagination

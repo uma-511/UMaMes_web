@@ -87,17 +87,17 @@
       <el-table-column prop="contactPhone" label="客户联系电话"/>-->
       <el-table-column prop="receivable" label="应收金额">
         <template slot-scope="scope">
-          <span>{{ scope.row.receivable | rounding}}</span>
+          <span>{{ scope.row.receivable }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="accumulatedArrears" label="上期欠款">
         <template slot-scope="scope">
-          <span>{{ parses(scope.row) |  rounding}}</span>
+          <span>{{ scope.row.accumulatedArrears }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="totalArrears" label="总欠金额">
         <template slot-scope="scope">
-          <span>{{ scope.row.totalArrears | rounding}}</span>
+          <span>{{ scope.row.totalArrears }}</span>
         </template>
       </el-table-column>
       </el-table-column>
@@ -253,11 +253,11 @@ export default {
       }).catch(() => {
         this.downloadLoading = false
       })
-    },
-    parses(data){
+    }
+    /*parses(data){
       data.accumulatedArrears = data.totalArrears - data.receivable
       return data.accumulatedArrears
-    }
+    }*/
   }
 }
 </script>
