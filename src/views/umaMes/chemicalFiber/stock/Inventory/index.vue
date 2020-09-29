@@ -216,7 +216,7 @@ export default {
   data() {
     return {
       isAdd:true,dialog: false,detalList: [],detaLoading: false,isAnd: '',visible: false,sutmitDetailLoading: false,
-      lnventoryStatus: '',typeButton: '',dateQuery: '',checkInvalidQuery: false,sutmitDetailLoading: false,
+      lnventoryStatus: '',typeButton: '',dateQuery: '',checkInvalidQuery: false,sutmitDetailLoading: false,showUnEnable: false,
       form: {
         prodModel: '',
         prodName: '',
@@ -440,7 +440,7 @@ export default {
               }
             }
           }
-          sums[index] = a+"吨/"+b+ "支"
+          sums[index] = (a.toFixed(2))+"吨/"+(b.toFixed(2))+ "支"
         }
         if (index === 7) {
           sums[index] = values.reduce((prev, curr) => {
@@ -465,7 +465,7 @@ export default {
             }
 
           }
-          sums[index] = a+"吨/"+b+ "支"
+          sums[index] = (a.toFixed(2)) + "吨/" + (b.toFixed(2)) + "支"
         }
       })
       return sums
