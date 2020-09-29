@@ -166,7 +166,7 @@ export default {
     },
     doSubmit() {
       this.loading = true
-      if (this.form.min >= this.form.max) {
+      /*if (this.form.min >= this.form.max) {
         this.$notify({
           title: '最小值不能大于等于最大值',
           type: 'warning',
@@ -174,7 +174,7 @@ export default {
         })
         this.loading = false
         return
-      }
+      }*/
       if (this.isAdd) {
         this.doAdd()
       } else this.doEdit()
