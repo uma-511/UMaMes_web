@@ -104,6 +104,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="customerName" label="客户" align="center"/>
+      <el-table-column prop="sumTotalPrice" label="计划金额" align="center"/>
       <el-table-column prop="totalPrice" label="应收金额" align="center"/>
       <el-table-column prop="totalCost" label="实收金额" align="center"/>
       <el-table-column prop="remainder" label="损数" align="center"/>
@@ -158,8 +159,10 @@
       <el-table-column prop="outOfStockNetWeight" label="出库净重(kg)" align="center"/>
       <el-table-column prop="totalCost" label="成本金额" align="center"/>
       <el-table-column prop="receivablePrice" label="总金额" align="center"/>-->
-      <el-table-column prop="realQuantity" label="数量" align="center"/>
-      <el-table-column prop="realPrice" label="金额" align="center"/>
+      <el-table-column prop="totalNumber" label="计划数量" align="center"/>
+      <el-table-column prop="totalPrice" label="计划金额" align="center"/>
+      <el-table-column prop="realQuantity" label="实际数量" align="center"/>
+      <el-table-column prop="realPrice" label="实际金额" align="center"/>
       <!-- <el-table-column label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" icon="el-icon-tickets" @click="details(scope.row)"/>
