@@ -408,7 +408,7 @@ export default {
         }
         const values = data.map(item => Number(item[column.property]))
         if (index === 5) {
-          sums[index] = values.reduce((prev, curr) => {
+          var a = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
               return (((prev * 10) + (curr * 10))/10)
@@ -416,7 +416,7 @@ export default {
               return ((prev * 10)/10)
             }
           }, 0)
-          sums[index].toFixed(2)
+          sums[index] = a.toFixed(2)
         }
         if (index === 6) {
           sums[index] = values.reduce((prev, curr) => {
@@ -478,11 +478,13 @@ export default {
       // 盈亏
       if (data.lnventoryNumber <= data.prodNumber ) {
         data.lnventoryLoss = (((data.prodNumber * 10) - data.lnventoryNumber * 10)/10).toFixed(2)
-        data.lnventorySurplus = 0
+        var a = 0;
+        data.lnventorySurplus = a.toFixed(2)
       }
       if (data.lnventoryNumber >= data.prodNumber) {
         data.lnventorySurplus = (((data.lnventoryNumber * 10) - (data.prodNumber * 10))/10).toFixed(2)
-        data.lnventoryLoss = 0
+        var b = 0;
+        data.lnventoryLoss = b.toFixed(2)
       }
     }
   }
