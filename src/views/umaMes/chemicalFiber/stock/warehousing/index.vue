@@ -65,7 +65,7 @@
         <el-table-column prop="scanNumber" label="入库单号"align="center"/>
         <el-table-column prop="supplierName" label="供应商名称"align="center"/>
         <el-table-column prop="batchNumber" label="批号"align="center"/>
-        <el-table-column prop="tonAndBranch" label="数量"align="center"/>
+        <el-table-column prop="tonAndBranch" label="数量"align="center"  width="180px"/>
         <el-table-column prop="totalPrice" label="总金额"align="center"/>
         <el-table-column prop="createDate" label="制单时间"align="center">
           <template slot-scope="scope">
@@ -599,7 +599,7 @@ export default {
       typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
       dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,customerOptions: [],
       customerCodeOptions: [],customerLoading:false,carOptions: [],carLoading: false,prodModelOptions: [],
-      showUnEnable: false,
+      showUnEnable: false,sum:[],
       form: {
         id: '',
         createUser: '',
@@ -689,11 +689,11 @@ export default {
       return true
     },
     getWarSummaries() {
-      return this.sums
+      return this.sum
     },
     tempGetSalesReportSummaries() {
       getWarehousingSummaries(this.params).then(res => {
-        this.sums = res.data
+        this.sum = res.data
       })
     },
     // 详情触发按钮
