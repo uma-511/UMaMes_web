@@ -113,7 +113,8 @@ export default {
       endTime: '',sums: [],
       queryTypeOptions: [
         { key: 'customerName', display_name: '客户名称' },
-        { key: 'prodName', display_name: '产品名称' }
+        { key: 'prodName', display_name: '产品名称' },
+        { key: 'scanNumber', display_name: '送货单号' }
       ]
     }
   },

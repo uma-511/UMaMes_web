@@ -5,11 +5,13 @@
     <el-row :gutter="20">
       <el-col :xs="9" :sm="6" :md="4" :lg="4" :xl="4">
         <el-form ref="form1" :model="form" size="mini" label-width="80px" >
-          <el-input v-model="form.productMenusName" size="mini" style="width: 120px;" />
+          <el-input v-model="form.productMenusName" size="mini" style="width: 200px;" />
+          <div style="width:50px; height:10px;"></div>
           <el-button size="mini" type="primary" icon="el-icon-plus" @click="addDepts">新增</el-button>
+          <el-button size="mini" type="warning" icon="el-icon-delete" @click="delectDepts">删除</el-button>
         </el-form>
         <!--<el-button size="mini" type="danger" icon="el-icon-delete" @click="editDepts">删除</el-button>-->
-        <div style="width:50px; height:30px;"/>
+        <div style="width:50px; height:10px;"></div>
         <el-tree :data="depts" :props="defaultProps" :expand-on-click-node="false" default-expand-all @node-click="handleNodeClick"/>
       </el-col>
       <el-col :xs="15" :sm="18" :md="20" :lg="20" :xl="20">
@@ -89,7 +91,7 @@ import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberProduct } from '@/api/chemicalFiberProduct'
 import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
-import { getMenu, addMenu } from '@/api/chemicalFiberProductMenu'
+import { getMenu, addMenu, delectMenu } from '@/api/chemicalFiberProductMenu'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -205,6 +207,7 @@ export default {
       _this.dialog = true
     },
     addDepts() {
+
       if (this.form.productMenusName == '') {
         this.$notify({
           title: '请填写目录名称',
@@ -219,6 +222,27 @@ export default {
           type: 'success',
           duration: 2500
         })
+        this.form.productMenusName = ''
+        this.getMenutDatas()
+      })
+    },
+    delectDepts() {
+
+      if (this.form.productMenusName == '') {
+        this.$notify({
+          title: '请填写目录名称',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      delectMenu(this.form).then(res => {
+        this.$notify({
+          title: '删除成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.form.productMenusName = ''
         this.getMenutDatas()
       })
     },

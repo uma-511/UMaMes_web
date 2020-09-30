@@ -15,3 +15,11 @@ export function addMenu(params) {
     params
   })
 }
+
+export function delectMenu(params) {
+  return request({
+    url: 'api/chemicalFiberProductMenus/delect',
+    method: 'get',
+    params
+  })
+}

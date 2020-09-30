@@ -56,14 +56,16 @@
     <div class="head-container">
       <el-table
         v-loading="loading"
+        :summary-method="getWarSummaries"
         :data="data"
+        show-summary
         size="small"
         style="width: 100%;"
       >
         <el-table-column prop="scanNumber" label="入库单号"align="center"/>
         <el-table-column prop="supplierName" label="供应商名称"align="center"/>
         <el-table-column prop="batchNumber" label="批号"align="center"/>
-        <el-table-column prop="tonAndBranch" label="数量"align="center"/>
+        <el-table-column prop="tonAndBranch" label="数量"align="center"  width="180px"/>
         <el-table-column prop="totalPrice" label="总金额"align="center"/>
         <el-table-column prop="createDate" label="制单时间"align="center">
           <template slot-scope="scope">
@@ -584,7 +586,7 @@ import { parseTime, downloadFile, downloadFileWhithScanNumber, parseTimeToDate }
 import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { getProdList } from '@/api/chemicalFiberProduct'
 import { getCarList } from '@/api/car'
-import { add, edit, warehousing, delWarehousing } from '@/api/chemicalFiberStockWarehousing'
+import { add, edit, warehousing, delWarehousing, getWarehousingSummaries } from '@/api/chemicalFiberStockWarehousing'
 import { warehousingDetali, warehousingDetaliList, warehousingEdit, delDetail } from '@/api/chemicalFiberStockWarehousingDetail'
 import { getUserListByDeptId } from '@/api/user'
 import eForm from './form'
@@ -597,7 +599,7 @@ export default {
       typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
       dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,customerOptions: [],
       customerCodeOptions: [],customerLoading:false,carOptions: [],carLoading: false,prodModelOptions: [],
-      showUnEnable: false,
+      showUnEnable: false,sum:[],
       form: {
         id: '',
         createUser: '',
@@ -683,7 +685,16 @@ export default {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
+      this.tempGetSalesReportSummaries()
       return true
+    },
+    getWarSummaries() {
+      return this.sum
+    },
+    tempGetSalesReportSummaries() {
+      getWarehousingSummaries(this.params).then(res => {
+        this.sum = res.data
+      })
     },
     // 详情触发按钮
     warehousingDetail(data) {
