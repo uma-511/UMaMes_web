@@ -416,7 +416,7 @@ export default {
               return ((prev * 10)/10)
             }
           }, 0)
-          sums[index]
+          sums[index].toFixed(2)
         }
         if (index === 6) {
           sums[index] = values.reduce((prev, curr) => {
@@ -477,11 +477,11 @@ export default {
     sum(data){
       // 盈亏
       if (data.lnventoryNumber <= data.prodNumber ) {
-        data.lnventoryLoss = (((data.prodNumber * 10) - data.lnventoryNumber * 10)/10)
+        data.lnventoryLoss = (((data.prodNumber * 10) - data.lnventoryNumber * 10)/10).toFixed(2)
         data.lnventorySurplus = 0
       }
       if (data.lnventoryNumber >= data.prodNumber) {
-        data.lnventorySurplus = (((data.lnventoryNumber * 10) - (data.prodNumber * 10))/10)
+        data.lnventorySurplus = (((data.lnventoryNumber * 10) - (data.prodNumber * 10))/10).toFixed(2)
         data.lnventoryLoss = 0
       }
     }

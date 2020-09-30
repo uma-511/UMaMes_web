@@ -56,7 +56,9 @@
     <div class="head-container">
       <el-table
         v-loading="loading"
+        :summary-method="getWarSummaries"
         :data="data"
+        show-summary
         size="small"
         style="width: 100%;"
       >
@@ -584,7 +586,7 @@ import { parseTime, downloadFile, downloadFileWhithScanNumber, parseTimeToDate }
 import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { getProdList } from '@/api/chemicalFiberProduct'
 import { getCarList } from '@/api/car'
-import { add, edit, warehousing, delWarehousing } from '@/api/chemicalFiberStockWarehousing'
+import { add, edit, warehousing, delWarehousing, getWarehousingSummaries } from '@/api/chemicalFiberStockWarehousing'
 import { warehousingDetali, warehousingDetaliList, warehousingEdit, delDetail } from '@/api/chemicalFiberStockWarehousingDetail'
 import { getUserListByDeptId } from '@/api/user'
 import eForm from './form'
@@ -683,7 +685,16 @@ export default {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
+      this.tempGetSalesReportSummaries()
       return true
+    },
+    getWarSummaries() {
+      return this.sums
+    },
+    tempGetSalesReportSummaries() {
+      getWarehousingSummaries(this.params).then(res => {
+        this.sums = res.data
+      })
     },
     // 详情触发按钮
     warehousingDetail(data) {

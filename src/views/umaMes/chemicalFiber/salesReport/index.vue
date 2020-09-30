@@ -26,6 +26,7 @@
         icon="el-icon-search"
         @click="toQuery"
       >搜索</el-button>
+      <el-tag class="filter-item" type="info">计划金额 {{ sumTotal }} 元</el-tag>
       <el-tag class="filter-item" type="info">应收金额 {{ sumTotalPrice }} 元</el-tag>
       <el-tag class="filter-item" type="info">实收金额 {{ sumTotalCost }} 元</el-tag>
       <el-tag class="filter-item" type="success">损数 {{ sumRemainder }} 元</el-tag>
@@ -249,7 +250,7 @@ export default {
       dialogVisible: false,
       loadingDateil: false,
       loading: false,dialog: false,loadingPay: false,
-      sumTotalCost: 0, sumTotalPrice: 0,sumRemainder: 0,
+      sumTotalCost: 0, sumTotalPrice: 0,sumRemainder: 0,sumTotal: 0,
       queryTypeOptions: [
         { key: 'customerName', display_name: '客户名称' }
       ],
@@ -314,6 +315,7 @@ export default {
         this.sumTotalCost = res.data.sumTotalCost
         this.sumTotalPrice = res.data.sumTotalPrice
         this.sumRemainder = res.data.sumRemainder
+        this.sumTotal = res.data.sumTotal
       })
     },
     getDataSummaries(param) {
@@ -348,6 +350,17 @@ export default {
           sums[index] += ' 元'
         }
         if (index === 7) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 8) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
