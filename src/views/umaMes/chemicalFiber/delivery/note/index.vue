@@ -378,6 +378,7 @@
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 filterable
+                clearable
                 remote
                 reserve-keyword
                 placeholder="输入主司机关键词"
@@ -401,6 +402,7 @@
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 filterable
+                clearable
                 remote
                 reserve-keyword
                 placeholder="输入装卸员1关键词"
@@ -470,6 +472,7 @@
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 filterable
+                clearable
                 remote
                 reserve-keyword
                 placeholder="输入副司机关键词"
@@ -493,6 +496,7 @@
                 :loading="userLoading"
                 :remote-method="transporterRemoteMethod"
                 filterable
+                clearable
                 remote
                 reserve-keyword
                 placeholder="输入装卸员2关键词"
@@ -1704,6 +1708,9 @@ export default {
       this.detailLoading = false
     },
     checkDriverDeputy(data) {
+      if (data == '' || data == null) {
+        return
+      }
       if (data == this.form.driverDeputy) {
         this.form.driverMain = ''
         this.$notify({
@@ -1725,6 +1732,9 @@ export default {
       this.typeButton = 'danger'
     },
     checkDriverMain(data) {
+      if (data == '' || data == null) {
+        return
+      }
       if (data == this.form.driverMain) {
         this.form.driverDeputy = ''
         this.$notify({
@@ -1746,6 +1756,9 @@ export default {
       this.typeButton = 'danger'
     },
     checkLoader2(data) {
+      if (data == '' || data == null) {
+        return
+      }
       if (data == this.form.loaderTwo) {
         this.form.loaderOne = ''
         this.$notify({
@@ -1770,6 +1783,9 @@ export default {
       this.$forceUpdate()
     },
     checkLoader1(data) {
+      if (data == '' || data == null) {
+        return
+      }
       if (data == this.form.loaderOne) {
         this.form.loaderTwo = ''
         this.$notify({

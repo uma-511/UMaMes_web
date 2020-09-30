@@ -139,6 +139,7 @@
           :remote-method="transporterRemoteMethod"
           multiple:false
           filterable
+          clearable
           remote
           reserve-keyword
           placeholder="请输入主司机名称关键词"
@@ -161,6 +162,7 @@
           :remote-method="transporterRemoteMethod"
           multiple:false
           filterable
+          clearable
           remote
           reserve-keyword
           placeholder="请输入副司机名称关键词"
@@ -183,6 +185,7 @@
           :remote-method="transporterRemoteMethod"
           multiple:false
           filterable
+          clearable
           remote
           reserve-keyword
           placeholder="请输入装卸员1名称关键词"
@@ -205,6 +208,7 @@
           :remote-method="transporterRemoteMethod"
           multiple:false
           filterable
+          clearable
           remote
           reserve-keyword
           placeholder="请输入装卸员2名称关键词"

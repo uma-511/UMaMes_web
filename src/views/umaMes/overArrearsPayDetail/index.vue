@@ -7,6 +7,10 @@
       <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
         <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select>
+      <el-checkbox
+        v-model="showAll"
+        @change="toQuery"
+      >查询所有客户</el-checkbox>
       <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
     </div>
     <!--表单组件-->
@@ -63,6 +67,7 @@ export default {
   data() {
     return {
       delLoading: false,
+      showAll: false,
       payDetailList: [],
       queryTypeOptions: [
         { key: 'name', display_name: '客户名称' },
@@ -81,7 +86,9 @@ export default {
     beforeInit() {
       this.url = 'api/overArrearsPayDetail'
       const sort = 'id,desc'
+      const checkEnables = this.showAll
       this.params = { page: this.page, size: this.size, sort: sort }
+      this.params['showAll'] = checkEnables
       const query = this.query
       const type = query.type
       const value = query.value

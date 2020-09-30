@@ -66,6 +66,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-if="isAdd" :loading="loading" type="primary" @click="subThenCreate">确认并新增</el-button>
       <el-button type="text" @click="cancel">取消</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
     </div>
@@ -210,6 +211,34 @@ export default {
         return item.realname === event
       })
       this.form.personId = obj.id
+    },
+    subThenCreate() {
+      add(this.form).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.loading = false
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
+      this.form = {
+        id: '',
+        personName: '',
+        personId: '',
+        attenceDate: new Date(),
+        attenceType: '',
+        day: '',
+        remark: '',
+        createDate: '',
+        serialNumber: '',
+        safeType: '',
+        price: '',
+        enable: ''
+      }
     },
     doAdd() {
       add(this.form).then(res => {

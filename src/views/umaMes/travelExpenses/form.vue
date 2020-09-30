@@ -54,6 +54,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-if="isAdd" :loading="loading" type="primary" @click="subThenCreate">确认并新增</el-button>
       <el-button type="text" @click="cancel">取消</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
     </div>
@@ -121,6 +122,40 @@ export default {
     // 清空下拉框
     cleanUpOptions() {
       this.customerOptions = []
+    },
+    subThenCreate() {
+      if (this.form.startPlace == this.form.endPlace) {
+        this.$notify({
+          title: '发货地不能与目的地相同',
+          type: 'success',
+          duration: 2500
+        })
+        return
+      }
+      add(this.form).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.loading = false
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
+      this.form = {
+        id: '',
+        startPlace: '',
+        endPlace: '',
+        createUser: '',
+        createTime: '',
+        price: '',
+        tractorPrice: '',
+        vanPrice: '',
+        tankPrice: '',
+        enable: ''
+      }
     },
     doAdd() {
       if (this.form.startPlace == this.form.endPlace) {

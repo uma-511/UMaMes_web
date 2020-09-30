@@ -53,6 +53,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-if="isAdd" :loading="loading" type="primary" @click="subThenCreate">确认并新增</el-button>
       <el-button type="text" @click="cancel">取消</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
     </div>
@@ -140,6 +141,34 @@ export default {
       var n5 = this.form.handlingCost
       var sum = n1 * 1 + n2 * 1 + n3 * 1 + n4 * 1 + n5 * 1
       this.form.totalPerformance = sum.toFixed(2)
+    },
+    subThenCreate() {
+      add(this.form).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.loading = false
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
+      this.form = {
+        id: '',
+        personName: '',
+        personId: '',
+        permission: '',
+        mileageFee: '',
+        overtimePay: '',
+        allowance: '',
+        surcharge: '',
+        handlingCost: '',
+        totalPerformance: '',
+        createTime: new Date(),
+        enable: ''
+      }
     },
     doAdd() {
       add(this.form).then(res => {

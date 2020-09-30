@@ -27,6 +27,28 @@
       <el-form-item label="任务日期" >
         <el-date-picker v-model="form.taskDate" type="date" style="width: 370px;"/>
       </el-form-item>
+      <el-form-item label="产品编号" >
+        <el-select
+          v-model="form.productCode"
+          :disabled="!isAdd"
+          :loading="userLoading"
+          :remote-method="prodRemoteMethodByCode"
+          filterable
+          remote
+          reserve-keyword
+          placeholder="输入产品编号关键字"
+          style="width: 370px;"
+          @focus="cleanUpOptions"
+          @change="setProd($event)"
+        >
+          <el-option
+            v-for="item in prodOptions"
+            :key="item.model"
+            :label="item.model"
+            :value="item.model"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="产品名称" >
         <el-select
           v-model="form.productName"
@@ -39,12 +61,13 @@
           placeholder="输入产品名称关键字"
           style="width: 370px;"
           @focus="cleanUpOptions"
+          @change="setProd($event)"
         >
           <el-option
             v-for="item in prodOptions"
-            :key="item.prodName"
-            :label="item.prodName"
-            :value="item.prodName"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
           />
         </el-select>
       </el-form-item>
@@ -65,6 +88,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button v-if="isAdd" :loading="loading" type="primary" @click="subThenCreate">确认并新增</el-button>
       <el-button type="text" @click="cancel">取消</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
     </div>
@@ -74,7 +98,7 @@
 <script>
 import { add, edit } from '@/api/acidPersionPerformance'
 import { getUserListByDeptId } from '@/api/user'
-import { getSelectMaps } from '@/api/chemicalFiberStock'
+import { getProdList } from '@/api/chemicalFiberProduct'
 export default {
   props: {
     isAdd: {
@@ -95,6 +119,7 @@ export default {
         personId: '',
         taskDate: new Date(),
         productName: '',
+        productCode: '',
         number: '',
         specifications: '',
         weight: '',
@@ -147,17 +172,70 @@ export default {
         })
       })
     },
+    setProd(event) {
+      let obj = []
+      obj = this.prodOptions.find((item) => {
+        return item.name === event
+      })
+      if (obj == [] || obj == null) {
+        obj = this.prodOptions.find((item) => {
+          return item.model === event
+        })
+      }
+      console.log(obj)
+      this.form.productName = obj.name
+      this.form.productCode = obj.model
+    },
     // 查询产品的下拉列表
     prodRemoteMethod(query) {
-      const params = { prodName: query }
+      const params = { name: query }
       this.userLoading = true
-      getSelectMaps(params).then(res => {
+      getProdList(params).then(res => {
         this.userLoading = false
         this.prodList = res
         this.prodOptions = this.prodList.filter(item => {
           return item
         })
       })
+    },prodRemoteMethodByCode(query) {
+      const params = { model: query }
+      this.userLoading = true
+      getProdList(params).then(res => {
+        this.userLoading = false
+        this.prodList = res
+        this.prodOptions = this.prodList.filter(item => {
+          return item
+        })
+      })
+    },
+    subThenCreate() {
+      add(this.form).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.loading = false
+        this.$parent.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
+      this.form = {
+        id: '',
+        person: '',
+        personId: '',
+        taskDate: new Date(),
+        productName: '',
+        productCode: '',
+        number: '',
+        specifications: '',
+        weight: '',
+        unitPrice: '',
+        price: '',
+        enable: '',
+        createDate: ''
+      }
     },
     doAdd() {
       add(this.form).then(res => {
@@ -199,6 +277,7 @@ export default {
         personId: '',
         taskDate: new Date(),
         productName: '',
+        productCode: '',
         number: '',
         specifications: '',
         weight: '',

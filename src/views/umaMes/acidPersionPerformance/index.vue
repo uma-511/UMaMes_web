@@ -34,6 +34,7 @@
           <span>{{ parseTimeToDate(scope.row.taskDate) }}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="productCode" label="产品编号"/>
       <el-table-column prop="productName" label="产品名称"/>
       <el-table-column prop="number" label="桶数"/>
       <el-table-column prop="specifications" label="规格(公斤)"/>
@@ -160,6 +161,7 @@ export default {
         person: data.person,
         personId: data.personId,
         taskDate: data.taskDate,
+        productCode: data.productCode,
         productName: data.productName,
         number: data.number,
         specifications: data.specifications,
