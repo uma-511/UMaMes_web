@@ -31,6 +31,14 @@ export function delWarehousing(id) {
   })
 }
 
+export function getWarehousingSummaries(data) {
+  return request({
+    url: 'api/chemicalFiberStockWarehousing/getWarehousingSummaries',
+    method: 'post',
+    data
+  })
+}
+
 
 
 
