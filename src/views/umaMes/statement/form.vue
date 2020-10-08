@@ -483,6 +483,7 @@ export default {
       this.exportStatementLoading = true
       exportStatementFun(this.form.id).then(result => {
         this.exportStatementLoading = false
+        this.$parent.init()
         downloadFile(result, '对账单导出', 'xls')
       }).catch(() => {
         this.exportStatementLoading = false

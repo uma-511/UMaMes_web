@@ -85,7 +85,7 @@
       <el-table-column prop="customerName" label="客户名称"/>
       <!-- <el-table-column prop="contacts" label="客户联系人"/>
       <el-table-column prop="contactPhone" label="客户联系电话"/>-->
-      <el-table-column prop="receivable" label="应收金额">
+      <el-table-column prop="receivable" label="本月欠款">
         <template slot-scope="scope">
           <span>{{ scope.row.receivable }}</span>
         </template>
@@ -95,9 +95,24 @@
           <span>{{ scope.row.accumulatedArrears }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="totalArrears" label="总欠金额">
+      <el-table-column prop="totalArrears" label="本期欠款">
         <template slot-scope="scope">
           <span>{{ scope.row.totalArrears }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="account" label="支配金额">
+        <template slot-scope="scope">
+          <span>{{ scope.row.account }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="remainder" label="损数">
+        <template slot-scope="scope">
+          <span>{{ scope.row.remainder }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="printDate" label="打印时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.printDate) }}</span>
         </template>
       </el-table-column>
       </el-table-column>
@@ -150,7 +165,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadUmaChemicalFiberStatement } from '@/api/umaChemicalFiberStatement'
-import { parseTimeToDate, downloadFile } from '@/utils/index'
+import { parseTimeToDate, downloadFile, parseTime } from '@/utils/index'
 import eForm from './form'
 import addForm from './addForm'
 export default {
@@ -165,6 +180,9 @@ export default {
         // { key: 'contacts', display_name: '客户联系人' },
         // { key: 'contactPhone', display_name: '客户联系电话' }
       ],
+      query:{
+        type: 'customerName'
+      }
     }
   },
   filters: {
@@ -179,6 +197,7 @@ export default {
   },
   methods: {
     parseTimeToDate,
+    parseTime,
     checkPermission,
     beforeInit() {
       this.url = 'api/umaChemicalFiberStatement'
@@ -253,6 +272,7 @@ export default {
       }).catch(() => {
         this.downloadLoading = false
       })
+
     }
     /*parses(data){
       data.accumulatedArrears = data.totalArrears - data.receivable

@@ -296,7 +296,7 @@ export default {
       if (type && value) { this.params[type] = value }
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
-        this.params['tempEndTime'] = dateQuery[1].getTime()
+        this.params['tempEndTime'] = dateQuery[1].getTime() + 24 * 60 * 60 * 1000
       }
       this.tempGetSalesReportSummaries()
       this.getSummaryData(this.params)
@@ -401,6 +401,14 @@ export default {
       if (day < 10)  day = '0' + day
       this.startTime = date.getFullYear() + '-' + month + '-' + day
     },
+    /*getCurrentMonthLast () {
+      var date = new Date()
+      var year = date.getFullYear()
+      var month = date.getMonth() + 2
+      month = month < 10 ? '0' + month : month
+      var day = new Date(year, month, 0)
+      this.endTime = year + '-' + month + '-' + day.getDate()
+    }*/
     getCurrentMonthLast () {
       var date = new Date()
       var year = date.getFullYear()
