@@ -41,14 +41,16 @@
       @click="toQuery"
     >搜索</el-button>
     <el-button :loading="downloadLoading" size="mini" type="success" @click="exportWarehousing()">导出</el-button>
-    <el-tag class="filter-item" type="info">总支数 {{ sum}} 支</el-tag>
+    <!--<el-tag class="filter-item" type="info">总支数 {{ sum}} 支</el-tag>
     <el-tag class="filter-item" type="info">总吨数 {{ sumTon }} T</el-tag>
-    <el-tag class="filter-item" type="success">总金额 {{ sumtotalPrice }} 元</el-tag>
+    <el-tag class="filter-item" type="success">总金额 {{ sumtotalPrice }} 元</el-tag>-->
     <div class="head-container">
       <el-table
         v-loading="loading"
         :data="data"
+        :summary-method="getSummaries"
         border
+        show-summary
         size="small"
         style="width: 100%;"
       >
@@ -120,7 +122,7 @@ export default {
   mixins: [initData],
   data() {
     return {
-      dateQuery: '',checkInvalidQuery: false,sumtotalPrice: 0,sumTon: 0,sum: 0,startTime: '',
+      dateQuery: '',checkInvalidQuery: false,sumtotalPrice: 0,sumTon: 0,sum: 0,startTime: '',sums:[],
       endTime: '',
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '入库单号' },
@@ -172,6 +174,7 @@ export default {
           return false
       }
       this.getSummaryData(this.params)
+      this.tempGetProductionReportSummaries()
       /*const query = this.query
       const type = query.type
       const value = query.value
@@ -181,6 +184,14 @@ export default {
       this.params['queryWithInvalid'] = checkInvalidQurey
       */
       return true
+    },
+    getSummaries() {
+      return this.sums
+    },
+    tempGetProductionReportSummaries() {
+      getSummaryData(this.params).then(res => {
+        this.sums = res.data
+      })
     },
     getSummaryData(params) {
       getSummaryData(params).then((res) => {
@@ -243,6 +254,13 @@ export default {
 <style>
   body .el-table th.gutter {
     display: table-cell !important
+  }
+  .el-table .warning-row {
+    background: #c5c8ce;
+  }
+
+  .el-table .success-row {
+    background: #ffffff;
   }
 
 </style>

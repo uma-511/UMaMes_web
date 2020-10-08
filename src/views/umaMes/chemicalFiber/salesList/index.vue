@@ -71,7 +71,7 @@
         <el-table-column prop="sumNumber" label="数量差" align="center">
         </el-table-column>
         </el-table-column>
-        <el-table-column prop="totalPrice" label="计划金额" align="center"/>
+        <el-table-column prop="totalPrice" label="预计金额" align="center"/>
         <el-table-column prop="realPrice" label="实际金额" align="center"/>
         <el-table-column prop="sumPrice" label="金额差" align="center">
         </el-table-column>
@@ -115,7 +115,10 @@ export default {
         { key: 'customerName', display_name: '客户名称' },
         { key: 'prodName', display_name: '产品名称' },
         { key: 'scanNumber', display_name: '送货单号' }
-      ]
+      ],
+      query:{
+        type: 'customerName'
+      }
     }
   },
   created() {
@@ -140,7 +143,7 @@ export default {
       if (type && value) { this.params[type] = value }
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
-        this.params['tempEndTime'] = dateQuery[1].getTime()
+        this.params['tempEndTime'] = dateQuery[1].getTime() + 24 * 60 * 60 * 1000
       } else {
         this.$notify({
           title: '警告',

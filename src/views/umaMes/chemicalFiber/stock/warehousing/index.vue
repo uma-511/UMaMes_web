@@ -70,7 +70,8 @@
         </el-table-column>
         <el-table-column prop="supplierName" label="供应商名称"align="center"/>
         <el-table-column prop="batchNumber" label="批号"align="center"/>
-        <el-table-column prop="tonAndBranch" label="数量"align="center"  width="180px"/>
+        <el-table-column prop="ton" label="吨数量"align="center"/>
+        <el-table-column prop="branch" label="支数量"align="center"/>
         <el-table-column prop="totalPrice" label="总金额"align="center"/>
         <el-table-column prop="warehousingStatus" label="状态"align="center">
           <template slot-scope="scope">
