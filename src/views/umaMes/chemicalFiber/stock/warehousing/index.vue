@@ -63,28 +63,22 @@
         style="width: 100%;"
       >
         <el-table-column prop="scanNumber" label="入库单号"align="center"/>
-        <el-table-column prop="supplierName" label="供应商名称"align="center"/>
-        <el-table-column prop="batchNumber" label="批号"align="center"/>
-        <el-table-column prop="tonAndBranch" label="数量"align="center"  width="180px"/>
-        <el-table-column prop="totalPrice" label="总金额"align="center"/>
-        <el-table-column prop="createDate" label="制单时间"align="center">
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.createDate) }}</span>
-          </template>
-        </el-table-column>
         <el-table-column prop="warehousingDate" label="入库日期"align="center">
           <template slot-scope="scope">
             <span>{{ parseTimeToDate(scope.row.warehousingDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createUser" label="制单人"align="center"/>
+        <el-table-column prop="supplierName" label="供应商名称"align="center"/>
+        <el-table-column prop="batchNumber" label="批号"align="center"/>
+        <el-table-column prop="tonAndBranch" label="数量"align="center"  width="180px"/>
+        <el-table-column prop="totalPrice" label="总金额"align="center"/>
         <el-table-column prop="warehousingStatus" label="状态"align="center">
           <template slot-scope="scope">
             <div v-if = "scope.row.invalid == 1">
-                <el-tag
-                  type="danger"
-                  size="medium"
-                >{{ statusValue[0] }}</el-tag>
+              <el-tag
+                type="danger"
+                size="medium"
+              >{{ statusValue[0] }}</el-tag>
             </div>
             <div v-else>
               <div v-if="scope.row.warehousingStatus == 1">
@@ -102,6 +96,13 @@
 
             </div>
 
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="createUser" label="制单人"align="center"/>
+        <el-table-column prop="createDate" label="制单时间"align="center">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -408,12 +409,12 @@
           </el-table-column>
           <el-table-column prop="warehousingNumber" label="数量" width="120px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.warehousingNumber" :disabled="form.warehousingStatus == 2?true:false" :min="0" type="number" @input = "sum(scope.row)"/>
+              <el-input v-model="scope.row.warehousingNumber" :disabled="form.warehousingStatus == 2?true:false" :min="0" type="number" @input = "sumTotal(scope.row)"/>
             </template>
           </el-table-column>
           <el-table-column prop="price" label="单价" width="120px" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.price" :disabled="form.warehousingStatus == 2?true:false" :min="0" type="number" @input = "sum(scope.row)"/>
+              <el-input v-model="scope.row.price" :disabled="form.warehousingStatus == 2?true:false" :min="0" type="number" @input = "sumTotal(scope.row)"/>
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="总金额" width="150px" align="center"/>
@@ -643,7 +644,11 @@ export default {
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '入库单号' },
         { key: 'supplierName', display_name: '供应商' },
+
       ],
+      query:{
+        type: 'supplierName'
+      },
       statusValue: {
         0: '已失效',
         1: '编辑中',
@@ -1016,7 +1021,7 @@ export default {
         console.log(err.response.data.message)
       })
     },
-    sum(data) {
+    sumTotal(data) {
       data.totalPrice = (data.warehousingNumber * data.price).toFixed(2)
       this.buttonType()
     },

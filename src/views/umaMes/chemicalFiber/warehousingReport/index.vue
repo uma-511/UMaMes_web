@@ -125,9 +125,12 @@ export default {
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '入库单号' },
         { key: 'prodName', display_name: '产品名称' },
-        { key: 'supplierName', display_name: '供应商名称' },
+        { key: 'supplierName', display_name: '供应商' },
         { key: 'createUser', display_name: '制单人' }
-      ]
+      ],
+      query:{
+        type: 'supplierName'
+      }
     }
 
   },
@@ -159,7 +162,7 @@ export default {
       }
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
-        this.params['tempEndTime'] = dateQuery[1].getTime()
+        this.params['tempEndTime'] = dateQuery[1].getTime() + 24 * 60 * 60 * 1000
       } else {
           this.$notify({
             title: '警告',

@@ -401,13 +401,22 @@ export default {
       if (day < 10)  day = '0' + day
       this.startTime = date.getFullYear() + '-' + month + '-' + day
     },
-    getCurrentMonthLast () {
+    /*getCurrentMonthLast () {
       var date = new Date()
       var year = date.getFullYear()
-      var month = date.getMonth() + 1
+      var month = date.getMonth() + 2
       month = month < 10 ? '0' + month : month
       var day = new Date(year, month, 0)
       this.endTime = year + '-' + month + '-' + day.getDate()
+    }*/
+    getCurrentMonthLast () {
+      var date = new Date()
+      date.setDate(1)
+      var month = parseInt(date.getMonth() + 2)
+      var day = date.getDate()
+      if (month < 10)  month = '0' + month
+      if (day < 10)  day = '0' + day
+      this.endTime = date.getFullYear() + '-' + month + '-' + day
     }
    /* details(data) {
       this.dialogVisible = true
