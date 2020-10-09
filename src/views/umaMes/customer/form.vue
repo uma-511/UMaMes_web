@@ -19,6 +19,9 @@
       <el-form-item label="联系电话" prop="contactPhone">
         <el-input v-model="form.contactPhone" style="width: 370px;" maxlength="15"/>
       </el-form-item>
+      <el-form-item label="对账日" prop="reconciliation">
+        <el-input v-model="form.reconciliation" style="width: 370px;" maxlength="15"/>
+      </el-form-item>
       <el-form-item label="备注" >
         <el-input v-model="form.remark" style="width: 370px;" maxlength="100"/>
       </el-form-item>

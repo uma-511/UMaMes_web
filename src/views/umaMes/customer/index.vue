@@ -190,7 +190,8 @@ export default {
         fullName: data.fullName,
         account: data.account,
         totalArrears: data.totalArrears,
-        currentArrears: data.currentArrears
+        currentArrears: data.currentArrears,
+        reconciliation: data.reconciliation
       }
       _this.dialog = true
     },
