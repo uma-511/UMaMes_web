@@ -198,6 +198,9 @@ export default {
         { key: 'prodFineness', display_name: '产品纤度' },*/
         { key: 'prodUnit', display_name: '计量单位' }
       ],
+      query: {
+        type: 'prodName'
+      },
       stockMapping: {
         0: 'success',
         1: 'warning',
