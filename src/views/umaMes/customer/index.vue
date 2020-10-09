@@ -54,7 +54,8 @@
       <el-table-column prop="address" show-overflow-tooltip="true" label="客户地址"/>
       <el-table-column prop="contacts" show-overflow-tooltip="true" label="联系人"/>
       <el-table-column prop="contactPhone" show-overflow-tooltip="true" label="联系电话"/>
-      <el-table-column prop="account" label="预付额度"/>
+      <el-table-column prop="reconciliation" show-overflow-tooltip="true" label="对账日"/>
+      <el-table-column prop="account" label="支配金额"/>
       <el-table-column prop="totalArrears" label="上期欠款"/>
       <el-table-column prop="currentArrears" label="本月欠款"/>
       <el-table-column prop="remark" show-overflow-tooltip="true" label="备注"/>

@@ -47,6 +47,7 @@
         <el-table v-loading="loading" :data="data" stripe size="small" style="width: 100%;" @row-click="rowClicker">
           <el-table-column prop="model" label="产品编号"/>
           <el-table-column prop="name" label="产品名称"/>
+          <el-table-column prop="machining" label="加工单价(元/吨)"/>
           <el-table-column prop="createDate" label="创建日期">
             <template slot-scope="scope">
               <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
@@ -165,7 +166,8 @@ export default {
         createUser: row.createUser,
         delFlag: row.delFlag,
         menusId: row.menusId,
-        menus: row.menus
+        menus: row.menus,
+        machining: row.machining
       }
       _this.dialog = true
     },
@@ -202,7 +204,8 @@ export default {
         fineness: data.fineness,
         createDate: data.createDate,
         createUser: data.createUser,
-        delFlag: data.delFlag
+        delFlag: data.delFlag,
+        machining: row.machining
       }
       _this.dialog = true
     },

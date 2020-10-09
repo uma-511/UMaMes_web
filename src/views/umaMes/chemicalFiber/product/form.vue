@@ -26,6 +26,9 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="加工单价" prop="machining">
+        <el-input v-model="form.machining" style="width: 370px;" maxlength="25"/>
+      </el-form-item>
     <!--  <el-form-item label="色号" prop="color">
         <el-input v-model="form.color" style="width: 370px;" maxlength="10"/>
       </el-form-item>
