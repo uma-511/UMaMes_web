@@ -22,8 +22,8 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-row :gutter="15">
-      <!--角色管理-->
-      <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="17" style="margin-bottom: 10px">
+      <!--类型列表-->
+      <el-col :xs="18" :sm="18" :md="15" :lg="15" :xl="13" style="margin-bottom: 10px">
         <el-card class="box-card" shadow="never">
           <div slot="header" class="clearfix">
             <span class="role-span">类型列表</span>
@@ -52,7 +52,7 @@
                 </div>
               </template>
             </el-table-column>-->
-            <el-table-column label="操作" width="150px" align="center">
+            <el-table-column label="操作" width="100px" align="center">
               <template slot-scope="scope">
                 <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
                 <!--<el-popover
@@ -80,7 +80,7 @@
             @current-change="pageChange"/>
         </el-card>
       </el-col>
-      <el-col :xs="12" :sm="12" :md="4" :lg="4" :xl="1">
+      <el-col :xs="12" :sm="12" :md="4" :lg="4" :xl="4">
         <el-card class="box-card" shadow="never">
           <div slot="header" class="clearfix">
             <el-tooltip class="item" effect="dark" content="选择指定类型分配周期" placement="top">
@@ -106,7 +106,7 @@
             node-key="id"/>
         </el-card>
       </el-col>
-      <el-col :xs="12" :sm="12" :md="4" :lg="4" :xl="7">
+      <el-col :xs="12" :sm="12" :md="4" :lg="4" :xl="4">
         <el-card class="box-card" shadow="never">
           <div slot="header" class="clearfix">
             <el-tooltip class="item" effect="dark" content="选择指定类型分配周期" placement="top">

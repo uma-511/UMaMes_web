@@ -11,31 +11,31 @@
         <el-input :disabled="true" v-model="form.job" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="基本工资" >
-        <el-input v-model="form.basicSalary" style="width: 370px;"/>
+        <el-input v-model="form.basicSalary" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="绩效" >
-        <el-input v-model="form.performance" style="width: 370px;"/>
+        <el-input v-model="form.performance" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="打卡奖" >
-        <el-input v-model="form.cardPrize" style="width: 370px;"/>
+        <el-input v-model="form.cardPrize" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="安全奖" >
-        <el-input v-model="form.safePrize" style="width: 370px;"/>
+        <el-input v-model="form.safePrize" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="全勤奖" >
-        <el-input v-model="form.fullPrize" style="width: 370px;"/>
+        <el-input v-model="form.fullPrize" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="高温津贴" >
-        <el-input v-model="form.highTemperatureSubsidy" style="width: 370px;"/>
+        <el-input v-model="form.highTemperatureSubsidy" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="加班费" >
-        <el-input v-model="form.overtimePay" style="width: 370px;"/>
+        <el-input v-model="form.overtimePay" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="其他" >
-        <el-input v-model="form.otherPrize" style="width: 370px;"/>
+        <el-input v-model="form.otherPrize" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="应发工资" >
-        <el-input v-model="form.wagesPayable" style="width: 370px;"/>
+        <el-input :disabled="true" v-model="form.wagesPayable" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="出勤天数" >
         <el-input v-model="form.attendance" style="width: 370px;"/>
@@ -44,16 +44,16 @@
         <el-input v-model="form.attendanceReal" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="请假" >
-        <el-input v-model="form.leaveCount" style="width: 370px;"/>
+        <el-input v-model="form.leaveCount" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <!--<el-form-item label="休息" >
         <el-input v-model="form.restDay" style="width: 370px;"/>
       </el-form-item>-->
       <el-form-item label="缺卡" >
-        <el-input v-model="form.lackCard" style="width: 370px;"/>
+        <el-input v-model="form.lackCard" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="违反安全" >
-        <el-input v-model="form.violationOfSafety" style="width: 370px;"/>
+        <el-input v-model="form.violationOfSafety" style="width: 370px;" type="number" @input="calPayable"/>
       </el-form-item>
       <el-form-item label="日期" >
         <el-date-picker :disabled="true" v-model="form.dateTime" type="month" style="width: 370px;"/>
@@ -130,6 +130,10 @@ export default {
       if (this.isAdd) {
         this.doAdd()
       } else this.doEdit()
+    },
+    calPayable() {
+      this.form.wagesPayable = (this.form.basicSalary) * 1 + (this.form.performance) * 1 + (this.form.cardPrize) * 1 + (this.form.safePrize) * 1 + (this.form.fullPrize) * 1 + (this.form.highTemperatureSubsidy) * 1 + (this.form.overtimePay) * 1 + (this.form.otherPrize) * 1
+      this.form.netSalary = (this.form.wagesPayable) * 1 - (this.form.leaveCount) * 1 - (this.form.lackCard) * 1 - (this.form.violationOfSafety) * 1
     },
     doFinish() {
       this.finishLoading = true
