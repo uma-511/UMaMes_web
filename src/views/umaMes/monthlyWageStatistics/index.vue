@@ -73,24 +73,17 @@
               size="medium"
             >{{ statusValue[0] }}</el-tag>
           </div>
-          <!--待发放-->
+          <!--已完成-->
           <div v-if="scope.row.status == 1">
             <el-tag
+              type="success"
               size="medium"
             >{{ statusValue[1] }}</el-tag>
           </div>
-          <!--已发放-->
-          <div v-if="scope.row.status == 2">
-            <el-tag
-              type="warning"
-              size="medium"
-            >{{ statusValue[2] }}</el-tag>
-          </div>
         </template>
       </el-table-column>
-      <!--<el-table-column v-if="checkPermission(['admin','monthlyWageStatistics:edit','monthlyWageStatistics:del'])" label="操作" width="150px" align="center">
+      <el-table-column v-if="checkPermission(['admin','monthlyWageStatistics:edit','monthlyWageStatistics:del'])" label="操作" width="80px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','monthlyWageStatistics:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
             v-permission="['admin','monthlyWageStatistics:del']"
             :ref="scope.row.id"
@@ -101,10 +94,10 @@
               <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
               <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
             </div>
-            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
+            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" @click.stop/>
           </el-popover>
         </template>
-      </el-table-column>-->
+      </el-table-column>
     </el-table>
     <!--分页组件-->
     <el-pagination
@@ -131,8 +124,7 @@ export default {
       delLoading: false,
       statusValue: {
         0: '待确认',
-        1: '待发放',
-        2: '已发放'
+        1: '已完成'
       },
       queryTypeOptions: [
         { key: 'personName', display_name: '姓名' },

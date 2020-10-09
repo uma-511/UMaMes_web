@@ -38,3 +38,12 @@ export function generateWage() {
     method: 'get'
   })
 }
+
+
+
+export function doFinish(id) {
+  return request({
+    url: 'api/monthlyWageStatistics/doFinish/' + id,
+    method: 'get'
+  })
+}

@@ -4,6 +4,9 @@
       <el-form-item label="类型" >
         <el-input v-model="form.attenceType" style="width: 370px;"/>
       </el-form-item>
+      <el-form-item label="金额" >
+        <el-input v-model="form.price" style="width: 370px;"/>
+      </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
@@ -79,6 +82,7 @@ export default {
       this.form = {
         id: '',
         attenceType: '',
+        price: '',
         enable: ''
       }
     }

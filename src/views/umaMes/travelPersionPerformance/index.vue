@@ -40,7 +40,7 @@
       <el-table-column prop="surcharge" label="附加费"/>
       <el-table-column prop="handlingCost" label="装卸费"/>
       <el-table-column prop="totalPerformance" label="绩效总计"/>
-      <el-table-column prop="createTime" label="日期">
+      <el-table-column prop="createTime" label="交货日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.createTime) }}</span>
         </template>

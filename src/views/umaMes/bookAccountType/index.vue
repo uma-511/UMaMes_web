@@ -31,7 +31,7 @@
       <el-table-column prop="name" label="记账项目"/>
       <el-table-column prop="createTime" label="创建日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
+          <span>{{ parseTimeToDate(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column v-if="checkPermission(['admin','bookAccountType:edit','bookAccountType:del'])" label="操作" width="150px" align="center">
@@ -67,7 +67,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadBookAccountType } from '@/api/bookAccountType'
-import { parseTime, downloadFile } from '@/utils/index'
+import { parseTimeToDate, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
@@ -83,7 +83,7 @@ export default {
     })
   },
   methods: {
-    parseTime,
+    parseTimeToDate,
     checkPermission,
     beforeInit() {
       this.url = 'api/bookAccountType'

@@ -3,8 +3,8 @@
     <!--工具栏-->
     <div class="head-container">
       <!-- 搜索 -->
-      <el-input v-model="query.value" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
-      <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
+      <el-input v-model="queryValue" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
+      <el-select v-model="queryType" clearable placeholder="类型" class="filter-item" style="width: 130px">
         <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select>
       <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
@@ -78,11 +78,12 @@ export default {
       delLoading: false,
       queryTypeOptions: [
         { key: 'personName', display_name: '人员姓名' },
-        { key: 'attenceDate', display_name: '制单日期' },
         { key: 'attenceType', display_name: '类型' },
         { key: 'day', display_name: '天数' },
         { key: 'remark', display_name: '备注' }
-      ]
+      ],
+      queryType: 'personName',
+      queryValue: ''
     }
   },
   created() {
@@ -97,10 +98,7 @@ export default {
       this.url = 'api/workAttendance'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
-      const query = this.query
-      const type = query.type
-      const value = query.value
-      if (type && value) { this.params[type] = value }
+      if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       return true
     },
     subDelete(id) {
