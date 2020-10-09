@@ -78,7 +78,7 @@
       <el-table-column prop="accountCode" label="对账单号"/>
       <el-table-column prop="reconciliations" label="对账日">
       </el-table-column>
-      <el-table-column prop="createDate" label="创建日期">
+      <el-table-column prop="createDate" label="送货日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
