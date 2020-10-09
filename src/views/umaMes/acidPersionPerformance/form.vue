@@ -1,7 +1,7 @@
 <template>
-  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
-    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="责任人" >
+  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="520px">
+    <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
+      <el-form-item label="责任人" prop="person">
         <el-select
           v-model="form.person"
           :disabled="!isAdd"
@@ -27,7 +27,7 @@
       <el-form-item label="任务日期" >
         <el-date-picker v-model="form.taskDate" type="date" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="产品编号" >
+      <el-form-item label="产品编号" prop="productCode">
         <el-select
           v-model="form.productCode"
           :disabled="!isAdd"
@@ -49,7 +49,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="产品名称" >
+      <el-form-item label="产品名称" prop="productName">
         <el-select
           v-model="form.productName"
           :disabled="!isAdd"
@@ -71,16 +71,16 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="桶数" >
+      <el-form-item label="桶数" prop="number">
         <el-input v-model="form.number" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="calPrice"/>
       </el-form-item>
-      <el-form-item label="规格(公斤)" >
+      <el-form-item label="规格(公斤)" prop="specifications">
         <el-input v-model="form.specifications" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="calPrice"/>
       </el-form-item>
       <el-form-item label="吨数" >
         <el-input v-model="form.weight" :disabled="true" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="单价(元)" >
+      <el-form-item label="单价(元)" prop="unitPrice">
         <el-input v-model="form.unitPrice" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="calPrice"/>
       </el-form-item>
       <el-form-item label="金额" >
@@ -129,6 +129,24 @@ export default {
         createDate: ''
       },
       rules: {
+        person: [
+          { required: true, message: '责任人不能为空', trigger: 'blur' }
+        ],
+        productCode: [
+          { required: true, message: '产品编号不能为空', trigger: 'blur' }
+        ],
+        productName: [
+          { required: true, message: '产品名称不能为空', trigger: 'blur' }
+        ],
+        number: [
+          { required: true, message: '桶数不能为空', trigger: 'blur' }
+        ],
+        specifications: [
+          { required: true, message: '规格不能为空', trigger: 'blur' }
+        ],
+        unitPrice: [
+          { required: true, message: '单价不能为空', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -197,7 +215,8 @@ export default {
           return item
         })
       })
-    },prodRemoteMethodByCode(query) {
+    },
+    prodRemoteMethodByCode(query) {
       const params = { model: query }
       this.userLoading = true
       getProdList(params).then(res => {
@@ -209,62 +228,167 @@ export default {
       })
     },
     subThenCreate() {
-      add(this.form).then(res => {
-        this.$notify({
-          title: '添加成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.loading = false
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.person === null || this.person === undefined) {
+            this.$message({
+              message: '责任人不能为空',
+              type: 'warning'
+            })
+          } else if (this.productName === null) {
+            this.$message({
+              message: '产品名称不能为空',
+              type: 'warning'
+            })
+          } else if (this.productCode === null) {
+            this.$message({
+              message: '产品编号不能为空',
+              type: 'warning'
+            })
+          } else if (this.number === null) {
+            this.$message({
+              message: '桶数不能为空',
+              type: 'warning'
+            })
+          } else if (this.specifications === null) {
+            this.$message({
+              message: '规格不能为空',
+              type: 'warning'
+            })
+          } else if (this.unitPrice === null) {
+            this.$message({
+              message: '单价不能为空',
+              type: 'warning'
+            })
+          }
+          add(this.form).then(res => {
+            this.$notify({
+              title: '添加成功',
+              type: 'success',
+              duration: 2500
+            })
+            this.loading = false
+            this.$parent.init()
+          }).catch(err => {
+            this.loading = false
+            console.log(err.response.data.message)
+          })
+          this.form = {
+            id: '',
+            person: '',
+            personId: '',
+            taskDate: new Date(),
+            productName: '',
+            productCode: '',
+            number: '',
+            specifications: '',
+            weight: '',
+            unitPrice: '',
+            price: '',
+            enable: '',
+            createDate: ''
+          }
+        }
       })
-      this.form = {
-        id: '',
-        person: '',
-        personId: '',
-        taskDate: new Date(),
-        productName: '',
-        productCode: '',
-        number: '',
-        specifications: '',
-        weight: '',
-        unitPrice: '',
-        price: '',
-        enable: '',
-        createDate: ''
-      }
     },
     doAdd() {
-      add(this.form).then(res => {
-        this.resetForm()
-        this.$notify({
-          title: '添加成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.loading = false
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.person === null || this.person === undefined) {
+            this.$message({
+              message: '责任人不能为空',
+              type: 'warning'
+            })
+          } else if (this.productName === null) {
+            this.$message({
+              message: '产品名称不能为空',
+              type: 'warning'
+            })
+          } else if (this.productCode === null) {
+            this.$message({
+              message: '产品编号不能为空',
+              type: 'warning'
+            })
+          } else if (this.number === null) {
+            this.$message({
+              message: '桶数不能为空',
+              type: 'warning'
+            })
+          } else if (this.specifications === null) {
+            this.$message({
+              message: '规格不能为空',
+              type: 'warning'
+            })
+          } else if (this.unitPrice === null) {
+            this.$message({
+              message: '单价不能为空',
+              type: 'warning'
+            })
+          }
+          add(this.form).then(res => {
+            this.resetForm()
+            this.$notify({
+              title: '添加成功',
+              type: 'success',
+              duration: 2500
+            })
+            this.loading = false
+            this.$parent.init()
+          }).catch(err => {
+            this.loading = false
+            console.log(err.response.data.message)
+          })
+        }
       })
     },
     doEdit() {
-      edit(this.form).then(res => {
-        this.resetForm()
-        this.$notify({
-          title: '修改成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.loading = false
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.person === null || this.person === undefined) {
+            this.$message({
+              message: '责任人不能为空',
+              type: 'warning'
+            })
+          } else if (this.productName === null) {
+            this.$message({
+              message: '产品名称不能为空',
+              type: 'warning'
+            })
+          } else if (this.productCode === null) {
+            this.$message({
+              message: '产品编号不能为空',
+              type: 'warning'
+            })
+          } else if (this.number === null) {
+            this.$message({
+              message: '桶数不能为空',
+              type: 'warning'
+            })
+          } else if (this.specifications === null) {
+            this.$message({
+              message: '规格不能为空',
+              type: 'warning'
+            })
+          } else if (this.unitPrice === null) {
+            this.$message({
+              message: '单价不能为空',
+              type: 'warning'
+            })
+          }
+          edit(this.form).then(res => {
+            this.resetForm()
+            this.$notify({
+              title: '修改成功',
+              type: 'success',
+              duration: 2500
+            })
+            this.loading = false
+            this.$parent.init()
+          }).catch(err => {
+            this.loading = false
+            console.log(err.response.data.message)
+          })
+        }
       })
     },
     resetForm() {

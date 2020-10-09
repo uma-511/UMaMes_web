@@ -3,8 +3,8 @@
     <!--工具栏-->
     <div class="head-container">
       <!-- 搜索 -->
-      <el-input v-model="query.value" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
-      <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
+      <el-input v-model="queryValue" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
+      <el-select v-model="queryType" clearable placeholder="类型" class="filter-item" style="width: 130px">
         <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select>
       <el-checkbox
@@ -28,15 +28,9 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="id" label="id"/>
+      <el-table-column prop="id" label="序号"/>
       <el-table-column prop="startPlace" label="发货地"/>
       <el-table-column prop="endPlace" label="目的地"/>
-      <el-table-column prop="createUser" label="创建者"/>
-      <el-table-column prop="createTime" label="创建时间">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
       <el-table-column prop="tractorPrice" label="拖头费用"/>
       <el-table-column prop="vanPrice" label="厢式车费用"/>
       <el-table-column prop="tankPrice" label="槽罐车费用"/>
@@ -54,6 +48,12 @@
               size="medium"
             >正常</el-tag>
           </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createUser" label="创建者"/>
+      <el-table-column prop="createTime" label="创建时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column v-if="checkPermission(['admin','travelExpenses:edit','travelExpenses:del'])" label="操作" width="150px" align="center">
@@ -101,7 +101,9 @@ export default {
       queryTypeOptions: [
         { key: 'startPlace', display_name: '发货地' },
         { key: 'endPlace', display_name: '目的地' }
-      ]
+      ],
+      queryType: 'endPlace',
+      queryValue: ''
     }
   },
   created() {
@@ -116,12 +118,9 @@ export default {
       this.url = 'api/travelExpenses'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
-      const query = this.query
-      const type = query.type
-      const value = query.value
       const checkEnables = this.showUnEnable
       this.params['showUnEnable'] = checkEnables
-      if (type && value) { this.params[type] = value }
+      if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       return true
     },
     subDelete(id) {

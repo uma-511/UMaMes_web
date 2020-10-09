@@ -48,7 +48,7 @@
       <el-form-item label="绩效总计" >
         <el-input :disabled="true" v-model="form.totalPerformance" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="日期" >
+      <el-form-item label="交货日期" >
         <el-date-picker :disabled="!isAdd" v-model="form.createTime" type="date" style="width: 370px;"/>
       </el-form-item>
     </el-form>

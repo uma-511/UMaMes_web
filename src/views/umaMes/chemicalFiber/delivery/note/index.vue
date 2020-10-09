@@ -5,7 +5,7 @@
       <!-- 搜索 -->
       <el-input
         v-longpress="showInvoice"
-        v-model="query.value"
+        v-model="queryValue"
         clearable
         placeholder="输入搜索内容"
         style="width: 200px;"
@@ -13,7 +13,7 @@
         @keyup.enter.native="toQuery"
       />
       <el-select
-        v-model="query.type"
+        v-model="queryType"
         clearable
         placeholder="类型"
         class="filter-item"
@@ -78,19 +78,18 @@
       @row-click="detail($event)"
     >
       <el-table-column prop="scanNumber" label="出库单号"/>
-      <el-table-column prop="customerName" label="客户名称"/>
-      <el-table-column prop="customerCode" label="客户编号"/>
-      <el-table-column prop="contacts" label="联系人"/>
-      <el-table-column prop="contactPhone" label="联系电话"/>
-      <el-table-column prop="remark" label="备注"/>
-      <el-table-column prop="totalPrice" label="总金额"/>
-      <el-table-column prop="seller" label="业务员"/>
-      <el-table-column prop="createDate" label="制单日期">
+      <el-table-column prop="deliveryDate" label="交货日期">
         <template slot-scope="scope">
-          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
+          <span>{{ parseTimeToDate(scope.row.deliveryDate) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createUser" label="制单人"/>
+      <el-table-column prop="customerCode" label="客户编号"/>
+      <el-table-column prop="customerName" label="客户名称"/>
+      <el-table-column prop="contacts" label="联系人"/>
+      <el-table-column prop="contactPhone" label="联系电话"/>
+      <el-table-column prop="seller" label="业务员"/>
+      <el-table-column prop="totalPrice" label="金额"/>
+      <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="noteStatus" label="状态">
         <template slot-scope="scope">
           <div v-if="scope.row.enable == false">
@@ -141,6 +140,12 @@
               >{{ statusValue[6] }}</el-tag>
             </div>
           </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createUser" label="制单人"/>
+      <el-table-column prop="createDate" label="制单日期">
+        <template slot-scope="scope">
+          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -449,6 +454,7 @@
                 :loading="carLoading"
                 :remote-method="carRemoteMethod"
                 filterable
+                clearable
                 remote
                 reserve-keyword
                 placeholder="输入车牌关键词"
@@ -987,10 +993,11 @@ export default {
         { key: 'scanNumber', display_name: '出库单号' },
         { key: 'customerName', display_name: '客户名称' },
         { key: 'customerCode', display_name: '客户编号' },
-        { key: 'customerAddress', display_name: '客户地址' },
         { key: 'contacts', display_name: '联系人' },
         { key: 'contactPhone', display_name: '联系电话' }
       ],
+      queryType: 'customerName',
+      queryValue: '',
       statusValue: {
         0: '已失效',
         1: '待打印',
@@ -1047,7 +1054,7 @@ export default {
       const value = query.value
       const dateQuery = this.dateQuery
       const checkEnables = this.showUnEnable
-      if (type && value) { this.params[type] = value }
+      if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       this.params['showUnEnable'] = checkEnables
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
@@ -1127,6 +1134,8 @@ export default {
         })
       }).catch(err => {
         this.sutmitDetailLoading = false
+        this.$refs[this.form.customerName].doClose()
+        this.dialogVisible = false
         console.log(err.response.data.message)
       })
     },
@@ -1189,6 +1198,14 @@ export default {
       this.detailList = []
       this.payDetailList = []
       this.buttonType()
+      const accountListParams = {}
+      getAccountList(accountListParams).then(res => {
+        this.accountLoading = false
+        this.accountList = res
+        this.accountOptions = this.accountList.filter(item => {
+          return item
+        })
+      })
     },
     // 导出
     download() {
@@ -1659,6 +1676,8 @@ export default {
         })
       }).catch(err => {
         this.sutmitDetailLoading = false
+        this.$refs['reRecived' + id].doClose()
+        this.dialogVisible = false
         console.log(err.response.data.message)
       })
     },

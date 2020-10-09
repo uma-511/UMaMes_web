@@ -186,7 +186,7 @@ export default {
             add(this.form).then(res => {
               this.$notify({
                 title: '添加成功',
-                message: '默认密码：123456',
+                message: '默认密码：123',
                 type: 'success',
                 duration: 2500
               })
@@ -211,7 +211,7 @@ export default {
         this.resetForm()
         this.$notify({
           title: '添加成功',
-          message: '默认密码：123456',
+          message: '默认密码：123',
           type: 'success',
           duration: 2500
         })

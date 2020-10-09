@@ -73,18 +73,12 @@
               size="medium"
             >{{ statusValue[0] }}</el-tag>
           </div>
-          <!--待发放-->
+          <!--已完成-->
           <div v-if="scope.row.status == 1">
             <el-tag
+              type="success"
               size="medium"
             >{{ statusValue[1] }}</el-tag>
-          </div>
-          <!--已发放-->
-          <div v-if="scope.row.status == 2">
-            <el-tag
-              type="warning"
-              size="medium"
-            >{{ statusValue[2] }}</el-tag>
           </div>
         </template>
       </el-table-column>
@@ -131,8 +125,7 @@ export default {
       delLoading: false,
       statusValue: {
         0: '待确认',
-        1: '待发放',
-        2: '已发放'
+        1: '已完成'
       },
       queryTypeOptions: [
         { key: 'personName', display_name: '姓名' },

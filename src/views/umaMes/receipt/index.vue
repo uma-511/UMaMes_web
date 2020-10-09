@@ -4,7 +4,7 @@
     <div class="head-container">
       <!-- 搜索 -->
       <el-input
-        v-model="query.value"
+        v-model="queryValue"
         clearable
         placeholder="输入搜索内容"
         style="width: 200px;"
@@ -12,7 +12,7 @@
         @keyup.enter.native="toQuery"
       />
       <el-select
-        v-model="query.type"
+        v-model="queryType"
         clearable
         placeholder="类型"
         class="filter-item"
@@ -59,27 +59,21 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :summary-method="getDataSummaries" :data="data" show-summary size="small" style="width: 100%;">
       <el-table-column prop="receiptNumber" label="流水号"/>
-      <el-table-column prop="customerName" label="客户名称"/>
-      <el-table-column prop="type" label="收入类型"/>
-      <el-table-column prop="recivedAccount" label="收款方式"/>
-      <el-table-column prop="recivedDate" label="单据日期">
+      <el-table-column prop="recivedDate" label="收款日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.recivedDate) }}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="customerName" label="客户名称"/>
+      <el-table-column prop="type" label="收入类型"/>
+      <el-table-column prop="recivedAccount" label="收款方式"/>
       <el-table-column prop="projectType" label="项目类型"/>
-      <el-table-column prop="operator" label="经办人"/>
       <el-table-column prop="amountOfMoney" label="金额"/>
+      <el-table-column prop="operator" label="经办人"/>
       <el-table-column prop="recivedNumber" label="单据编号"/>
       <el-table-column prop="remark" label="备注"/>
-      <el-table-column prop="createUser" label="制单人"/>
-      <el-table-column prop="createDate" label="制单日期">
-        <template slot-scope="scope">
-          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
-        </template>
-      </el-table-column>
       <el-table-column prop="noteStatus" label="状态">
         <template slot-scope="scope">
           <div v-if="scope.row.enable == false">
@@ -107,6 +101,12 @@
               >{{ statusValue[0] }}</el-tag>
             </div>
           </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createUser" label="制单人"/>
+      <el-table-column prop="createDate" label="制单日期">
+        <template slot-scope="scope">
+          <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
       <!--<el-table-column prop="status" label="状态"/>-->
@@ -183,7 +183,9 @@ export default {
         { key: 'customerName', display_name: '客户名称' },
         { key: 'customerCode', display_name: '客户编号' },
         { key: 'recivedAccount', display_name: '收款方式' }
-      ]
+      ],
+      queryType: 'customerName',
+      queryValue: ''
     }
   },
   created() {
@@ -199,18 +201,38 @@ export default {
       this.url = 'api/receipt'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
-      const query = this.query
-      const type = query.type
-      const value = query.value
       const dateQuery = this.dateQuery
       const checkEnables = this.showUnEnable
-      if (type && value) { this.params[type] = value }
+      if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       this.params['showUnEnable'] = checkEnables
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
       return true
+    },
+    getDataSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (index === 6) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+      })
+      return sums
     },
     doFinish(id) {
       this.finishLoading = true

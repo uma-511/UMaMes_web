@@ -63,14 +63,26 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-popover
+        v-permission="['admin','bookAccountType:del']"
+        :ref="form.id"
+        placement="top"
+        width="180">
+        <p>确定完成本条记录吗？</p>
+        <div style="text-align: right; margin: 0">
+          <el-button size="mini" type="text" @click="$refs[form.id].doClose()">取消</el-button>
+          <el-button :loading="delLoading" type="primary" size="mini" @click="doFinish()">确定</el-button>
+        </div>
+        <el-button slot="reference" type="warning">完成</el-button>
+      </el-popover>
       <el-button type="text" @click="cancel">取消</el-button>
-      <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
+      <el-button :loading="loading" type="primary" @click="doSubmit">保存</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { add, edit } from '@/api/monthlyWageStatistics'
+import { add, edit, doFinish } from '@/api/monthlyWageStatistics'
 export default {
   props: {
     isAdd: {
@@ -81,6 +93,7 @@ export default {
   data() {
     return {
       loading: false, dialog: false,
+      finishLoading: false,
       form: {
         id: '',
         personName: '',
@@ -117,6 +130,24 @@ export default {
       if (this.isAdd) {
         this.doAdd()
       } else this.doEdit()
+    },
+    doFinish() {
+      this.finishLoading = true
+      doFinish(this.form.id).then(res => {
+        this.$refs[this.form.id].doClose()
+        this.resetForm()
+        this.$notify({
+          title: '成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.finishLoading = false
+        this.$parent.init()
+      }).catch(err => {
+        this.finishLoading = false
+        this.$refs[this.form.id].doClose()
+        console.log(err.response.data.message)
+      })
     },
     doAdd() {
       add(this.form).then(res => {

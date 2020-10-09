@@ -1,7 +1,7 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="人员姓名" >
+      <el-form-item label="人员姓名" prop="personName">
         <el-select
           v-model="form.personName"
           :disabled="!isAdd"
@@ -27,13 +27,14 @@
       <el-form-item label="记录日期" >
         <el-date-picker v-model="form.attenceDate" type="date" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="类型" >
+      <el-form-item label="类型" prop="attenceType">
         <el-select
           v-model="form.attenceType"
           :loading="attenceTypeLoading"
           placeholder="请选择类型"
           style="width: 370px;"
-          @focus="attenceTypeRemoteMethod">
+          @focus="attenceTypeRemoteMethod"
+          @change="setPrice($event)">
           <el-option
             v-for="item in attenceTypeOptions"
             :key="item.attenceType"
@@ -42,7 +43,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="安全类型" >
+      <!--<el-form-item label="安全类型" >
         <el-select
           v-model="form.safeType"
           placeholder="请选择安全类型"
@@ -54,11 +55,11 @@
             :value="item.value"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item label="天数" >
         <el-input v-model="form.day" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="金额" >
+      <el-form-item label="金额" prop="price">
         <el-input v-model="form.price" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="备注" >
@@ -164,6 +165,15 @@ export default {
         enable: ''
       },
       rules: {
+        personName: [
+          { required: true, message: '人员姓名不能为空', trigger: 'blur' }
+        ],
+        attenceType: [
+          { required: true, message: '类型不能为空', trigger: 'blur' }
+        ],
+        price: [
+          { required: true, message: '金额不能为空', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -193,6 +203,14 @@ export default {
         })
       })
     },
+    setPrice(event) {
+      let obj = []
+      console.log(event)
+      obj = this.attenceTypeOptions.find((item) => {
+        return item.attenceType === event
+      })
+      this.form.price = obj.price
+    },
     // 查询人员的下拉列表
     personRemoteMethod(query) {
       const params = { realname: query }
@@ -213,62 +231,125 @@ export default {
       this.form.personId = obj.id
     },
     subThenCreate() {
-      add(this.form).then(res => {
-        this.$notify({
-          title: '添加成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.loading = false
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.personName === null || this.personName === undefined) {
+            this.$message({
+              message: '人员姓名不能为空',
+              type: 'warning'
+            })
+          } else if (this.attenceType === null) {
+            this.$message({
+              message: '类型不能为空',
+              type: 'warning'
+            })
+          } else if (this.price === null) {
+            this.$message({
+              message: '金额不能为空',
+              type: 'warning'
+            })
+          }
+          add(this.form).then(res => {
+            this.$notify({
+              title: '添加成功',
+              type: 'success',
+              duration: 2500
+            })
+            this.loading = false
+            this.$parent.init()
+          }).catch(err => {
+            this.loading = false
+            console.log(err.response.data.message)
+          })
+          this.form = {
+            id: '',
+            personName: '',
+            personId: '',
+            attenceDate: new Date(),
+            attenceType: '',
+            day: '',
+            remark: '',
+            createDate: '',
+            serialNumber: '',
+            safeType: '',
+            price: '',
+            enable: ''
+          }
+        }
       })
-      this.form = {
-        id: '',
-        personName: '',
-        personId: '',
-        attenceDate: new Date(),
-        attenceType: '',
-        day: '',
-        remark: '',
-        createDate: '',
-        serialNumber: '',
-        safeType: '',
-        price: '',
-        enable: ''
-      }
+      this.loading = false
     },
     doAdd() {
-      add(this.form).then(res => {
-        this.resetForm()
-        this.$notify({
-          title: '添加成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.loading = false
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.personName === null || this.personName === undefined) {
+            this.$message({
+              message: '人员姓名不能为空',
+              type: 'warning'
+            })
+          } else if (this.attenceType === null) {
+            this.$message({
+              message: '类型不能为空',
+              type: 'warning'
+            })
+          } else if (this.price === null) {
+            this.$message({
+              message: '金额不能为空',
+              type: 'warning'
+            })
+          }
+          add(this.form).then(res => {
+            this.resetForm()
+            this.$notify({
+              title: '添加成功',
+              type: 'success',
+              duration: 2500
+            })
+            this.loading = false
+            this.$parent.init()
+          }).catch(err => {
+            this.loading = false
+            console.log(err.response.data.message)
+          })
+        }
       })
+      this.loading = false
     },
     doEdit() {
-      edit(this.form).then(res => {
-        this.resetForm()
-        this.$notify({
-          title: '修改成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.loading = false
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.personName === null || this.personName === undefined) {
+            this.$message({
+              message: '人员姓名不能为空',
+              type: 'warning'
+            })
+          } else if (this.attenceType === null) {
+            this.$message({
+              message: '类型不能为空',
+              type: 'warning'
+            })
+          } else if (this.price === null) {
+            this.$message({
+              message: '金额不能为空',
+              type: 'warning'
+            })
+          }
+          edit(this.form).then(res => {
+            this.resetForm()
+            this.$notify({
+              title: '修改成功',
+              type: 'success',
+              duration: 2500
+            })
+            this.loading = false
+            this.$parent.init()
+          }).catch(err => {
+            this.loading = false
+            console.log(err.response.data.message)
+          })
+        }
       })
+      this.loading = false
     },
     resetForm() {
       this.dialog = false
