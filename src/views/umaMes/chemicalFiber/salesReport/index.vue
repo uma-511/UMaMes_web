@@ -415,7 +415,7 @@ export default {
       var month = date.getMonth() + 1
       month = month < 10 ? '0' + month : month
       var day = new Date(year, month, 0)
-      this.endTime = year + '-' + month + '-' + day.getDate()
+      this.endTime = year + '-' + month + '-' + day.getDate() + " 23:59:59"
     }
    /* details(data) {
       this.dialogVisible = true
