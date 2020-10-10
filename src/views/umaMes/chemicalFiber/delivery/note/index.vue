@@ -831,6 +831,7 @@ import { getUserListByDeptId } from '@/api/user'
 import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerById } from '@/api/customer'
 import { getCarList } from '@/api/car'
+import { getAddress } from '@/api/configCode'
 import { getAccountList } from '@/api/accountName'
 import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
@@ -879,6 +880,7 @@ export default {
       visible: false,
       sumRealQuantity: '',
       sumTotalQuantity: '',
+      address: '',
       id: '',
       form: {
         id: '',
@@ -1112,6 +1114,13 @@ export default {
         console.log(err.response.data.message)
       })
     },
+    initAddress() {
+      getAddress().then(res => {
+        this.address = res[0].address
+      }).catch(err => {
+        console.log(err.response.data.message)
+      })
+    },
     recived(id) {
       if (this.typeButton == 'danger') {
         this.$notify({
@@ -1190,7 +1199,6 @@ export default {
       this.dialogVisible = true
       this.detailLoading = false
       this.form.enable = true
-      this.form.startPlace = Config.globalCompanyName
       this.form.noteStatus = 1
       this.form.invoiceType = '不开发票'
       this.customerForm.currentArrears = ''
@@ -1198,6 +1206,12 @@ export default {
       this.detailList = []
       this.payDetailList = []
       this.buttonType()
+      getAddress().then(res => {
+        this.form.startPlace = res[0].address
+        this.$forceUpdate()
+      }).catch(err => {
+        console.log(err.response.data.message)
+      })
       const accountListParams = {}
       getAccountList(accountListParams).then(res => {
         this.accountLoading = false
