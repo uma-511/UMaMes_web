@@ -196,6 +196,7 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
+    this.dateQuery = new Date();
   },
   methods: {
     parseTimeToDate,
