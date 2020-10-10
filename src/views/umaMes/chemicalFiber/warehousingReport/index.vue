@@ -164,7 +164,7 @@ export default {
       }
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
-        this.params['tempEndTime'] = dateQuery[1].getTime() + 24 * 60 * 60 * 1000
+        this.params['tempEndTime'] = dateQuery[1].getTime()
       } else {
           this.$notify({
             title: '警告',

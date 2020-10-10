@@ -55,10 +55,10 @@
           </el-table-column>
           <el-table-column prop="createUser" label="创建人"/>
           <!-- <el-table-column prop="delFlag" label="删除标识"/> -->
-          <!--<el-table-column v-if="checkPermission(['admin','chemicalFiberProduct:edit','chemicalFiberProduct:del'])" label="操作" width="150px" align="center">
+          <el-table-column v-if="checkPermission(['admin','chemicalFiberProduct:edit','chemicalFiberProduct:del'])" label="操作" width="150px" align="center">
             <template slot-scope="scope">
-              &lt;!&ndash;<el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
-             &ndash;&gt;
+              <!--<el-button v-permission="['admin','chemicalFiberProduct:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+             -->
               <el-popover
                 v-permission="['admin','chemicalFiberProduct:del']"
                 :ref="scope.row.id"
@@ -72,7 +72,7 @@
                 <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" @click.stop/>
               </el-popover>
             </template>
-          </el-table-column>-->
+          </el-table-column>
         </el-table>
         <!--分页组件-->
         <el-pagination
