@@ -3,10 +3,17 @@
     <!--工具栏-->
     <div class="head-container">
       <!-- 搜索 -->
-      <el-input v-model="query.value" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
+      <el-input v-longpress="showInvoice" v-model="query.value" clearable placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
       <el-select v-model="query.type" clearable placeholder="类型" class="filter-item" style="width: 130px">
         <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select>
+      <el-date-picker
+        v-model="dateQuery"
+        size="mini"
+        class="el-range-editor--small filter-item"
+        type="month"
+        placeholder="选择月份"
+      />
       <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
       <!-- 新增 -->
       <!--<div style="display: inline-block;margin: 0px 2px;">
@@ -94,7 +101,7 @@
               <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
               <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
             </div>
-            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" @click.stop/>
+            <el-button slot="reference" :style="{ display: hideInvalidButton }" type="danger" icon="el-icon-delete" size="mini" @click.stop/>
           </el-popover>
         </template>
       </el-table-column>
@@ -122,6 +129,8 @@ export default {
   data() {
     return {
       delLoading: false,
+      hideInvalidButton: 'none',
+      dateQuery: '',
       statusValue: {
         0: '待确认',
         1: '已完成'
@@ -148,7 +157,11 @@ export default {
       const query = this.query
       const type = query.type
       const value = query.value
+      const dateQuery = this.dateQuery
       if (type && value) { this.params[type] = value }
+      if (dateQuery) {
+        this.params['monthTime'] = dateQuery.getTime()
+      }
       return true
     },
     generateWage() {
@@ -207,6 +220,13 @@ export default {
         netSalary: data.netSalary
       }
       _this.dialog = true
+    },
+    showInvoice(event) {
+      if (this.hideInvalidButton == 'none') {
+        this.hideInvalidButton = ''
+      } else {
+        this.hideInvalidButton = 'none'
+      }
     },
     // 导出
     download() {

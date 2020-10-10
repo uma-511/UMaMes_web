@@ -50,7 +50,7 @@ Vue.directive('longpress', {
         pressTimer = setTimeout(() => {
           // Run function
           handler()
-        }, 3000)
+        }, 2000)
       }
     }
 

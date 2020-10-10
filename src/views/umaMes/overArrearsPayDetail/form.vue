@@ -55,23 +55,6 @@ export default {
     return {
       loading: false, dialog: false,
       payDetailList: [],
-      tableData: [{
-        payDate: '2016-05-02',
-        createUser: '王小虎',
-        price: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        payDate: '2016-05-04',
-        createUser: '王小虎',
-        price: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        payDate: '2016-05-01',
-        createUser: '王小虎',
-        price: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        payDate: '2016-05-03',
-        createUser: '王小虎',
-        price: '上海市普陀区金沙江路 1516 弄'
-      }],
       form: {
         id: '',
         price: '',
@@ -129,6 +112,14 @@ export default {
       if (this.form.price == '0.00' || this.form.price == '' || this.form.price == null) {
         this.$notify({
           title: '请输入金额',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      if (this.form.price < 0) {
+        this.$notify({
+          title: '结款金额不能为负数',
           type: 'warning',
           duration: 2500
         })

@@ -72,6 +72,7 @@
       v-loading="loading"
       :data="data"
       :summary-method="getDataSummaries"
+      :max-height="tableHeight"
       size="small"
       show-summary
       style="width: 100%;"
@@ -835,7 +836,6 @@ import { getAddress } from '@/api/configCode'
 import { getAccountList } from '@/api/accountName'
 import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
-import Config from '@/config'
 import EllipsisTooltip from '@/views/components/EllipsisTooltip.vue'
 import eForm from './form'
 export default {
@@ -843,6 +843,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: document.documentElement.clientHeight - 260,
       unInvalidVisible: false,
       dateQuery: '',
       hideInvalidButton: 'none',
@@ -1282,6 +1283,14 @@ export default {
         })
         return
       }
+      if (this.payForm.amount < 0) {
+        this.$notify({
+          title: '金额不能为负数',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0') {
         this.$notify({
           title: '客户余额为0，无法执行该操作',
@@ -1324,7 +1333,15 @@ export default {
         })
         return
       }
-      if (!this.customerForm.account || this.customerForm.account === '' || this.customerForm.account === '0') {
+      if (this.payForm.amount < 0) {
+        this.$notify({
+          title: '金额不能为负数',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      if (!this.customerForm.account || this.customerForm.account === '') {
         this.$notify({
           title: '客户余额为0，无法执行该操作',
           type: 'warning',
