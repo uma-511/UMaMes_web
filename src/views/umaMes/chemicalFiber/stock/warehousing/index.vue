@@ -670,8 +670,9 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
-    var start = new Date(new Date(new Date().toLocaleDateString()))
-    this.dateQuery = [start, new Date(start.getTime() + 24 * 60 * 60 * 1000)]
+    this.getCurrentMonthFirst()
+    this.getCurrentMonthLast()
+    this.dateQuery = [new Date(this.startTime), new Date(this.endTime)];
   },
   methods: {
     parseTime,
@@ -1238,6 +1239,23 @@ export default {
       this.tableForm.prodId = obj.id
       this.tableForm.prodName = obj.name
       this.tableForm.prodModel = obj.model
+    },
+    getCurrentMonthFirst () {
+      var date = new Date()
+      date.setDate(1)
+      var month = parseInt(date.getMonth() + 1)
+      var day = date.getDate()
+      if (month < 10)  month = '0' + month
+      if (day < 10)  day = '0' + day
+      this.startTime = date.getFullYear() + '-' + month + '-' + day + " 00:00:00"
+    },
+    getCurrentMonthLast () {
+      var date = new Date()
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      month = month < 10 ? '0' + month : month
+      var day = new Date(year, month, 0)
+      this.endTime = year + '-' + month + '-' + day.getDate() + " 23:59:59"
     },
     resetForm() {
       this.form = {
