@@ -23,6 +23,13 @@ export function edit(data) {
   })
 }
 
+export function getAddress() {
+  return request({
+    url: 'api/configCode/getAddress',
+    method: 'get'
+  })
+}
+
 export function downloadConfigCode(params) {
   return request({
     url: 'api/configCode/download',

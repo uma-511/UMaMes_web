@@ -95,6 +95,11 @@ export default {
       this.isAdd = true
       this.$refs.form.dialog = true
     },
+    showAddress() {
+      getAddress().then(res => {
+        console.log(res)
+      })
+    },
     edit(data) {
       this.isAdd = false
       const _this = this.$refs.form
