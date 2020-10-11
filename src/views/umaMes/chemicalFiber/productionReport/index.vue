@@ -153,7 +153,7 @@ export default {
     return {
       dateQuery: [],customerOptions: [],
       queryTypeOptions: [
-        { key: 'machineNumber', display_name: '机台' },
+        { key: 'machine', display_name: '机台' },
         { key: 'prodColor', display_name: '产品颜色' },
         { key: 'prodFineness', display_name: '产品纤度' }
       ],
