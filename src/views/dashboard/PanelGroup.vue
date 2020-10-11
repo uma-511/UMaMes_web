@@ -163,7 +163,7 @@ export default {
   },
   data() {
     return {
-      typeTime: 'date',time: '',radio: '1',timePlaceholder: '选择日期',
+      typeTime: 'date',time: '',radio: '2',timePlaceholder: '选择日期',
         count: { warehousingNumber: 0, warehousingTonNumber: 0, warehousingBranchNumber: 0, deliveryNumber: 0,
           deliveryTonNumber: 0, deliveryBranchNumber: 0, deliveryTotalNumber: 0, stockTonNumber: 0, stockBranchNumber: 0}
     }
