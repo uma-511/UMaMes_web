@@ -21,7 +21,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="serialNumber" label="流水号"/>
       <el-table-column prop="personName" label="人员姓名"/>
       <el-table-column prop="attenceDate" label="记录日期">
@@ -75,6 +75,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false,
       queryTypeOptions: [
         { key: 'personName', display_name: '人员姓名' },

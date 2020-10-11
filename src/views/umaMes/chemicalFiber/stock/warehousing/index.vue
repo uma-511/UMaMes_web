@@ -57,6 +57,7 @@
       <el-table
         v-loading="loading"
         :summary-method="getWarSummaries"
+        :max-height="tableHeight"
         :data="data"
         show-summary
         size="small"
@@ -596,7 +597,8 @@ export default {
   components: { eForm },
   mixins: [initData],
   data() {
-    return{
+    return {
+      tableHeight: window.innerHeight - 240,
       loading: false,dialog: false,detalList:[],userLoading: false,prodOptions: [],addTableFrom: false,isAnd: '',
       typeButton: '',formTotalPrice: '',detaLoading: false,sutmitDetailLoading:false,
       dateQuery: '',userLoading: false,userOptions: [],visible: false,checkInvalidQuery: false,customerOptions: [],

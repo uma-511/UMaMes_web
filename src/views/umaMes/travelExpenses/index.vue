@@ -27,7 +27,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="id" label="序号"/>
       <el-table-column prop="startPlace" label="发货地"/>
       <el-table-column prop="endPlace" label="目的地"/>
@@ -96,6 +96,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false,
       showUnEnable: false,
       queryTypeOptions: [

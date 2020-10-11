@@ -73,7 +73,7 @@
     <eForm ref="form" :is-add="isAdd"/>
     <addForm ref="addForm" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
       <!-- <el-table-column prop="id" label="主键"/> -->
       <el-table-column prop="accountCode" label="对账单号"/>
       <el-table-column prop="reconciliations" label="对账日">
@@ -175,6 +175,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false,dateQuery: '',
       queryTypeOptions: [
         { key: 'accountCode', display_name: '对账单号' },

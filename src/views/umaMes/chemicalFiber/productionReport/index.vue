@@ -47,6 +47,7 @@
     <el-table
       v-loading="loading"
       :data="data"
+      :max-height="tableHeight"
       :summary-method="getSummaries"
       size="small"
       style="width: 100%;"
@@ -151,6 +152,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       dateQuery: [],
       queryTypeOptions: [
         { key: 'prodColor', display_name: '产品颜色' },

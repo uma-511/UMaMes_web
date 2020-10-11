@@ -59,7 +59,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :summary-method="getDataSummaries" :data="data" show-summary size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :summary-method="getDataSummaries" :data="data" show-summary size="small" style="width: 100%;">
       <el-table-column prop="receiptNumber" label="流水号"/>
       <el-table-column prop="recivedDate" label="收款日期">
         <template slot-scope="scope">
@@ -167,6 +167,7 @@ export default {
   dicts: ['recived_type'],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       dateQuery: '',
       delLoading: false,
       finishLoading: false,

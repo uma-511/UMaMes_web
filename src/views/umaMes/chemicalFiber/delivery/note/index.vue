@@ -261,6 +261,7 @@
       :current-page="page + 1"
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
+      page-count="pageCount"
       @size-change="sizeChange"
       @current-change="pageChange"
     />
@@ -843,7 +844,7 @@ export default {
   mixins: [initData],
   data() {
     return {
-      tableHeight: document.documentElement.clientHeight - 260,
+      tableHeight: window.innerHeight - 240,
       unInvalidVisible: false,
       dateQuery: '',
       hideInvalidButton: 'none',

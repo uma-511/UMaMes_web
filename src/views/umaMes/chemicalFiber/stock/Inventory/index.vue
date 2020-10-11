@@ -31,6 +31,7 @@
     <div class="head-container">
       <el-table
         v-loading="loading"
+        :max-height="tableHeight"
         :data="data"
         size="small"
         style="width: 100%;"
@@ -215,6 +216,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       isAdd:true,dialog: false,detalList: [],detaLoading: false,isAnd: '',visible: false,sutmitDetailLoading: false,
       lnventoryStatus: '',typeButton: '',dateQuery: '',checkInvalidQuery: false,sutmitDetailLoading: false,showUnEnable: false,
       form: {

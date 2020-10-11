@@ -81,7 +81,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="labelNumber" label="条码号"/>
       <el-table-column prop="fineness" label="纤度"/>
       <el-table-column prop="color" label="色号"/>
@@ -148,6 +148,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false,
       sumFactPerBagNumber: 0,
       sumNetWeight: 0,

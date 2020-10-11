@@ -50,7 +50,7 @@
           </div>
         </div>
         <!--表格渲染-->
-        <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+        <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
           <el-table-column prop="username" label="账号"/>
           <el-table-column prop="realname" label="用户名"/>
           <el-table-column prop="phone" label="电话"/>
@@ -129,6 +129,7 @@ export default {
   dicts: ['user_status'],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       height: document.documentElement.clientHeight - 180 + 'px;', isAdd: false,
       delLoading: false, deptName: '', depts: [], deptId: null,
       defaultProps: {

@@ -32,7 +32,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="scanNumber" label="扫描单号"/>
       <el-table-column prop="scanUser" label="扫描员"/>
       <el-table-column prop="scanTime" label="扫描时间">
@@ -81,6 +81,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false,
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '扫描单号' },

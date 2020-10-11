@@ -44,7 +44,7 @@
           </div> -->
         </div>
         <!--表单组件-->
-        <el-table v-loading="loading" :data="data" stripe size="small" style="width: 100%;" @row-click="rowClicker">
+        <el-table v-loading="loading" :max-height="tableHeight"	:data="data" stripe size="small" style="width: 100%;" @row-click="rowClicker">
           <el-table-column prop="model" label="产品编号"/>
           <el-table-column prop="name" label="产品名称"/>
           <el-table-column prop="machining" label="加工单价(元/吨)"/>
@@ -99,6 +99,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false, deptId: null, addDeptsLoading: false,
       queryTypeOptions: [
         { key: 'model', display_name: '产品编号' },

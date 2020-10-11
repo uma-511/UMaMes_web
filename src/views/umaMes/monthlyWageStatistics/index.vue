@@ -48,7 +48,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;" @row-click="edit">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;" @row-click="edit">
       <el-table-column prop="dateTime" label="日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDates(scope.row.dateTime) }}</span>
@@ -128,6 +128,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false,
       hideInvalidButton: 'none',
       dateQuery: '',

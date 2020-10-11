@@ -1,17 +1,16 @@
 <template>
   <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="流水单号" >
+      <el-form-item label="流水单号" prop="scanNumber">
         <el-input :disabled="!isAdd" v-model="form.scanNumber" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="责任人" >
+      <el-form-item label="责任人" prop="personName">
         <el-select
           v-model="form.personName"
           :disabled="!isAdd"
           :loading="userLoading"
           :remote-method="transporterRemoteMethod"
           filterable
-          allow-create
           remote
           reserve-keyword
           placeholder="输入责任人关键字"
@@ -91,6 +90,12 @@ export default {
         enable: ''
       },
       rules: {
+        personName: [
+          { required: true, message: '责任人不能为空', trigger: 'blur' }
+        ],
+        scanNumber: [
+          { required: true, message: '流水号不能为空', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -143,47 +148,79 @@ export default {
       this.form.totalPerformance = sum.toFixed(2)
     },
     subThenCreate() {
-      add(this.form).then(res => {
-        this.$notify({
-          title: '添加成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.loading = false
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.form.personName === null || this.form.personName === undefined) {
+            this.$message({
+              message: '责任人不能为空',
+              type: 'warning'
+            })
+          } else if (this.form.scanNumber === null) {
+            this.$message({
+              message: '流水号不能为空',
+              type: 'warning'
+            })
+          }
+          add(this.form).then(res => {
+            this.$notify({
+              title: '添加成功',
+              type: 'success',
+              duration: 2500
+            })
+            this.loading = false
+            this.$parent.init()
+          }).catch(err => {
+            this.loading = false
+            console.log(err.response.data.message)
+          })
+          this.form = {
+            id: '',
+            personName: '',
+            personId: '',
+            permission: '',
+            mileageFee: '',
+            overtimePay: '',
+            allowance: '',
+            surcharge: '',
+            handlingCost: '',
+            totalPerformance: '',
+            createTime: new Date(),
+            enable: ''
+          }
+        }
       })
-      this.form = {
-        id: '',
-        personName: '',
-        personId: '',
-        permission: '',
-        mileageFee: '',
-        overtimePay: '',
-        allowance: '',
-        surcharge: '',
-        handlingCost: '',
-        totalPerformance: '',
-        createTime: new Date(),
-        enable: ''
-      }
+      this.loading = false
     },
     doAdd() {
-      add(this.form).then(res => {
-        this.resetForm()
-        this.$notify({
-          title: '添加成功',
-          type: 'success',
-          duration: 2500
-        })
-        this.loading = false
-        this.$parent.init()
-      }).catch(err => {
-        this.loading = false
-        console.log(err.response.data.message)
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.form.personName === null || this.form.personName === undefined) {
+            this.$message({
+              message: '责任人不能为空',
+              type: 'warning'
+            })
+          } else if (this.form.scanNumber === null) {
+            this.$message({
+              message: '流水号不能为空',
+              type: 'warning'
+            })
+          }
+          add(this.form).then(res => {
+            this.resetForm()
+            this.$notify({
+              title: '添加成功',
+              type: 'success',
+              duration: 2500
+            })
+            this.loading = false
+            this.$parent.init()
+          }).catch(err => {
+            this.loading = false
+            console.log(err.response.data.message)
+          })
+        }
       })
+      this.loading = false
     },
     doEdit() {
       edit(this.form).then(res => {

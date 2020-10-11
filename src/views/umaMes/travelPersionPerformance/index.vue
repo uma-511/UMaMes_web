@@ -29,7 +29,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
       <!--流水单号非中文-->
       <el-table-column prop="scanNumber" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" label="流水单号"/>
       <el-table-column prop="personName" label="责任人"/>
@@ -101,6 +101,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false,
       showUnEnable: false,
       queryValue: '',

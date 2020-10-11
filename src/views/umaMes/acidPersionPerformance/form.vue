@@ -8,7 +8,6 @@
           :loading="userLoading"
           :remote-method="transporterRemoteMethod"
           filterable
-          allow-create
           remote
           reserve-keyword
           placeholder="输入责任人关键字"

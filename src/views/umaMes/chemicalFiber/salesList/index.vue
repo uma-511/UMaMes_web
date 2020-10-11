@@ -45,6 +45,7 @@
       <el-table
         v-loading="loading"
         :data="data"
+        :max-height="tableHeight"
         :summary-method="getSummaries"
         size="small"
         border
@@ -109,6 +110,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       loading: false, dateQuery: '',checkInvalidQuery: false,sumtotalPrice: 0,sumTon: 0,sum: 0,startTime: '',
       endTime: '',sums: [],
       queryTypeOptions: [

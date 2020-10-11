@@ -22,7 +22,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="attenceType" label="类型"/>
       <el-table-column prop="price" label="金额"/>
       <el-table-column prop="enable" label="状态">
@@ -80,6 +80,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false,
       queryTypeOptions: [
         { key: 'attenceType', display_name: '类型' }

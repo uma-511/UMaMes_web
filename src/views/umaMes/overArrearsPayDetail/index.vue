@@ -16,7 +16,7 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="code" label="客户编号"/>
       <el-table-column prop="name" label="客户名称"/>
       <el-table-column prop="account" label="支配额度"/>
@@ -66,6 +66,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      tableHeight: window.innerHeight - 240,
       delLoading: false,
       showAll: false,
       payDetailList: [],
