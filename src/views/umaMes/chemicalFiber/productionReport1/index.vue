@@ -131,6 +131,7 @@
       <!--<el-table-column prop="productionNumber" label="生产单号" align="center"/>-->
       <el-table-column prop="machine" label="机台" align="center"/>
       <el-table-column prop="shifts" label="班次" align="center"/>
+      <el-table-column prop="model" label="产品名称" align="center"/>
       <el-table-column prop="color" label="色号" align="center"/>
       <el-table-column prop="fineness" label="纤度" align="center"/>
       <el-table-column prop="productionPacketNumber" label="生产包数" align="center"/>
@@ -230,7 +231,7 @@ export default {
       const type = 'shifts'
       const value = query.value
       const dateQuery = this.dateQuery
-      this.params['is'] = null;
+      this.params['is'] = 1;
       if (types && values) { this.params[types] = values }
       if (types1 && values1) { this.params[types1] = values1 }
       if (types2 && values2) { this.params[types2] = values2 }
