@@ -238,7 +238,8 @@ export default {
         receivable: '',
         accumulatedArrears: '',
         totalArrears: '',
-        unit: ''
+        unit: '',
+        time: ''
       },
       tableData: [],
       rules: {
@@ -484,7 +485,17 @@ export default {
       exportStatementFun(this.form.id).then(result => {
         this.exportStatementLoading = false
         this.$parent.init()
-        downloadFileWhithScanNumber(result, this.form.accountCode + '对账单导出', 'xls')
+        console.log(this.cycleDate[0])
+
+        var date1 = new Date(this.cycleDate[0])
+        date1.setDate(1)
+        var month = parseInt(date1.getMonth() + 1)
+        var day = date1.getDate()
+        if (month < 10)  month = '0' + month
+        if (day < 10)  day = '0' + day
+        var str = date1.getFullYear() + '-' + month
+        var timearr = str.replace(" ", ":").replace(/\:/g, "-").split("-");
+        downloadFileWhithScanNumber(result, timearr[0]+'年'+ Number(timearr[1])+ '月' + this.form.customerName +'对账单导出', 'xls')
       }).catch(() => {
         this.exportStatementLoading = false
       })
