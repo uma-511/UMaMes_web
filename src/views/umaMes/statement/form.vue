@@ -201,7 +201,7 @@
 import { add, edit, getStatementDetailsList, getStatementDetailsAllList, getSums, exportStatementFun } from '@/api/umaChemicalFiberStatement'
 import { statementDetailsEdit } from '@/api/umaChemicalFiberStatementDetails'
 import { getCustomerList } from '@/api/customer'
-import { parseTimeToDate, downloadFile , parseTimeToDates } from '@/utils/index'
+import { parseTimeToDate, downloadFile , parseTimeToDates, downloadFileWhithScanNumber } from '@/utils/index'
 export default {
   props: {
     isAdd: {
@@ -484,7 +484,7 @@ export default {
       exportStatementFun(this.form.id).then(result => {
         this.exportStatementLoading = false
         this.$parent.init()
-        downloadFile(result, '对账单导出', 'xls')
+        downloadFileWhithScanNumber(result, this.form.accountCode + '对账单导出', 'xls')
       }).catch(() => {
         this.exportStatementLoading = false
       })
