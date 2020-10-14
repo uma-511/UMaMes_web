@@ -117,7 +117,7 @@
 
 <script>
 import initData from '@/mixins/initData'
-import { parseTime, parseTimeToDate, downloadChemicalFiberLabel,downloadFile} from '@/utils/index'
+import { parseTime, parseTimeToDate, downloadChemicalFiberLabel,downloadFile, downloadFileWhithScanNumber} from '@/utils/index'
 import { getSummaryData, download} from '@/api/chemicalFiberWarehousingReort'
 export default {
   mixins: [initData],
@@ -219,7 +219,19 @@ export default {
         this.downloadLoading = false
         this.dialogVisible = false
         this.init()
-        downloadFile(result, '导出', 'xls')
+
+        console.log(this.startTime)
+        console.log()
+
+        var date1 = new Date(this.dateQuery[0].getTime())
+        date1.setDate(1)
+        var month = parseInt(date1.getMonth() + 1)
+        var day = date1.getDate()
+        if (month < 10)  month = '0' + month
+        if (day < 10)  day = '0' + day
+        var str = date1.getFullYear() + '-' + month
+        var timearr = str.replace(" ", ":").replace(/\:/g, "-").split("-");
+        downloadFileWhithScanNumber(result, timearr[0]+'年'+ Number(timearr[1])+ '月' + '入库报表', 'xls')
       })
     },
     /*getdateValue (val) {
