@@ -65,6 +65,13 @@
         <el-input v-model="form.remark" style="width: 370px;"/>
       </el-form-item>
     </el-form>
+    <div style="color: #ff4949">
+      <p>&emsp;&emsp;&emsp;提示:<br>
+        &emsp;&emsp;&emsp;&emsp;&emsp;司机请假累计满七天，扣除基本工资<br>
+        &emsp;&emsp;&emsp;&emsp;&emsp;缺卡或迟到打卡，累计满7次，取消打卡奖<br>
+        &emsp;&emsp;&emsp;&emsp;&emsp;请假一次，取消全勤奖<br>
+        &emsp;&emsp;&emsp;&emsp;&emsp;安全奖扣除按制度表为准</p>
+    </div>
     <div slot="footer" class="dialog-footer">
       <el-button v-if="isAdd" :loading="loading" type="primary" @click="subThenCreate">确认并新增</el-button>
       <el-button type="text" @click="cancel">取消</el-button>
@@ -232,17 +239,17 @@ export default {
     subThenCreate() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.personName === null || this.personName === undefined) {
+          if (this.form.personName === null || this.form.personName === undefined) {
             this.$message({
               message: '人员姓名不能为空',
               type: 'warning'
             })
-          } else if (this.attenceType === null) {
+          } else if (this.form.attenceType === null) {
             this.$message({
               message: '类型不能为空',
               type: 'warning'
             })
-          } else if (this.price === null) {
+          } else if (this.form.price === null) {
             this.$message({
               message: '金额不能为空',
               type: 'warning'
@@ -281,17 +288,17 @@ export default {
     doAdd() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.personName === null || this.personName === undefined) {
+          if (this.form.personName === null || this.form.personName === undefined) {
             this.$message({
               message: '人员姓名不能为空',
               type: 'warning'
             })
-          } else if (this.attenceType === null) {
+          } else if (this.form.attenceType === null) {
             this.$message({
               message: '类型不能为空',
               type: 'warning'
             })
-          } else if (this.price === null) {
+          } else if (this.form.price === null) {
             this.$message({
               message: '金额不能为空',
               type: 'warning'
@@ -317,17 +324,17 @@ export default {
     doEdit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.personName === null || this.personName === undefined) {
+          if (this.form.personName === null || this.form.personName === undefined) {
             this.$message({
               message: '人员姓名不能为空',
               type: 'warning'
             })
-          } else if (this.attenceType === null) {
+          } else if (this.form.attenceType === null) {
             this.$message({
               message: '类型不能为空',
               type: 'warning'
             })
-          } else if (this.price === null) {
+          } else if (this.form.price === null) {
             this.$message({
               message: '金额不能为空',
               type: 'warning'

@@ -4,6 +4,54 @@
       <el-form-item label="流水单号" prop="scanNumber">
         <el-input :disabled="!isAdd" v-model="form.scanNumber" style="width: 370px;"/>
       </el-form-item>
+      <el-form-item label="发货地" >
+        <el-select
+          v-model="form.startPlace"
+          :loading="customerLoading"
+          :remote-method="customerRemoteMethod"
+          filterable
+          allow-create
+          clearable
+          remote
+          reserve-keyword
+          placeholder="输入发货地关键词"
+          style="width: 370px;"
+          @visible-change="$forceUpdate()"
+          @focus="cleanUpOptions"
+          @change="checkEndPlace($event)"
+        >
+          <el-option
+            v-for="item in customerOptions"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="目的地" >
+        <el-select
+          v-model="form.endPlace"
+          :loading="customerLoading"
+          :remote-method="customerRemoteMethod"
+          filterable
+          allow-create
+          remote
+          clearable
+          reserve-keyword
+          placeholder="输入目的地关键词"
+          style="width: 370px;"
+          @visible-change="$forceUpdate()"
+          @focus="cleanUpOptions"
+          @change="checkStartPlace($event)"
+        >
+          <el-option
+            v-for="item in customerOptions"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="责任人" prop="personName">
         <el-select
           v-model="form.personName"
@@ -61,7 +109,8 @@
 
 <script>
 import { add, edit } from '@/api/travelPersionPerformance'
-import { getUserListByDeptId, getPermissionByUserId } from '@/api/user'
+import { getUserListByRealName, getPermissionByUserId } from '@/api/user'
+import { getCustomerList } from '@/api/customer'
 export default {
   props: {
     isAdd: {
@@ -75,9 +124,17 @@ export default {
       dialog: false,
       userLoading: false,
       userOptions: [],
+      customerOptions: [],
+      customerLoading: false,
+      customerQuery: {
+        name: '',
+        code: ''
+      },
       form: {
         id: '',
         personName: '',
+        startPlace: '',
+        endPlace: '',
         personId: '',
         permission: '',
         mileageFee: '',
@@ -105,7 +162,7 @@ export default {
     },
     // 清空下拉框
     cleanUpOptions() {
-      this.userOptions = []
+      this.customerOptions = []
     },
     initIdAndPermission(event) {
       let obj = []
@@ -121,10 +178,11 @@ export default {
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
       // 运输部deptId为18
-      const idList = [18]
-      const params = { deptIdList: idList + '', realname: query }
+      /* const idList = [18]
+      const params = { deptIdList: idList + '', realname: query }*/
+      const params = { realname: query }
       this.userLoading = true
-      getUserListByDeptId(params).then(res => {
+      getUserListByRealName(params).then(res => {
         this.userLoading = false
         this.userList = res
         this.userOptions = this.userList.filter(item => {
@@ -137,6 +195,51 @@ export default {
       if (this.isAdd) {
         this.doAdd()
       } else this.doEdit()
+    },
+    checkEndPlace(data) {
+      if (data == '' || data == null) {
+        return
+      }
+      if (data == this.form.endPlace) {
+        this.form.startPlace = ''
+        this.$notify({
+          title: '发货地，目的地不能相同',
+          type: 'warning',
+          duration: 2500
+        })
+      }
+    },
+    checkStartPlace(data) {
+      if (data == '' || data == null) {
+        return
+      }
+      if (data == this.form.startPlace) {
+        this.form.endPlace = ''
+        this.$notify({
+          title: '发货地，目的地不能相同',
+          type: 'warning',
+          duration: 2500
+        })
+      }
+    },
+    // 查询客户名称的下拉列表
+    customerRemoteMethod(query) {
+      if (query !== '') {
+        this.customerLoading = true
+        this.customerQuery.name = query
+        this.customerOptions = []
+        getCustomerList(this.customerQuery).then(res => {
+          this.customerLoading = false
+          this.customerQuery.name = ''
+          this.customerList = res
+          this.customerOptions = this.customerList.filter(item => {
+            return item.name.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1
+          })
+        })
+      } else {
+        this.customerOptions = []
+      }
     },
     doCount() {
       var n1 = this.form.mileageFee

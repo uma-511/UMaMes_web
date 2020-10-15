@@ -7,7 +7,13 @@
       <el-select v-model="queryType" clearable placeholder="类型" class="filter-item" style="width: 130px">
         <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select>
-
+      <el-date-picker
+        v-model="dateQuery"
+        size="mini"
+        class="el-range-editor--small filter-item"
+        type="month"
+        placeholder="选择月份"
+      />
       <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
       <el-checkbox
         v-model="showUnEnable"
@@ -25,13 +31,33 @@
           icon="el-icon-plus"
           @click="add">新增</el-button>
       </div>
+      <!-- 导出 -->
+      <div style="display: inline-block;">
+        <el-button
+          :loading="downloadLoading"
+          size="mini"
+          class="filter-item"
+          type="warning"
+          icon="el-icon-download"
+          @click="download">导出</el-button>
+      </div>
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
+    <el-table
+      v-loading="loading"
+      :max-height="tableHeight"
+      :data="data"
+      :summary-method="getDataSummaries"
+      show-summary
+      size="small"
+      style="width: 100%;"
+      @row-click="edit($event)">
       <!--流水单号非中文-->
       <el-table-column prop="scanNumber" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" label="流水单号"/>
+      <el-table-column prop="startPlace" label="出发地"/>
+      <el-table-column prop="endPlace" label="目的地"/>
       <el-table-column prop="personName" label="责任人"/>
       <el-table-column prop="permission" label="职位"/>
       <el-table-column prop="mileageFee" label="里程费"/>
@@ -63,7 +89,6 @@
       </el-table-column>
       <el-table-column v-if="checkPermission(['admin','travelPersionPerformance:edit','travelPersionPerformance:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','travelPersionPerformance:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
           <el-popover
             v-permission="['admin','travelPersionPerformance:del']"
             :ref="scope.row.id"
@@ -105,6 +130,7 @@ export default {
       delLoading: false,
       showUnEnable: false,
       queryValue: '',
+      dateQuery: new Date(),
       queryType: 'personName',
       queryTypeOptions: [
         { key: 'personName', display_name: '责任人' },
@@ -126,6 +152,10 @@ export default {
       this.params = { page: this.page, size: this.size, sort: sort }
       const checkEnables = this.showUnEnable
       this.params['showUnEnable'] = checkEnables
+      const dateQuery = this.dateQuery
+      if (dateQuery) {
+        this.params['monthTime'] = dateQuery.getTime()
+      }
       if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       return true
     },
@@ -147,6 +177,84 @@ export default {
         console.log(err.response.data.message)
       })
     },
+    getDataSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (index === 9) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 8) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 7) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 6) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 5) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 4) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+      })
+      return sums
+    },
     add() {
       this.isAdd = true
       this.$refs.form.dialog = true
@@ -167,6 +275,9 @@ export default {
         handlingCost: data.handlingCost,
         totalPerformance: data.totalPerformance,
         createTime: data.createTime,
+        customerName: data.customerName,
+        startPlace: data.startPlace,
+        endPlace: data.endPlace,
         enable: data.enable
       }
       _this.dialog = true
@@ -176,7 +287,7 @@ export default {
       this.beforeInit()
       this.downloadLoading = true
       downloadTravelPersionPerformance(this.params).then(result => {
-        downloadFile(result, 'TravelPersionPerformance列表', 'xlsx')
+        downloadFile(result, '送货绩效统计', 'xls')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

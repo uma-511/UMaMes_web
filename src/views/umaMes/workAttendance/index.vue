@@ -7,6 +7,13 @@
       <el-select v-model="queryType" clearable placeholder="类型" class="filter-item" style="width: 130px">
         <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select>
+      <el-date-picker
+        v-model="dateQuery"
+        size="mini"
+        class="el-range-editor--small filter-item"
+        type="month"
+        placeholder="选择月份"
+      />
       <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
@@ -17,11 +24,21 @@
           icon="el-icon-plus"
           @click="add">新增</el-button>
       </div>
+      <!-- 导出 -->
+      <div style="display: inline-block;">
+        <el-button
+          :loading="downloadLoading"
+          size="mini"
+          class="filter-item"
+          type="warning"
+          icon="el-icon-download"
+          @click="download">导出</el-button>
+      </div>
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" :summary-method="getDataSummaries" show-summary size="small" style="width: 100%;">
       <el-table-column prop="serialNumber" label="流水号"/>
       <el-table-column prop="personName" label="人员姓名"/>
       <el-table-column prop="attenceDate" label="记录日期">
@@ -30,7 +47,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="attenceType" label="类型"/>
-      <el-table-column prop="safeType" label="安全类型"/>
+      <!--<el-table-column prop="safeType" label="安全类型"/>-->
       <el-table-column prop="day" label="天数"/>
       <el-table-column prop="price" label="金额"/>
       <el-table-column prop="remark" label="备注"/>
@@ -77,6 +94,7 @@ export default {
     return {
       tableHeight: window.innerHeight - 240,
       delLoading: false,
+      dateQuery: new Date(),
       queryTypeOptions: [
         { key: 'personName', display_name: '人员姓名' },
         { key: 'attenceType', display_name: '类型' },
@@ -99,6 +117,10 @@ export default {
       this.url = 'api/workAttendance'
       const sort = 'id,desc'
       this.params = { page: this.page, size: this.size, sort: sort }
+      const dateQuery = this.dateQuery
+      if (dateQuery) {
+        this.params['monthTime'] = dateQuery.getTime()
+      }
       if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       return true
     },
@@ -123,6 +145,40 @@ export default {
     add() {
       this.isAdd = true
       this.$refs.form.dialog = true
+    },
+    getDataSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (index === 4) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index] += ' 天'
+        }
+        if (index === 5) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+      })
+      return sums
     },
     edit(data) {
       this.isAdd = false
@@ -149,7 +205,7 @@ export default {
       this.beforeInit()
       this.downloadLoading = true
       downloadWorkAttendance(this.params).then(result => {
-        downloadFile(result, 'WorkAttendance列表', 'xlsx')
+        downloadFile(result, '考勤统计', 'xls')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

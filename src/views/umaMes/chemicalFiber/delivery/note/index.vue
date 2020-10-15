@@ -839,6 +839,7 @@ import { getSelectMaps, getByProdName } from '@/api/chemicalFiberStock'
 import { doPay, finalPay, getPayDetailList } from '@/api/chemicalFiberDeliveryNotePayDetail'
 import EllipsisTooltip from '@/views/components/EllipsisTooltip.vue'
 import eForm from './form'
+import { getUserListByRealName } from '@/api/user'
 export default {
   components: { eForm, EllipsisTooltip },
   mixins: [initData],
@@ -1994,6 +1995,14 @@ export default {
         })
         return
       }
+      if (!this.form.carNumber) {
+        this.$notify({
+          title: '请输入车牌号',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
       this.downloadLoading = true
       downloadDeliveryNote(this.form.id).then(result => {
         this.downloadLoading = false
@@ -2214,15 +2223,16 @@ export default {
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
       // 运输部deptId为18
-      const idList = [18]
-      const params = { deptIdList: idList + '', realname: query }
+      // const idList = [18]
+      // const params = { deptIdList: idList + '', realname: query }
+      // 改为查全部
+      const params = { realname: query }
       this.userLoading = true
-      getUserListByDeptId(params).then(res => {
+      getUserListByRealName(params).then(res => {
         this.userLoading = false
         this.userList = res
         this.userOptions = this.userList.filter(item => {
-          return item.realname.toLowerCase()
-            .indexOf(query.toLowerCase()) > -1
+          return item
         })
       })
     },

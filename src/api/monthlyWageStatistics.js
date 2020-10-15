@@ -23,6 +23,20 @@ export function edit(data) {
   })
 }
 
+export function oneKeyDelete() {
+  return request({
+    url: 'api/monthlyWageStatistics/oneKeyDelete',
+    method: 'get'
+  })
+}
+
+export function oneKeyReset() {
+  return request({
+    url: 'api/monthlyWageStatistics/oneKeyReset',
+    method: 'get'
+  })
+}
+
 export function downloadMonthlyWageStatistics(params) {
   return request({
     url: 'api/monthlyWageStatistics/download',

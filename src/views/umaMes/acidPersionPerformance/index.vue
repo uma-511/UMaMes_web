@@ -7,6 +7,13 @@
       <el-select v-model="queryType" clearable placeholder="类型" class="filter-item" style="width: 130px">
         <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select>
+      <el-date-picker
+        v-model="dateQuery"
+        size="mini"
+        class="el-range-editor--small filter-item"
+        type="month"
+        placeholder="选择月份"
+      />
       <el-checkbox
         v-model="showUnEnable"
         label="查询失效单"
@@ -23,11 +30,21 @@
           icon="el-icon-plus"
           @click="add">新增</el-button>
       </div>
+      <!-- 导出 -->
+      <div style="display: inline-block;">
+        <el-button
+          :loading="downloadLoading"
+          size="mini"
+          class="filter-item"
+          type="warning"
+          icon="el-icon-download"
+          @click="download">导出</el-button>
+      </div>
     </div>
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :max-height="tableHeight" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading" :max-height="tableHeight" :data="data" :summary-method="getDataSummaries" show-summary size="small" style="width: 100%;">
       <el-table-column prop="person" label="责任人"/>
       <el-table-column prop="taskDate" label="任务日期">
         <template slot-scope="scope">
@@ -105,6 +122,7 @@ export default {
       tableHeight: window.innerHeight - 240,
       delLoading: false,
       showUnEnable: false,
+      dateQuery: new Date(),
       queryTypeOptions: [
         { key: 'person', display_name: '责任人' },
         { key: 'productName', display_name: '产品名称' }
@@ -127,6 +145,10 @@ export default {
       this.params = { page: this.page, size: this.size, sort: sort }
       const checkEnables = this.showUnEnable
       this.params['showUnEnable'] = checkEnables
+      const dateQuery = this.dateQuery
+      if (dateQuery) {
+        this.params['monthTime'] = dateQuery.getTime()
+      }
       if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       return true
     },
@@ -147,6 +169,51 @@ export default {
         this.$refs[id].doClose()
         console.log(err.response.data.message)
       })
+    },
+    getDataSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (index === 8) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 6) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 吨'
+        }
+        if (index === 4) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 桶'
+        }
+      })
+      return sums
     },
     add() {
       this.isAdd = true
@@ -177,7 +244,7 @@ export default {
       this.beforeInit()
       this.downloadLoading = true
       downloadAcidPersionPerformance(this.params).then(result => {
-        downloadFile(result, 'AcidPersionPerformance列表', 'xlsx')
+        downloadFile(result, '放酸绩效统计', 'xls')
         this.downloadLoading = false
       }).catch(() => {
         this.downloadLoading = false

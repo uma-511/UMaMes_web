@@ -96,7 +96,7 @@
 
 <script>
 import { add, edit } from '@/api/acidPersionPerformance'
-import { getUserListByDeptId } from '@/api/user'
+import { getUserListByRealName } from '@/api/user'
 import { getProdList } from '@/api/chemicalFiberProduct'
 export default {
   props: {
@@ -178,10 +178,9 @@ export default {
     // 查询运输的下拉列表
     transporterRemoteMethod(query) {
       // 运输部deptId为18
-      const idList = [18]
-      const params = { deptIdList: idList + '', realname: query }
+      const params = { realname: query }
       this.userLoading = true
-      getUserListByDeptId(params).then(res => {
+      getUserListByRealName(params).then(res => {
         this.userLoading = false
         this.userList = res
         this.userOptions = this.userList.filter(item => {
@@ -229,22 +228,22 @@ export default {
     subThenCreate() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.person === null || this.person === undefined) {
+          if (this.form.person === null || this.form.person === undefined) {
             this.$message({
               message: '责任人不能为空',
               type: 'warning'
             })
-          } else if (this.productName === null) {
+          } else if (this.form.productName === null) {
             this.$message({
               message: '产品名称不能为空',
               type: 'warning'
             })
-          } else if (this.productCode === null) {
+          } else if (this.form.productCode === null) {
             this.$message({
               message: '产品编号不能为空',
               type: 'warning'
             })
-          } else if (this.number === null) {
+          } else if (this.form.number === null) {
             this.$message({
               message: '桶数不能为空',
               type: 'warning'
@@ -293,32 +292,32 @@ export default {
     doAdd() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.person === null || this.person === undefined) {
+          if (this.form.person === null || this.form.person === undefined) {
             this.$message({
               message: '责任人不能为空',
               type: 'warning'
             })
-          } else if (this.productName === null) {
+          } else if (this.form.productName === null) {
             this.$message({
               message: '产品名称不能为空',
               type: 'warning'
             })
-          } else if (this.productCode === null) {
+          } else if (this.form.productCode === null) {
             this.$message({
               message: '产品编号不能为空',
               type: 'warning'
             })
-          } else if (this.number === null) {
+          } else if (this.form.number === null) {
             this.$message({
               message: '桶数不能为空',
               type: 'warning'
             })
-          } else if (this.specifications === null) {
+          } else if (this.form.specifications === null) {
             this.$message({
               message: '规格不能为空',
               type: 'warning'
             })
-          } else if (this.unitPrice === null) {
+          } else if (this.form.unitPrice === null) {
             this.$message({
               message: '单价不能为空',
               type: 'warning'
@@ -343,32 +342,32 @@ export default {
     doEdit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.person === null || this.person === undefined) {
+          if (this.form.person === null || this.form.person === undefined) {
             this.$message({
               message: '责任人不能为空',
               type: 'warning'
             })
-          } else if (this.productName === null) {
+          } else if (this.form.productName === null) {
             this.$message({
               message: '产品名称不能为空',
               type: 'warning'
             })
-          } else if (this.productCode === null) {
+          } else if (this.form.productCode === null) {
             this.$message({
               message: '产品编号不能为空',
               type: 'warning'
             })
-          } else if (this.number === null) {
+          } else if (this.form.number === null) {
             this.$message({
               message: '桶数不能为空',
               type: 'warning'
             })
-          } else if (this.specifications === null) {
+          } else if (this.form.specifications === null) {
             this.$message({
               message: '规格不能为空',
               type: 'warning'
             })
-          } else if (this.unitPrice === null) {
+          } else if (this.form.unitPrice === null) {
             this.$message({
               message: '单价不能为空',
               type: 'warning'
