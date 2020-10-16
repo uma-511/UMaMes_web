@@ -30,12 +30,16 @@
               <svg-icon icon-class="ckf" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description">
-              <div class="card-panel-text">库存吨数</div>
-              <count-to :start-val="0" :end-val="count.stockTonNumber" :duration="3600" :decimals ="2" class="card-panel-num"/>
+              <div class="card-panel-text">库存包数</div>
+              <count-to :start-val="0" :end-val="count.stockNumber" :duration="3600"  class="card-panel-num"/>
             </div>
-            <div class="card-panel-description" style="width:300px;">
-              <div class="card-panel-text">库存支数</div>
-              <count-to :start-val="0" :end-val="count.stockBranchNumber" :duration="3600"  class="card-panel-num"/>
+            <div class="card-panel-description" style="width:150px;">
+              <div class="card-panel-text">库存毛重</div>
+              <count-to :start-val="0" :end-val="count.stockGrossWeight" :duration="3600" :decimals ="2" class="card-panel-num"/>
+            </div>
+            <div class="card-panel-description" style="width:150px;">
+              <div class="card-panel-text">库存净重</div>
+              <count-to :start-val="0" :end-val="count.stockNetWeight" :duration="3600" :decimals ="2" class="card-panel-num"/>
             </div>
           </div>
         </el-col>
@@ -45,16 +49,16 @@
               <svg-icon icon-class="ck2" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description" >
-              <div class="card-panel-text">入库支数</div>
-              <count-to :start-val="0" :end-val="count.warehousingBranchNumber" :duration="3000"  class="card-panel-num"/>
+              <div class="card-panel-text">入库包数</div>
+              <count-to :start-val="0" :end-val="count.warehousingNumber" :duration="3000"  class="card-panel-num"/>
             </div>
             <div class="card-panel-description" style="width:150px;">
-              <div class="card-panel-text">入库吨数</div>
-              <count-to :start-val="0" :end-val="count.warehousingTonNumber" :duration="3000" :decimals ="2" class="card-panel-num"/>
+              <div class="card-panel-text">入库毛重</div>
+              <count-to :start-val="0" :end-val="count.warehousingGrossWeight" :duration="3000" :decimals ="2" class="card-panel-num"/>
             </div>
             <div class="card-panel-description" style="width:150px;">
-              <div class="card-panel-text">入库单数</div>
-              <count-to :start-val="0" :end-val="count.warehousingNumber" :duration="2600"  class="card-panel-num"/>
+              <div class="card-panel-text">入库净重</div>
+              <count-to :start-val="0" :end-val="count.warehousingNetWeight" :duration="2600" :decimals ="2" class="card-panel-num"/>
             </div>
             <!--<div class="card-panel-description">
               <div class="card-panel-text">库存支数</div>
@@ -86,28 +90,29 @@
             </div>
           </div>
         </el-col>
-        <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <el-col :xs="12" :sm="12" :lg="12" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
               <svg-icon icon-class="ck" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description">
-              <div class="card-panel-text">送货吨数</div>
-              <count-to :start-val="0" :end-val="count.deliveryTonNumber" :duration="3600" :decimals ="2" class="card-panel-num"/>
+              <div class="card-panel-text">出库包数</div>
+              <count-to :start-val="0" :end-val="count.deliveryBagNumber" :duration="3600"  class="card-panel-num"/>
+            </div>
+            <div class="card-panel-description"style="width:300px;">
+              <div class="card-panel-text">出库净重</div>
+              <count-to :start-val="0" :end-val="count.deliveryNetWeight" :duration="3600" :decimals ="2" class="card-panel-num"/>
             </div>
           </div>
         </el-col>
-        <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <!--<el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
               <svg-icon icon-class="ck" class-name="card-panel-icon" />
             </div>
-            <div class="card-panel-description">
-              <div class="card-panel-text">送货支数</div>
-              <count-to :start-val="0" :end-val="count.deliveryBranchNumber" :duration="3600"  class="card-panel-num"/>
-            </div>
+
           </div>
-        </el-col>
+        </el-col>-->
       </el-row>
       <!-- <el-row :gutter="40" class="panel-group">
          <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
@@ -154,6 +159,7 @@
 import CountTo from 'vue-count-to'
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
+import { get } from '@/api/visits'
 import { parseTime } from '@/utils/index'
 export default {
   mixins: [initData],
@@ -164,7 +170,8 @@ export default {
     return {
       typeTime: 'month',time: '',radio: '2',timePlaceholder: '选择日期',
       count: { warehousingNumber: 0, warehousingTonNumber: 0, warehousingBranchNumber: 0, deliveryNumber: 0,
-        deliveryTonNumber: 0, deliveryBranchNumber: 0, deliveryTotalNumber: 0, stockTonNumber: 0, stockBranchNumber: 0}
+        deliveryTonNumber: 0, deliveryBagNumber: 0, deliveryTotalNumber: 0, stockNumber: 0, stockNetWeight: 0,
+        stockGrossWeight: 0, deliveryNetWeight: 0}
     }
   },
   created() {
@@ -176,18 +183,19 @@ export default {
       time: this.time,
       radio: this.radio
     }
-    /*get(data).then(res=>{
+    get(data).then(res=>{
       this.count.warehousingNumber = res.warehousingNumber,
-        this.count.warehousingTonNumber = res.warehousingTonNumber,
-        this.count.warehousingBranchNumber = res.warehousingBranchNumber,
+        this.count.warehousingNetWeight = res.warehousingNetWeight,
+        this.count.warehousingGrossWeight = res.warehousingGrossWeight,
         this.count.deliveryNumber = res.deliveryNumber,
-        this.count.deliveryTonNumber = res.deliveryTonNumber,
-        this.count.deliveryBranchNumber = res.deliveryBranchNumber,
         this.count.deliveryTotalNumber = res.deliveryTotalNumber,
-        this.count.stockTonNumber = res.stockTonNumber,
-        this.count.stockBranchNumber = res.stockBranchNumber
+        this.count.deliveryBagNumber = res.deliveryBagNumber,
+        this.count.deliveryNetWeight = res.deliveryNetWeight,
+        this.count.stockNumber = res.stockNumber,
+        this.count.stockNetWeight = res.stockNetWeight,
+        this.count.stockGrossWeight = res.stockGrossWeight
 
-    })*/
+    })
   },
   methods: {
     getAdd() {
@@ -204,17 +212,19 @@ export default {
         time: this.time,
         radio: this.radio
       }
-      /*get(data).then(res=>{
+      get(data).then(res=>{
         this.count.warehousingNumber = res.warehousingNumber,
-          this.count.warehousingTonNumber = res.warehousingTonNumber.toFixed(2),
-          this.count.warehousingBranchNumber = res.warehousingBranchNumber,
+          this.count.warehousingNetWeight = res.warehousingNetWeight,
+          this.count.warehousingGrossWeight = res.warehousingGrossWeight,
           this.count.deliveryNumber = res.deliveryNumber,
-          this.count.deliveryTonNumber = res.deliveryTonNumber,
-          this.count.deliveryBranchNumber = res.deliveryBranchNumber,
           this.count.deliveryTotalNumber = res.deliveryTotalNumber,
-          this.count.stockTonNumber = res.stockTonNumber,
-          this.count.stockBranchNumber = res.stockBranchNumber
-      })*/
+          this.count.deliveryBagNumber = res.deliveryBagNumber,
+          this.count.deliveryNetWeight = res.deliveryNetWeight,
+          this.count.stockNumber = res.stockNumber,
+          this.count.stockNetWeight = res.stockNetWeight,
+          this.count.stockGrossWeight = res.stockGrossWeight
+
+      })
     },
     setRadio() {
       if (this.radio == 1) {

@@ -7,10 +7,11 @@ export function count() {
   })
 }
 
-export function get() {
+export function get(data) {
   return request({
-    url: 'api/visits',
-    method: 'get'
+    url: 'api/visits/get',
+    method: 'post',
+    data
   })
 }
 
