@@ -257,7 +257,8 @@ export default {
         receivable: data.receivable,
         accumulatedArrears: data.accumulatedArrears,
         totalArrears: data.totalArrears,
-        unit: data.unit
+        unit: data.unit,
+        time: this.dateQuery
       }
       _this.dialog = true
       _this.initEdit(_this.form)
