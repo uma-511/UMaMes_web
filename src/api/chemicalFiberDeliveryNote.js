@@ -48,6 +48,14 @@ export function downloadDeliveryNote(id) {
   })
 }
 
+export function getLastSellingPrice(params) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/getLastSellingPrice/',
+    method: 'get',
+    params
+  })
+}
+
 export function sendOut(id) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/sendOut/' + id,

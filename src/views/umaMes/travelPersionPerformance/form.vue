@@ -80,6 +80,20 @@
       <el-form-item label="里程费" >
         <el-input v-model="form.mileageFee" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
       </el-form-item>
+      <el-divider content-position="left"/>
+      <el-form-item label="参考数量" >
+        <el-input v-model="form.referenceQuantity" disabled="true" style="width: 370px;" @input="doCount"/>
+      </el-form-item>
+      <el-form-item label="转换数量" >
+        <el-input v-model="form.realQuantity" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="countHandlingCost"/>
+      </el-form-item>
+      <el-form-item label="装卸单价" >
+        <el-input v-model="form.unitPrice" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="countHandlingCost"/>
+      </el-form-item>
+      <el-form-item label="装卸费" >
+        <el-input v-model="form.handlingCost" disabled="true" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
+      </el-form-item>
+      <el-divider content-position="left"/>
       <el-form-item label="加班费" >
         <el-input v-model="form.overtimePay" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
       </el-form-item>
@@ -88,9 +102,6 @@
       </el-form-item>
       <el-form-item label="附加费" >
         <el-input v-model="form.surcharge" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
-      </el-form-item>
-      <el-form-item label="装卸费" >
-        <el-input v-model="form.handlingCost" type="number" onkeyup="this.value = this.value.replace(/^[+](\d+).(\d){1,2}/g,'')" style="width: 370px;" @input="doCount"/>
       </el-form-item>
       <el-form-item label="绩效总计" >
         <el-input :disabled="true" v-model="form.totalPerformance" style="width: 370px;"/>
@@ -132,6 +143,9 @@ export default {
       },
       form: {
         id: '',
+        realQuantity: '',
+        referenceQuantity: '',
+        unitPrice: '',
         personName: '',
         startPlace: '',
         endPlace: '',
@@ -240,6 +254,12 @@ export default {
       } else {
         this.customerOptions = []
       }
+    },
+    countHandlingCost() {
+      var n6 = this.form.realQuantity * 1
+      var n7 = this.form.unitPrice * 1
+      this.form.handlingCost = n6 * n7
+      this.doCount()
     },
     doCount() {
       var n1 = this.form.mileageFee

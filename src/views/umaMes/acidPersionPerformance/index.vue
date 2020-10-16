@@ -9,11 +9,17 @@
       </el-select>
       <el-date-picker
         v-model="dateQuery"
+        :type="typeTime"
+        :placeholder="timePlaceholder"
         size="mini"
+        value-format="timestamp"
         class="el-range-editor--small filter-item"
-        type="month"
-        placeholder="选择月份"
+        @visible-change="$forceUpdate()"
       />
+      <el-radio-group v-model="radio" @change="setRadio">
+        <el-radio label="1">日</el-radio>
+        <el-radio label="2">月</el-radio>
+      </el-radio-group>
       <el-checkbox
         v-model="showUnEnable"
         label="查询失效单"
@@ -119,10 +125,11 @@ export default {
   mixins: [initData],
   data() {
     return {
+      typeTime: 'month', radio: '2', timePlaceholder: '选择日期',
       tableHeight: window.innerHeight - 240,
       delLoading: false,
       showUnEnable: false,
-      dateQuery: new Date(),
+      dateQuery: '',
       queryTypeOptions: [
         { key: 'person', display_name: '责任人' },
         { key: 'productName', display_name: '产品名称' }
@@ -132,6 +139,9 @@ export default {
     }
   },
   created() {
+    if (this.dateQuery == '') {
+      this.dateQuery = new Date().getTime()
+    }
     this.$nextTick(() => {
       this.init()
     })
@@ -147,10 +157,27 @@ export default {
       this.params['showUnEnable'] = checkEnables
       const dateQuery = this.dateQuery
       if (dateQuery) {
-        this.params['monthTime'] = dateQuery.getTime()
+        if (this.radio == 2) {
+          this.params['monthTime'] = dateQuery
+        }
+        if (this.radio == 1) {
+          this.params['dayTime'] = dateQuery
+        }
       }
       if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       return true
+    },
+    setRadio() {
+      if (this.radio == 1) {
+        this.dateQuery = new Date().getTime()
+        this.typeTime = 'date'
+        this.timePlaceholder = '选择日期'
+      }
+      if (this.radio == 2) {
+        this.dateQuery = new Date().getTime()
+        this.typeTime = 'month'
+        this.timePlaceholder = '选择月'
+      }
     },
     subDelete(id) {
       this.delLoading = true

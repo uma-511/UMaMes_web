@@ -154,6 +154,7 @@
         width="280px"
         label="操作"
         align="center"
+        @cell-click="alert()"
       >
         <template slot-scope="scope">
           <el-button
@@ -164,6 +165,14 @@
             @click="detail(scope.row)"
             @click.stop
           >详情</el-button>
+          <el-button
+            :disabled="scope.row.noteStatus != 4 && scope.row.noteStatus != 5 ? true : false"
+            :type="scope.row.noteStatus != 4 && scope.row.noteStatus != 5 ? 'info' : 'warning'"
+            :style="{ display: showInvalidButton }"
+            size="mini"
+            icon="el-icon-s-finance"
+            @click="showPayDialogWithoutCustomerForm(scope.row)"
+          >结款</el-button>
           <el-popover
             :ref="'doInvalidRef' + scope.row.id"
             placement="top"
@@ -830,7 +839,7 @@ import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, sendOut, 
 import { editList, getChemicalFiberDeliveryDetailsList, addTableRow, delDetail } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTimeToDate, downloadFile, downloadFileWhithScanNumber } from '@/utils/index'
 import { getUserListByDeptId } from '@/api/user'
-import { add, editAll, doInvalid, unInvalid } from '@/api/chemicalFiberDeliveryNote'
+import { add, editAll, doInvalid, unInvalid, getLastSellingPrice } from '@/api/chemicalFiberDeliveryNote'
 import { getCustomerList, getCustomerById } from '@/api/customer'
 import { getCarList } from '@/api/car'
 import { getAddress } from '@/api/configCode'
@@ -849,8 +858,10 @@ export default {
       unInvalidVisible: false,
       dateQuery: '',
       hideInvalidButton: 'none',
+      showInvalidButton: '',
       checkInvalidQuery: false,
       showUnEnable: false,
+      lastPrice: '',
       delLoading: false,
       payLoading: false,
       dialogVisible: false,
@@ -1069,6 +1080,7 @@ export default {
         return true
       } else {
         this.hideInvalidButton = 'none'
+        this.showInvalidButton = ''
       }
       return true
     },
@@ -1247,6 +1259,32 @@ export default {
       this.prodList = []
       this.getProdList()
       this.addTableFrom = true
+    },
+    async showPayDialogWithoutCustomerForm(data) {
+      let initAmount = 0
+      let customerAccount = 0
+      const paramCustomer = { id: data.customerId }
+      await getCustomerById(paramCustomer).then(res => {
+        customerAccount = res.account
+      })
+      if (customerAccount > this.data.balance) {
+        initAmount = this.data.balance
+      } else {
+        initAmount = customerAccount
+      }
+      this.dialogVisible = false
+      this.payForm = {
+        id: '',
+        customerId: '',
+        customerName: '',
+        payment: '',
+        createDate: '',
+        payDate: new Date(),
+        inputUser: '',
+        scanNumber: '',
+        amount: initAmount
+      }
+      this.payDialog = true
     },
     showPayDialog() {
       this.payDialog = true
@@ -1510,7 +1548,6 @@ export default {
         endPlace: this.form.endPlace,
         externalNumber: this.form.externalNumber
       }
-      console.log(this.sumTotalQuantity)
       if (this.isAdd == 1) {
         this.doAdd(this.customerForm)
       }
@@ -1665,8 +1702,10 @@ export default {
     showInvoice(event) {
       if (this.hideInvalidButton == 'none') {
         this.hideInvalidButton = ''
+        this.showInvalidButton = 'none'
       } else {
         this.hideInvalidButton = 'none'
+        this.showInvalidButton = ''
       }
     },
     formatDate(row, column) {
@@ -1684,6 +1723,7 @@ export default {
         this.$refs['doInvalidRef' + id].doClose()
         this.dialogVisible = false
         this.hideInvalidButton = 'none'
+        this.showInvalidButton = ''
         this.init()
         this.$notify({
           title: '状态设置为失效',
@@ -1701,6 +1741,7 @@ export default {
         this.$refs['reRecived' + id].doClose()
         this.dialogVisible = false
         this.hideInvalidButton = 'none'
+        this.showInvalidButton = ''
         this.init()
         this.$notify({
           title: '设置成功',
@@ -1720,6 +1761,7 @@ export default {
         this.sutmitDetailLoading = false
         this.$refs['doInvalidRef' + id].doClose()
         this.hideInvalidButton = 'none'
+        this.showInvalidButton = ''
         this.init()
         this.$notify({
           title: '状态设置为生效',
@@ -2145,13 +2187,18 @@ export default {
         this.tableForm.prodModel = this.prodList[0].prodModel
       })
     },
-    addToDetail(row) {
+    async addToDetail(row) {
+      const params = { customerId: this.form.customerId, prodModel: row.prodModel }
+      await getLastSellingPrice(params).then(res => {
+        this.lastPrice = res.lastPrice
+      })
       this.tableForm = {
         detailNumber: this.detailList.length + 1,
         prodModel: row.prodModel,
         prodName: row.prodName,
         scanNumber: this.form.scanNumber,
-        unit: row.prodUnit
+        unit: row.prodUnit,
+        sellingPrice: this.lastPrice
       }
       // 产品重复选择
       /* this.detailList.forEach((item) => {

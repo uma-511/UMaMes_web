@@ -97,7 +97,7 @@
           <span>{{ scope.row.accumulatedArrears }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="totalArrears" label="本期欠款">
+      <el-table-column prop="totalArrears" label="总欠款">
         <template slot-scope="scope">
           <span>{{ scope.row.totalArrears }}</span>
         </template>

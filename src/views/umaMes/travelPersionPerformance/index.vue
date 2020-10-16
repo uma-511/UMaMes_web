@@ -9,11 +9,17 @@
       </el-select>
       <el-date-picker
         v-model="dateQuery"
+        :type="typeTime"
+        :placeholder="timePlaceholder"
         size="mini"
+        value-format="timestamp"
         class="el-range-editor--small filter-item"
-        type="month"
-        placeholder="选择月份"
+        @visible-change="$forceUpdate()"
       />
+      <el-radio-group v-model="radio" @change="setRadio">
+        <el-radio label="1">日</el-radio>
+        <el-radio label="2">月</el-radio>
+      </el-radio-group>
       <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
       <el-checkbox
         v-model="showUnEnable"
@@ -126,11 +132,12 @@ export default {
   mixins: [initData],
   data() {
     return {
+      typeTime: 'month', radio: '2', timePlaceholder: '选择日期',
       tableHeight: window.innerHeight - 240,
       delLoading: false,
       showUnEnable: false,
       queryValue: '',
-      dateQuery: new Date(),
+      dateQuery: '',
       queryType: 'personName',
       queryTypeOptions: [
         { key: 'personName', display_name: '责任人' },
@@ -139,6 +146,9 @@ export default {
     }
   },
   created() {
+    if (this.dateQuery == '') {
+      this.dateQuery = new Date().getTime()
+    }
     this.$nextTick(() => {
       this.init()
     })
@@ -154,10 +164,27 @@ export default {
       this.params['showUnEnable'] = checkEnables
       const dateQuery = this.dateQuery
       if (dateQuery) {
-        this.params['monthTime'] = dateQuery.getTime()
+        if (this.radio == 2) {
+          this.params['monthTime'] = dateQuery
+        }
+        if (this.radio == 1) {
+          this.params['dayTime'] = dateQuery
+        }
       }
       if (this.queryType && this.queryValue) { this.params[this.queryType ] = this.queryValue }
       return true
+    },
+    setRadio() {
+      if (this.radio == 1) {
+        this.dateQuery = new Date().getTime()
+        this.typeTime = 'date'
+        this.timePlaceholder = '选择日期'
+      }
+      if (this.radio == 2) {
+        this.dateQuery = new Date().getTime()
+        this.typeTime = 'month'
+        this.timePlaceholder = '选择月'
+      }
     },
     subDelete(id) {
       this.delLoading = true
@@ -241,7 +268,7 @@ export default {
           }, 0).toFixed(2)
           sums[index] += ' 元'
         }
-        if (index === 4) {
+        if (index === 10) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
@@ -278,6 +305,9 @@ export default {
         customerName: data.customerName,
         startPlace: data.startPlace,
         endPlace: data.endPlace,
+        realQuantity: data.realQuantity,
+        referenceQuantity: data.referenceQuantity,
+        unitPrice: data.unitPrice,
         enable: data.enable
       }
       _this.dialog = true

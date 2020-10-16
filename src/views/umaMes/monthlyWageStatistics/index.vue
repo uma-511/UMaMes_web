@@ -130,8 +130,19 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column v-if="checkPermission(['admin','monthlyWageStatistics:edit','monthlyWageStatistics:del'])" label="操作" width="80px" align="center">
+      <el-table-column v-if="checkPermission(['admin','monthlyWageStatistics:edit','monthlyWageStatistics:del'])" label="操作" width="138px" align="center">
         <template slot-scope="scope">
+          <el-popover
+            :ref="'finish'+scope.row.id"
+            placement="top"
+            width="180">
+            <p>确定完成本条记录吗？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="$refs['finish'+scope.row.id].doClose()">取消</el-button>
+              <el-button :loading="delLoading" type="primary" size="mini" @click="doFinish(scope.row.id)">确定</el-button>
+            </div>
+            <el-button slot="reference" type="warning" size="mini" @click.stop>完成</el-button>
+          </el-popover>
           <el-popover
             v-permission="['admin','monthlyWageStatistics:del']"
             :ref="scope.row.id"
@@ -161,7 +172,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadMonthlyWageStatistics, generateWage, oneKeyDelete, oneKeyReset } from '@/api/monthlyWageStatistics'
+import { del, downloadMonthlyWageStatistics, generateWage, oneKeyDelete, oneKeyReset, doFinish } from '@/api/monthlyWageStatistics'
 import { parseTimeToDates, downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -174,6 +185,7 @@ export default {
       hideInvalidButton: 'none',
       refOneKey: '',
       refReSet: '',
+      finishLoading: '',
       dateQuery: new Date(),
       statusValue: {
         0: '待确认',
@@ -368,6 +380,23 @@ export default {
           this.init()
         }
       )
+    },
+    doFinish(id) {
+      this.finishLoading = true
+      doFinish(id).then(res => {
+        this.$refs['finish' + id].doClose()
+        this.$notify({
+          title: '成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.finishLoading = false
+        this.init()
+      }).catch(err => {
+        this.finishLoading = false
+        this.$refs['finish' + id].doClose()
+        console.log(err.response.data.message)
+      })
     },
     subDelete(id) {
       this.delLoading = true
