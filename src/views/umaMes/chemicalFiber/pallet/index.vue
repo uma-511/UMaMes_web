@@ -59,13 +59,14 @@
           <span>{{ parseTime(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="prodModel" label="料号"/>
+      <!--<el-table-column prop="prodModel" label="料号"/>-->
       <el-table-column prop="prodName" label="品名"/>
       <el-table-column prop="prodColor" label="色号"/>
       <el-table-column prop="prodFineness" label="纤度"/>
       <el-table-column prop="totalBag" width="55px" label="包数"/>
       <el-table-column prop="totalNumber" width="55px" label="个数"/>
-      <el-table-column :formatter="kgformatter" width="55px" prop="netWeight" label="净重"/>
+     <!-- <el-table-column :formatter="kgformatter" width="55px" prop="netWeight" label="净重"/>-->
+      <el-table-column width="55px" prop="netWeight" label="净重"/>
       <el-table-column prop="tare" width="55px" label="皮重"/>
       <el-table-column prop="grossWeight" width="55px" label="毛重"/>
       <el-table-column prop="warehousingBag" label="出库包数"/>
@@ -181,6 +182,7 @@ export default {
     return {
       loading: false,
       dataLoading:false,dateQuery: '',
+      dataList: [],
       form: {
         palletId: ''
       },
@@ -189,6 +191,7 @@ export default {
         { key: 'packer', display_name: '包装员' },
         { key: 'fineness', display_name: '纤度' },
         { key: 'color', display_name: '色号' },
+        { key: 'prodName', display_name: '产品名称' },
       ],
       typeMapping: {
         0: '',

@@ -64,15 +64,21 @@
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+    <el-table v-loading="loading"
+              :data="data" size="small"
+              :summary-method="getSummar"
+              show-summary
+              style="width: 100%;">
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerCode" label="客户编号"/>
      <!-- <el-table-column prop="customerAddress" label="客户地址"/>-->
-      <el-table-column prop="contacts" label="联系人"/>
-      <el-table-column prop="contactPhone" label="联系电话"/>
+     <!-- <el-table-column prop="contacts" label="联系人"/>
+      <el-table-column prop="contactPhone" label="联系电话"/>-->
       <el-table-column prop="totalCost" label="总成本"/>
       <el-table-column prop="totalPrice" label="总价"/>
+      <el-table-column prop="bag" label="总包数"/>
+      <el-table-column prop="weight" label="总净重"/>
       <el-table-column prop="remark" label="备注"/>
      <!-- <el-table-column prop="seller" label="业务员"/>
       <el-table-column prop="storeKeeper" label="仓管员"/>-->
@@ -243,7 +249,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel } from '@/api/chemicalFiberDeliveryNote'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, getSalesReportSummaries, getNoteSumm } from '@/api/chemicalFiberDeliveryNote'
 import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
@@ -256,7 +262,7 @@ export default {
       delLoading: false,
       dialogVisible: false,
       detailLoading: false,
-      sutmitDetailLoading: false,
+      sutmitDetailLoading: false,noteSums: [],
       unitInfoMsg: {
         id: '',
         customerName: '',
@@ -307,7 +313,16 @@ export default {
         this.params['tempStartTime'] = dateQuery[0].getTime()
         this.params['tempEndTime'] = dateQuery[1].getTime()
       }
+      this.tempGetSalesReportSummaries()
       return true
+    },
+    getSummar() {
+      return this.noteSums
+    },
+    tempGetSalesReportSummaries() {
+      getNoteSumm(this.params).then(res => {
+        this.noteSums = res.data
+      })
     },
     subDelete(id) {
       this.delLoading = true

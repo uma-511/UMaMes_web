@@ -25,6 +25,52 @@
           :value="item.key"
         />
       </el-select>
+      <!-- 搜索 -->
+      <el-input
+        v-model="query.value1"
+        clearable
+        placeholder="输入搜索内容"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="toQuery"
+      />
+      <el-select
+        v-model="query.type1"
+        clearable
+        placeholder="类型"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in queryTypeOptions"
+          :key="item.key"
+          :label="item.display_name"
+          :value="item.key"
+        />
+      </el-select>
+      <!-- 搜索 -->
+      <el-input
+        v-model="query.value2"
+        clearable
+        placeholder="输入搜索内容"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="toQuery"
+      />
+      <el-select
+        v-model="query.type2"
+        clearable
+        placeholder="类型"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in queryTypeOptions"
+          :key="item.key"
+          :label="item.display_name"
+          :value="item.key"
+        />
+      </el-select>
       <el-select
         v-model="query.status"
         clearable
@@ -38,7 +84,7 @@
         <el-option key="3" label="已作废" value="3"/>
         <el-option key="4" label="已返仓" value="4"/>
         <el-option key="5" label="已退货" value="5"/>
-        <el-option key="5" label="托板入库" value="9"/>
+        <!--<el-option key="5" label="托板入库" value="9"/>-->
       </el-select>
       <el-date-picker
         v-model="dateQuery"
@@ -199,11 +245,17 @@ export default {
       const query = this.query
       const type = query.type
       const value = query.value
+      const type1 = query.type1
+      const value1 = query.value1
+      const type2 = query.type2
+      const value2 = query.value2
       const status = query.status
       const dateQuery = this.dateQuery
       if (type && value) {
         this.params[type] = value
       }
+      if (type1 && value1) { this.params[type1] = value1 }
+      if (type2 && value2) { this.params[type2] = value2 }
       if (status) {
         this.params['status'] = status
       }

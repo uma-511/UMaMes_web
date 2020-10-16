@@ -56,3 +56,11 @@ export function getSalesReportSummaries(data) {
     data
   })
 }
+
+export function getNoteSumm(data) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/getNoteSumm',
+    method: 'post',
+    data
+  })
+}
