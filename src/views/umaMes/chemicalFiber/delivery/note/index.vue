@@ -71,10 +71,10 @@
               style="width: 100%;">
       <el-table-column prop="scanNumber" label="出库单号"/>
       <el-table-column prop="customerName" label="客户名称"/>
-      <el-table-column prop="customerCode" label="客户编号"/>
+      <!--<el-table-column prop="customerCode" label="客户编号"/>-->
      <!-- <el-table-column prop="customerAddress" label="客户地址"/>-->
-     <!-- <el-table-column prop="contacts" label="联系人"/>
-      <el-table-column prop="contactPhone" label="联系电话"/>-->
+      <el-table-column prop="contacts" label="联系人"/>
+      <el-table-column prop="contactPhone" label="联系电话"/>
       <el-table-column prop="totalCost" label="总成本"/>
       <el-table-column prop="totalPrice" label="总价"/>
       <el-table-column prop="bag" label="总包数"/>
