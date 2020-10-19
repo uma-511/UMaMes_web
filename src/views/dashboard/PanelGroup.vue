@@ -68,7 +68,7 @@
         </el-col>
       </el-row>
       <el-row :gutter="40" class="panel-group">
-        <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <el-col :xs="12" :sm="12" :lg="12" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
               <svg-icon icon-class="ck" class-name="card-panel-icon" />
@@ -77,19 +77,19 @@
               <div class="card-panel-text">送货单数</div>
               <count-to :start-val="0" :end-val="count.deliveryNumber" :duration="3200"  class="card-panel-num"/>
             </div>
-          </div>
-        </el-col>
-        <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-          <div class="card-panel">
-            <div class="card-panel-icon-wrapper icon-message">
-              <svg-icon icon-class="ck" class-name="card-panel-icon" />
-            </div>
-            <div class="card-panel-description">
+            <div class="card-panel-description"style="width:300px;">
               <div class="card-panel-text">送货金额</div>
               <count-to :start-val="0" :end-val="count.deliveryTotalNumber" :duration="3600" :decimals ="2" class="card-panel-num"/>
             </div>
           </div>
         </el-col>
+        <!--<el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+          <div class="card-panel">
+            <div class="card-panel-icon-wrapper icon-message">
+              <svg-icon icon-class="ck" class-name="card-panel-icon" />
+            </div>
+          </div>
+        </el-col>-->
         <el-col :xs="12" :sm="12" :lg="12" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-message">
@@ -99,7 +99,11 @@
               <div class="card-panel-text">出库包数</div>
               <count-to :start-val="0" :end-val="count.deliveryBagNumber" :duration="3600"  class="card-panel-num"/>
             </div>
-            <div class="card-panel-description"style="width:300px;">
+            <div class="card-panel-description"style="width:150px;">
+              <div class="card-panel-text">出库毛重</div>
+              <count-to :start-val="0" :end-val="count.deliveryGrossWeight" :duration="3600"  class="card-panel-num"/>
+            </div>
+            <div class="card-panel-description"style="width:150px;">
               <div class="card-panel-text">出库净重</div>
               <count-to :start-val="0" :end-val="count.deliveryNetWeight" :duration="3600" :decimals ="2" class="card-panel-num"/>
             </div>
@@ -171,7 +175,7 @@ export default {
       typeTime: 'month',time: '',radio: '2',timePlaceholder: '选择日期',
       count: { warehousingNumber: 0, warehousingTonNumber: 0, warehousingBranchNumber: 0, deliveryNumber: 0,
         deliveryTonNumber: 0, deliveryBagNumber: 0, deliveryTotalNumber: 0, stockNumber: 0, stockNetWeight: 0,
-        stockGrossWeight: 0, deliveryNetWeight: 0}
+        stockGrossWeight: 0, deliveryNetWeight: 0, deliveryGrossWeight: 0}
     }
   },
   created() {
@@ -191,6 +195,7 @@ export default {
         this.count.deliveryTotalNumber = res.deliveryTotalNumber,
         this.count.deliveryBagNumber = res.deliveryBagNumber,
         this.count.deliveryNetWeight = res.deliveryNetWeight,
+        this.count.deliveryGrossWeight = res.deliveryGrossWeight,
         this.count.stockNumber = res.stockNumber,
         this.count.stockNetWeight = res.stockNetWeight,
         this.count.stockGrossWeight = res.stockGrossWeight
@@ -220,6 +225,7 @@ export default {
           this.count.deliveryTotalNumber = res.deliveryTotalNumber,
           this.count.deliveryBagNumber = res.deliveryBagNumber,
           this.count.deliveryNetWeight = res.deliveryNetWeight,
+          this.count.deliveryGrossWeight = res.deliveryGrossWeight,
           this.count.stockNumber = res.stockNumber,
           this.count.stockNetWeight = res.stockNetWeight,
           this.count.stockGrossWeight = res.stockGrossWeight

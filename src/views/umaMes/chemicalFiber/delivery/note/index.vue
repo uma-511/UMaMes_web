@@ -79,6 +79,7 @@
       <el-table-column prop="totalPrice" label="总价"/>
       <el-table-column prop="bag" label="总包数"/>
       <el-table-column prop="weight" label="总净重"/>
+      <el-table-column prop="grossWeight" label="总毛重"/>
       <el-table-column prop="remark" label="备注"/>
      <!-- <el-table-column prop="seller" label="业务员"/>
       <el-table-column prop="storeKeeper" label="仓管员"/>-->
@@ -179,7 +180,14 @@
           <el-table-column
             :formatter="kgformatter"
             prop="totalWeight"
-            label="重量"
+            label="净重"
+            width="60%"
+            align="center"
+          />
+          <el-table-column
+            :formatter="kgformatter"
+            prop="grossWeight"
+            label="毛重"
             width="60%"
             align="center"
           />
@@ -457,6 +465,17 @@ export default {
           sums[index] += "KG"
         }
         if (index === 3) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += "KG"
+        }
+        if (index === 4) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
