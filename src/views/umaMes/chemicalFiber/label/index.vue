@@ -237,7 +237,7 @@ export default {
     beforeInit() {
       this.url = 'api/chemicalFiberLabel'
       const sort = 'id,desc'
-      this.params = { page: this.page, size: this.size, sort: sort }
+      this.params = { page: 0, size: 10000, sort: sort }
       const query = this.query
       const type = query.type
       const value = query.value
