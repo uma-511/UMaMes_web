@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <div class="dashboard-editor-container">
       <panel-group/>
-
+<!--
       <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
         <line-chart/>
       </el-row>
@@ -23,7 +23,7 @@
             <bar-chart/>
           </div>
         </el-col>
-      </el-row>
+      </el-row>-->
     </div>
   </div>
 </template>
@@ -45,11 +45,11 @@ count().then(res => {})
 export default {
   name: 'Dashboard',
   components: {
-    PanelGroup,
-    LineChart,
+    PanelGroup
+    /*LineChart,
     RaddarChart,
     PieChart,
-    BarChart },
+    BarChart*/ },
   computed: {
     ...mapGetters([
       'roles'

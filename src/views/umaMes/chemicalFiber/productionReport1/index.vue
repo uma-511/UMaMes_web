@@ -21,12 +21,56 @@
         v-model="query.values"
         clearable
         placeholder="输入搜索内容"
-        style="width: 200px;"
+        style="width: 130px;"
         class="filter-item"
         @keyup.enter.native="toQuery"
       />
       <el-select
         v-model="query.types"
+        clearable
+        placeholder="类型"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in queryTypeOptions"
+          :key="item.key"
+          :label="item.display_name"
+          :value="item.key"
+        />
+      </el-select>
+      <el-input
+        v-model="query.values1"
+        clearable
+        placeholder="输入搜索内容"
+        style="width: 130px;"
+        class="filter-item"
+        @keyup.enter.native="toQuery"
+      />
+      <el-select
+        v-model="query.types1"
+        clearable
+        placeholder="类型"
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="item in queryTypeOptions"
+          :key="item.key"
+          :label="item.display_name"
+          :value="item.key"
+        />
+      </el-select>
+      <el-input
+        v-model="query.values2"
+        clearable
+        placeholder="输入搜索内容"
+        style="width: 130px;"
+        class="filter-item"
+        @keyup.enter.native="toQuery"
+      />
+      <el-select
+        v-model="query.types2"
         clearable
         placeholder="类型"
         class="filter-item"
@@ -84,9 +128,10 @@
           <span>{{ parseTimeToDate(scope.row.time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="productionNumber" label="生产单号" align="center"/>
+      <!--<el-table-column prop="productionNumber" label="生产单号" align="center"/>-->
       <el-table-column prop="machine" label="机台" align="center"/>
       <el-table-column prop="shifts" label="班次" align="center"/>
+      <el-table-column prop="model" label="产品名称" align="center"/>
       <el-table-column prop="color" label="色号" align="center"/>
       <el-table-column prop="fineness" label="纤度" align="center"/>
       <el-table-column prop="productionPacketNumber" label="生产包数" align="center"/>
@@ -179,11 +224,17 @@ export default {
       const query = this.query
       const types = query.types
       const values = query.values
+      const types1 = query.types1
+      const values1 = query.values1
+      const types2 = query.types2
+      const values2 = query.values2
       const type = 'shifts'
       const value = query.value
-      this.params['is'] = null;
       const dateQuery = this.dateQuery
+      this.params['is'] = 1;
       if (types && values) { this.params[types] = values }
+      if (types1 && values1) { this.params[types1] = values1 }
+      if (types2 && values2) { this.params[types2] = values2 }
       if (type && value) { this.params[type] = value }
       if (dateQuery) {
         this.params['tempStartTime'] = dateQuery[0].getTime()
@@ -221,11 +272,8 @@ export default {
       getShifts().then(res => {
         this.customerList = res
         this.customerOptions = this.customerList.filter(item => {
-          if (item.shifts != null) {
-            return item.shifts.toLowerCase()
-              .indexOf(item.shifts.toLowerCase()) > -1
-          }
-
+          return item.shifts.toLowerCase()
+            .indexOf(item.shifts.toLowerCase()) > -1
         })
       })
     }
