@@ -225,7 +225,6 @@ export default {
             return item.shifts.toLowerCase()
               .indexOf(item.shifts.toLowerCase()) > -1
           }
-
         })
       })
     }

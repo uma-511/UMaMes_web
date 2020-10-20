@@ -272,8 +272,10 @@ export default {
       getShifts().then(res => {
         this.customerList = res
         this.customerOptions = this.customerList.filter(item => {
-          return item.shifts.toLowerCase()
-            .indexOf(item.shifts.toLowerCase()) > -1
+          if (item.shifts != null) {
+            return item.shifts.toLowerCase()
+              .indexOf(item.shifts.toLowerCase()) > -1
+          }
         })
       })
     }
