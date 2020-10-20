@@ -486,7 +486,7 @@ export default {
           }, 0)
           sums[index]
         }
-        if (index === 4) {
+        if (index === 5) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
