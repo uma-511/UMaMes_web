@@ -47,7 +47,7 @@
       <el-form-item label="流水号">
         <el-input v-model="form.flowNumber" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="纤度">
+      <el-form-item label="规格">
         <el-input v-model="form.fineness" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="色号">

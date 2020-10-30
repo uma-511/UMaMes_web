@@ -36,7 +36,7 @@
       <el-table-column prop="model" label="产品型号"/>
       <el-table-column prop="name" label="产品名称"/>
       <el-table-column prop="color" label="色号"/>
-      <el-table-column prop="fineness" label="纤度"/>
+      <el-table-column prop="fineness" label="规格"/>
       <el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
@@ -89,7 +89,7 @@ export default {
         { key: 'model', display_name: '产品型号' },
         { key: 'name', display_name: '产品名称' },
         { key: 'color', display_name: '色号' },
-        { key: 'fineness', display_name: '纤度' }
+        { key: 'fineness', display_name: '规格' }
       ]
     }
   },

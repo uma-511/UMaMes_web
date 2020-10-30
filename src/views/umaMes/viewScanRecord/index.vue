@@ -145,7 +145,7 @@
       <el-table-column prop="labelNumber" label="条码号"/>
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodColor" label="产品颜色"/>
-      <el-table-column prop="prodFineness" label="产品纤度"/>
+      <el-table-column prop="prodFineness" label="产品规格"/>
       <el-table-column prop="number" label="订单编号"/>
       <el-table-column prop="customerCode" label="客户编号"/>
       <el-table-column prop="factPerBagNumber" label="每包个数"/>

@@ -61,7 +61,7 @@
       <el-table-column
         type="index"
         width="200"
-        label="编号"
+        label="序号"
         align="center"/>
       <el-table-column prop="labelNumber" label="标签号"align="center"/>
       <el-table-column prop="labelError" label="删除原因"align="center"/>

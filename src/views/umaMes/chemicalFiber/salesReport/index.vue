@@ -90,7 +90,7 @@
       <el-table-column prop="receivablePrice" label="总金额" align="center"/>-->
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodColor" label="色号"/>
-      <el-table-column prop="prodFineness" label="纤度"/>
+      <el-table-column prop="prodFineness" label="规格"/>
       <el-table-column prop="totalBag" label="出库包数"/>
       <el-table-column prop="totalNumber" label="出库个数"/>
       <el-table-column prop="totalWeight" label="出库净重"/>
@@ -121,7 +121,7 @@
     >
       <el-table :data="chemicalFiberDeliveryDetails" style="width: 100%">
         <el-table-column prop="prodColor" label="色号" width="180"/>
-        <el-table-column prop="prodFineness" label="纤度" width="180"/>
+        <el-table-column prop="prodFineness" label="规格" width="180"/>
         <el-table-column prop="totalBag" label="出库包数"/>
         <el-table-column prop="totalNumber" label="出库个数"/>
         <el-table-column prop="totalWeight" label="出库净重"/>
@@ -157,7 +157,7 @@ export default {
         { key: 'scanNumber', display_name: '销售单号' },
         { key: 'prodName', display_name: '产品名称' },
         { key: 'prodColor', display_name: '产品颜色' },
-        { key: 'prodFineness', display_name: '产品纤度' }
+        { key: 'prodFineness', display_name: '产品规格' }
       ],
       sums: [],
       chemicalFiberDeliveryDetails: [],

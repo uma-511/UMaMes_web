@@ -10,7 +10,7 @@
       <el-form-item label="色号" prop="color">
         <el-input v-model="form.color" style="width: 370px;" maxlength="10"/>
       </el-form-item>
-      <el-form-item label="纤度" prop="fineness">
+      <el-form-item label="规格" prop="fineness">
         <el-input v-model="form.fineness" style="width: 370px;" maxlength="10"/>
       </el-form-item>
       <!-- <el-form-item label="创建日期" >
@@ -70,7 +70,7 @@ export default {
         ],
         fineness: [
           {
-            required: true, message: '请输入产品纤度', trigger: 'blur'
+            required: true, message: '请输入产品规格', trigger: 'blur'
           }
         ]
       }

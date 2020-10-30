@@ -120,9 +120,9 @@
       <el-table-column
         type="index"
         width="50"
-        label="编号"
+        label="序号"
         align="center"/>
-      <!-- <el-table-column prop="number" label="编号" align="center"/> -->
+      <!-- <el-table-column prop="number" label="序号" align="center"/> -->
       <el-table-column prop="time" label="日期" align="center">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.time) }}</span>
@@ -133,7 +133,7 @@
       <el-table-column prop="shifts" label="班次" align="center"/>
       <el-table-column prop="model" label="产品名称" align="center"/>
       <el-table-column prop="color" label="色号" align="center"/>
-      <el-table-column prop="fineness" label="纤度" align="center"/>
+      <el-table-column prop="fineness" label="规格" align="center"/>
       <el-table-column prop="productionPacketNumber" label="生产包数" align="center"/>
       <el-table-column prop="productionFactPerBagNumber" label="生产个数" align="center"/>
       <el-table-column prop="productionNetWeight" label="生产净重(kg)" align="center"/>
@@ -200,7 +200,7 @@ export default {
       queryTypeOptions: [
         { key: 'machine', display_name: '机台' },
         { key: 'color', display_name: '产品颜色' },
-        { key: 'fineness', display_name: '产品纤度' },
+        { key: 'fineness', display_name: '产品规格' },
         { key: 'name', display_name: '产品名称' }
       ],
       sums: []

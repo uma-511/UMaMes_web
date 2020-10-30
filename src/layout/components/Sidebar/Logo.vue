@@ -4,7 +4,7 @@
     <svg-icon v-if="isCollapse" icon-class="run" />
     <!--正常状态下显示的，可以使用本地的logoImg-->
     <div class="logo-con">
-      <img src="../../../assets/logo/um_logo.png">
+      <img src="../../../assets/logo/uma_logo_xinbaoli.png">
       <!--<img :src="logoImg">-->
     </div>
   </el-menu-item>

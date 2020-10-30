@@ -130,7 +130,7 @@
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="labelNumber" label="条码号"/>
-      <el-table-column prop="fineness" label="纤度"/>
+      <el-table-column prop="fineness" label="规格"/>
       <el-table-column prop="color" label="色号"/>
       <el-table-column prop="factPerBagNumber" label="每包个数"/>
       <el-table-column :formatter="kgformatter" prop="netWeight" label="净重"/>
@@ -149,11 +149,27 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="printTime" label="打印日期">
+      <el-table-column prop="printTime" label="打印时间">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.printTime) }}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="warehousingTime" label="入仓时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.warehousingTime) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="outOfWarehouseTime" label="出仓时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.outOfWarehouseTime) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="toVoidTime" label="作废时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.toVoidTime) }}</span>
+        </template>
+      </el-table-column>
+
       <!-- <el-table-column v-if="checkPermission(['admin','chemicalFiberLabel:edit','chemicalFiberLabel:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button v-permission="['admin','chemicalFiberLabel:edit']" size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
@@ -206,7 +222,7 @@ export default {
         // { key: 'printTime', display_name: '打印时间' },
         { key: 'shifts', display_name: '班次' },
         { key: 'packer', display_name: '包装员' },
-        { key: 'fineness', display_name: '纤度' },
+        { key: 'fineness', display_name: '规格' },
         { key: 'color', display_name: '色号' },
         { key: 'machine', display_name: '机台号' }
       ],

@@ -51,7 +51,7 @@
       <el-table-column
         type="index"
         width="50"
-        label="编号"
+        label="序号"
         align="center"/>
       <el-table-column prop="palletNumber" width="125px" label="托板号"/>
       <el-table-column prop="createDate" width="135px" label="单据时间">
@@ -62,7 +62,7 @@
       <!--<el-table-column prop="prodModel" label="料号"/>-->
       <el-table-column prop="prodName" label="品名"/>
       <el-table-column prop="prodColor" label="色号"/>
-      <el-table-column prop="prodFineness" label="纤度"/>
+      <el-table-column prop="prodFineness" label="规格"/>
       <el-table-column prop="totalBag" width="55px" label="包数"/>
       <el-table-column prop="totalNumber" width="55px" label="个数"/>
      <!-- <el-table-column :formatter="kgformatter" width="55px" prop="netWeight" label="净重"/>-->
@@ -143,12 +143,12 @@
       <el-table-column
         type="index"
         width="50"
-        label="编号"
+        label="序号"
         align="center"/>
       <el-table-column prop="labelNumber" width="125px" label="条码号" />
       <el-table-column prop="prodModel" label="料号"/>
       <el-table-column prop="prodName" label="品名"/>
-      <el-table-column prop="color" label="纤度"/>
+      <el-table-column prop="color" label="规格"/>
       <el-table-column prop="fineness" label="色号"/>
       <el-table-column prop="factPerBagNumber" label="个数"/>
       <el-table-column prop="netWeight" label="净重"/>
@@ -189,7 +189,7 @@ export default {
       queryTypeOptions: [
         { key: 'palletNumber', display_name: '条码号' },
         { key: 'packer', display_name: '包装员' },
-        { key: 'fineness', display_name: '纤度' },
+        { key: 'fineness', display_name: '规格' },
         { key: 'color', display_name: '色号' },
         { key: 'prodName', display_name: '产品名称' },
       ],

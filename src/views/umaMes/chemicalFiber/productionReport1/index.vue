@@ -107,7 +107,7 @@
       >导出</el-button>
     </div>
     <!--表单组件-->
-    <!-- <eForm ref="form" :is-add="isAdd"/> -->
+    <eForm ref="form"/>
     <!--表格渲染-->
     <el-table
       v-loading="loading"
@@ -120,7 +120,7 @@
       <el-table-column
         type="index"
         width="50"
-        label="编号"
+        label="序号"
         align="center"/>
       <!-- <el-table-column prop="number" label="编号" align="center"/> -->
       <el-table-column prop="time" label="日期" align="center">
@@ -133,7 +133,7 @@
       <el-table-column prop="shifts" label="班次" align="center"/>
       <el-table-column prop="model" label="产品名称" align="center"/>
       <el-table-column prop="color" label="色号" align="center"/>
-      <el-table-column prop="fineness" label="纤度" align="center"/>
+      <el-table-column prop="fineness" label="规格" align="center"/>
       <el-table-column prop="productionPacketNumber" label="生产包数" align="center"/>
       <el-table-column prop="productionFactPerBagNumber" label="生产个数" align="center"/>
       <el-table-column prop="productionNetWeight" label="生产净重(kg)" align="center"/>
@@ -173,6 +173,20 @@
           <span style="color:#F56C6C;">{{ scope.row.cancel_gross_weight }}</span>
         </template>
       </el-table-column>-->
+      <el-table-column
+        label="操作"
+        width="150px"
+        align="center"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="primary"
+            icon="el-icon-search"
+            @click="edit(scope.row)"
+          />
+        </template>
+      </el-table-column>
     </el-table>
     <!--分页组件-->
     <el-pagination
@@ -192,7 +206,9 @@ import { getProductionReportSummaries, exportPoundExcelProduct} from '@/api/chem
 import { getShifts } from '@/api/chemicalFiberLabel'
 import { parseTime, downloadFile, parseTimeToDate } from '@/utils/index'
 import initData from '@/mixins/initData'
+import eForm from './form'
 export default {
+  components: {eForm},
   mixins: [initData],
   data() {
     return {
@@ -200,7 +216,7 @@ export default {
       queryTypeOptions: [
         { key: 'machine', display_name: '机台' },
         { key: 'color', display_name: '产品颜色' },
-        { key: 'fineness', display_name: '产品纤度' },
+        { key: 'fineness', display_name: '产品规格' },
         { key: 'name', display_name: '产品名称' }
       ],
       sums: []
@@ -276,6 +292,24 @@ export default {
             .indexOf(item.shifts.toLowerCase()) > -1
         })
       })
+    },
+    edit(data) {
+      const _this = this.$refs.form
+      _this.form = {
+        machine: data.machine,
+        shifts: data.shifts,
+        model: data.model,
+        color: data.color,
+        fineness: data.fineness,
+        prodId: data.prodId,
+        time: data.time,
+        model: 2,
+        netWeight: data.productionNetWeight,
+        packetNumber: data.productionPacketNumber
+      }
+      _this.dialog = true
+      _this.init()
+
     }
   }
 }

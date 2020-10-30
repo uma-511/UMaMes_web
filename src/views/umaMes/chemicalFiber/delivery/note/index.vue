@@ -40,6 +40,13 @@
         icon="el-icon-search"
         @click="toQuery"
       >搜索</el-button>
+      <el-button
+        class="filter-item"
+        size="mini"
+        type="success"
+        icon="el-icon-search"
+        @click="WasteOutOfWarehouse()"
+      >废料出仓</el-button>
       <!-- 新增 -->
       <!-- <div style="display: inline-block;margin: 0px 2px;">
         <el-button
@@ -257,7 +264,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, getSalesReportSummaries, getNoteSumm } from '@/api/chemicalFiberDeliveryNote'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, getSalesReportSummaries, getNoteSumm, getWasteOutOfWarehouse } from '@/api/chemicalFiberDeliveryNote'
 import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
@@ -565,6 +572,16 @@ export default {
     },
     kgformatter(row, column, cellValue, index) {
       return cellValue + ' KG'
+    },
+    WasteOutOfWarehouse() {
+      getWasteOutOfWarehouse().then(res => {
+        this.$notify({
+          title: '废料出仓成功',
+          type: 'success',
+          duration: 2500
+        })
+      })
+
     }
   }
 }

@@ -62,7 +62,7 @@
       <el-table-column prop="prodModel" label="产品型号"/>
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodColor" label="产品色号"/>
-      <el-table-column prop="prodFineness" label="产品纤度"/>
+      <el-table-column prop="prodFineness" label="产品规格"/>
       <el-table-column prop="cost" label="成本单价"/>
       <el-table-column prop="sellingPrice" label="销售单价"/>
       <el-table-column prop="unit" label="单位"/>
@@ -132,7 +132,7 @@ export default {
         { key: 'prodModel', display_name: '产品型号' },
         { key: 'prodName', display_name: '产品名称' },
         { key: 'prodColor', display_name: '产品色号' },
-        { key: 'prodFineness', display_name: '产品纤度' }
+        { key: 'prodFineness', display_name: '产品规格' }
       ]
     }
   },

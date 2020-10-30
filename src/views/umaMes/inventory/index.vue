@@ -76,7 +76,7 @@
       <el-table-column prop="packer" label="包装员"/>
       <el-table-column prop="machine" label="机台号"/>
       <el-table-column prop="flowNumber" label="流水号"/>
-      <el-table-column prop="fineness" label="纤度"/>
+      <el-table-column prop="fineness" label="规格"/>
       <el-table-column prop="color" label="色号"/>
       <el-table-column prop="coreWeight" label="芯重"/>
       <el-table-column

@@ -65,7 +65,7 @@
       <el-table-column prop="prodModel" label="产品型号"/>
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodColor" label="产品色号"/>
-      <el-table-column prop="prodFineness" label="产品纤度"/>
+      <el-table-column prop="prodFineness" label="产品规格"/>
       <el-table-column :formatter="kgformatter" prop="totalNetWeight" label="总净重"/>
       <el-table-column :formatter="kgformatter" prop="totalTare" label="总皮重"/>
       <el-table-column :formatter="kgformatter" prop="totalGrossWeight" label="总毛重"/>
@@ -150,7 +150,7 @@ export default {
         { key: 'prodModel', display_name: '产品型号' },
         { key: 'prodName', display_name: '产品名称' },
         { key: 'prodColor', display_name: '产品色号' },
-        { key: 'prodFineness', display_name: '产品纤度' }
+        { key: 'prodFineness', display_name: '产品规格' }
       ],
       stockMapping: {
         0: 'success',

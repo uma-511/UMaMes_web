@@ -43,7 +43,7 @@
       <el-form-item label="产品颜色">
         <el-input v-model="form.prodColor" style="width: 370px;"/>
       </el-form-item>
-      <el-form-item label="产品纤度">
+      <el-form-item label="产品规格">
         <el-input v-model="form.prodFineness" style="width: 370px;"/>
       </el-form-item>
       <el-form-item label="客户id">

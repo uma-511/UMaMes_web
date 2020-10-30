@@ -49,7 +49,7 @@
       <el-table-column
         type="index"
         width="200"
-        label="编号"
+        label="序号"
         align="center"/>
       <el-table-column prop="ip" label="ip"align="center"/>
       <el-table-column prop="name" label="机台名称"align="center"/>

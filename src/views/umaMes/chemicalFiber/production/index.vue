@@ -63,7 +63,7 @@
       <el-table-column prop="prodModel" label="产品型号"/>
       <el-table-column prop="prodName" label="产品名称"/>
       <el-table-column prop="prodColor" label="产品颜色"/>
-      <el-table-column prop="prodFineness" label="产品纤度"/>
+      <el-table-column prop="prodFineness" label="产品规格"/>
       <el-table-column prop="customerName" label="客户名称"/>
       <el-table-column prop="customerContactPhone" label="联系电话"/>
       <el-table-column prop="customerContacts" label="联系人"/>
@@ -267,7 +267,7 @@ export default {
         { key: 'prodModel', display_name: '产品型号' },
         { key: 'prodName', display_name: '产品名称' },
         { key: 'prodColor', display_name: '产品颜色' },
-        { key: 'prodFineness', display_name: '产品纤度' },
+        { key: 'prodFineness', display_name: '产品规格' },
         { key: 'customerName', display_name: '客户名称' },
         { key: 'customerContactPhone', display_name: '联系电话' },
         { key: 'customerContacts', display_name: '联系人' },

@@ -64,3 +64,10 @@ export function getNoteSumm(data) {
     data
   })
 }
+
+export function getWasteOutOfWarehouse() {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/getWasteOutOfWarehouse',
+    method: 'post'
+  })
+}
