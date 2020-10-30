@@ -13,6 +13,9 @@
       <el-form-item label="规格" prop="fineness">
         <el-input v-model="form.fineness" style="width: 370px;" maxlength="10"/>
       </el-form-item>
+      <el-form-item label="备注" prop="fineness">
+        <el-input v-model="form.fineness" style="width: 370px;" maxlength="10"/>
+      </el-form-item>
       <!-- <el-form-item label="创建日期" >
         <el-date-picker v-model="form.createDate" type="datetime" style="width: 370px;"/>
       </el-form-item>
@@ -25,6 +28,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
+      <el-button  type="primary" @click="submits">保存并继续</el-button>
       <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
     </div>
   </el-dialog>
@@ -45,7 +49,7 @@ export default {
       form: {
         id: '',
         model: '',
-        name: '',
+        name: 'PP Yarm',
         color: '',
         fineness: '',
         createDate: '',
@@ -120,13 +124,33 @@ export default {
         console.log(err.response.data.message)
       })
     },
+    submits() {
+      add(this.form).then(res => {
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.form = {
+          id: '',
+          model: '',
+          name: 'PP Yarm',
+          color: '',
+          fineness: '',
+          createDate: '',
+          createUser: '',
+          delFlag: ''
+        }
+        this.$parent.init()
+      })
+    },
     resetForm() {
       this.dialog = false
       this.$refs['form'].resetFields()
       this.form = {
         id: '',
         model: '',
-        name: '',
+        name: 'PP Yarm',
         color: '',
         fineness: '',
         createDate: '',
