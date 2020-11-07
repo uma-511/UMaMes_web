@@ -130,6 +130,7 @@
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="labelNumber" label="条码号"/>
+      <el-table-column prop="flowingWater" label="流水"/>
       <el-table-column prop="fineness" label="规格"/>
       <el-table-column prop="color" label="色号"/>
       <el-table-column prop="factPerBagNumber" label="每包个数"/>

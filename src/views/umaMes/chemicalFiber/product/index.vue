@@ -37,6 +37,7 @@
       <el-table-column prop="name" label="产品名称"/>
       <el-table-column prop="color" label="色号"/>
       <el-table-column prop="fineness" label="规格"/>
+      <el-table-column prop="coreWeight" label="规格"/>
       <el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
@@ -143,6 +144,7 @@ export default {
         name: data.name,
         color: data.color,
         fineness: data.fineness,
+        fineness: data.coreWeight,
         createDate: data.createDate,
         createUser: data.createUser,
         delFlag: data.delFlag

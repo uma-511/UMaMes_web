@@ -8,6 +8,14 @@ export function add(data) {
   })
 }
 
+export function addex(data) {
+  return request({
+    url: 'api/chemicalFiberProduction',
+    method: 'post',
+    data
+  })
+}
+
 export function del(id) {
   return request({
     url: 'api/chemicalFiberProduction/' + id,
@@ -18,6 +26,14 @@ export function del(id) {
 export function edit(data) {
   return request({
     url: 'api/chemicalFiberProduction',
+    method: 'put',
+    data
+  })
+}
+
+export function editPrductionList(data) {
+  return request({
+    url: 'api/chemicalFiberProduction/PrductionList',
     method: 'put',
     data
   })

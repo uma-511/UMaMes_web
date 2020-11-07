@@ -64,6 +64,7 @@
       <el-table-column prop="address" label="客户地址"/>
       <el-table-column prop="contacts" label="联系人"/>
       <el-table-column prop="contactPhone" label="联系电话"/>
+      <el-table-column prop="fax" label="传真"/>
       <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
@@ -196,7 +197,8 @@ export default {
         remark: data.remark,
         createDate: data.createDate,
         createUser: data.createUser,
-        delFlag: data.delFlag
+        delFlag: data.delFlag,
+        fax: data.fax
       }
       _this.dialog = true
     },

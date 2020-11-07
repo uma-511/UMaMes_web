@@ -16,6 +16,9 @@
       <el-form-item label="联系电话" prop="contactPhone">
         <el-input v-model="form.contactPhone" style="width: 370px;" maxlength="15"/>
       </el-form-item>
+      <el-form-item label="传真" prop="fax">
+        <el-input v-model="form.fax" style="width: 370px;" maxlength="15"/>
+      </el-form-item>
       <el-form-item label="备注" >
         <el-input v-model="form.remark" style="width: 370px;" maxlength="100"/>
       </el-form-item>

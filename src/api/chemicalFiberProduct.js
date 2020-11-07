@@ -8,6 +8,14 @@ export function add(data) {
   })
 }
 
+export function addSave(data) {
+  return request({
+    url: 'api/chemicalFiberProduct/save',
+    method: 'post',
+    data
+  })
+}
+
 export function del(id) {
   return request({
     url: 'api/chemicalFiberProduct/' + id,
@@ -35,6 +43,22 @@ export function downloadChemicalFiberProduct(params) {
 export function getProdList(data) {
   return request({
     url: 'api/chemicalFiberProduct/getProdList',
+    method: 'post',
+    data
+  })
+}
+
+export function getProdListColor(data) {
+  return request({
+    url: 'api/chemicalFiberProduct/getProdListColor',
+    method: 'post',
+    data
+  })
+}
+
+export function getProdListFineness(data) {
+  return request({
+    url: 'api/chemicalFiberProduct/getProdListFineness',
     method: 'post',
     data
   })

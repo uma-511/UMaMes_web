@@ -13,6 +13,9 @@
       <el-form-item label="规格" prop="fineness">
         <el-input v-model="form.fineness" style="width: 370px;" maxlength="10"/>
       </el-form-item>
+      <el-form-item label="纸芯" prop="fineness">
+        <el-input v-model="form.coreWeight" style="width: 370px;" maxlength="10"/>
+      </el-form-item>
       <el-form-item label="备注" prop="fineness">
         <el-input v-model="form.fineness" style="width: 370px;" maxlength="10"/>
       </el-form-item>
