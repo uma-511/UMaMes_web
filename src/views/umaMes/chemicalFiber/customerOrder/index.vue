@@ -234,13 +234,17 @@
               <el-input v-model="scope.row.machineNumber"  :min="0" type="number" />
             </template>
           </el-table-column>
+          <el-table-column prop="factoryNumber" label="打印模板" width="150px" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.factoryNumber"  :min="0" type="number" />
+            </template>
+          </el-table-column>
           <el-table-column prop="remark" label="产品备注" width="200px" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" :disabled="form.warehousingStatus == 2?true:false" placeholder="备注" />
             </template>
           </el-table-column>
           <el-table-column
-            v-if="form.warehousingStatus == 1"
             label="操作"
             align="center"
             width="170%"
@@ -257,7 +261,7 @@
                     :loading="sutmitDetailLoading"
                     type="primary"
                     size="mini"
-                    @click="delWarehousingDetail(scope.row.id)"
+                    @click="delProdction(scope.row)"
                   >确定</el-button>
                 </div>
                 <el-button slot="reference" type="warning" icon="el-icon-delete" size="mini">删除</el-button>
@@ -360,7 +364,7 @@ import { getCustomerList, getCustomerLists, getCustomerById } from '@/api/custom
 import { parseTime, downloadFile, downloadFileWhithScanNumber, parseTimeToDate } from '@/utils/index'
 import { getProdction, addCustomerOrder, edit, del, exportCustomerOrder } from '@/api/chemicalFiberCustomerOrder'
 import { getProdList, getProdListColor, getProdListFineness, addSave } from '@/api/chemicalFiberProduct'
-import { addex, editPrductionList } from '@/api/chemicalFiberProduction'
+import { addex, editPrductionList, delex } from '@/api/chemicalFiberProduction'
 import { getUserListByDeptId } from '@/api/user'
 export default {
   mixins: [initData],
@@ -368,7 +372,7 @@ export default {
     return {
       loading: false, dialog: false, detaLoading: false,isAdd:false,dateQuery: '',customerCodeOptions:[],
       customerOptions: [],customerLoading:false,detalList: [],addTableFrom:false,prodctionLoading:false,
-      prodctionOptions: [],required:false,exportCustomerOrderLoading:false,
+      prodctionOptions: [],required:false,exportCustomerOrderLoading:false,sutmitDetailLoading:false,
       queryTypeOptions: [
         { key: 'scanNumber', display_name: '入库单号' },
         { key: 'supplierName', display_name: '供应商' },
@@ -469,6 +473,7 @@ export default {
     },
     getProdction(data) {
       this.detaLoading = true
+      console.log(data)
       getProdction(data).then(res => {
         this.detalList = res
         this.detaLoading = false
@@ -556,6 +561,7 @@ export default {
           if (res.length != 0) {
             this.$set(this.prodction,'color',res[0].color);
             this.$set(this.prodction,'fineness',res[0].fineness);
+            this.$set(this.prodction,'coreWeight',res[0].coreWeight);
           }
           this.prodctionQuery.modelAccurate = ''
         })
@@ -568,8 +574,10 @@ export default {
         getProdList(this.prodctionQuery).then(res => {
           if (res.length != 0) {
             this.$set(this.prodction,'model',res[0].model);
+            this.$set(this.prodction,'coreWeight',res[0].coreWeight);
           } else {
             this.$set(this.prodction,'model','');
+            this.$set(this.prodction,'coreWeight','');
           }
           this.prodctionQuery.colorAccurate = ''
           this.prodctionQuery.finenessAccurate = ''
@@ -770,6 +778,23 @@ export default {
 
       })
     },
+    delProdction(data) {
+      this.sutmitDetailLoading = true
+      delex(data.id).then(res=>{
+        this.sutmitDetailLoading = false
+        this.$refs[data.id].doClose()
+        const t = {
+          customerNumber: data.customerOrderNumber
+        }
+        this.getProdction(t)
+        this.$notify({
+          title: '删除成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.init()
+      })
+    },
     exportCustomerOrder() {
       exportCustomerOrder(this.form.id).then(result => {
         //this.exportStatementLoading = false
@@ -799,6 +824,10 @@ export default {
         deviceDate: '',
         createUser : ''
       }
+    },
+    // 取消按钮触发事件
+    popoverClose(id) {
+      this.$refs[id].doClose()
     }
   }
 

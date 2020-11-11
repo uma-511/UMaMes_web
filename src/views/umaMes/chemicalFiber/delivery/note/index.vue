@@ -40,13 +40,13 @@
         icon="el-icon-search"
         @click="toQuery"
       >搜索</el-button>
-      <el-button
+      <!--<el-button
         class="filter-item"
         size="mini"
         type="success"
         icon="el-icon-search"
         @click="WasteOutOfWarehouse()"
-      >废料出仓</el-button>
+      >废料出仓</el-button>-->
       <!-- 新增 -->
       <!-- <div style="display: inline-block;margin: 0px 2px;">
         <el-button
@@ -169,6 +169,7 @@
           <el-aside width="1px"/>
           <el-main style="height: 160px; width:30%">
             <el-main>单 号：{{ unitInfoMsg.scanNumber }}</el-main>
+            <el-main>客户传真：{{ unitInfoMsg.fax }}</el-main>
           </el-main>
         </el-container>
       </el-row>
@@ -182,8 +183,8 @@
           highlight-current-row
           @current-change="handleCurrentChange"
         >
-          <el-table-column prop="prodModel" label="型号" align="center"/>
-          <el-table-column prop="prodName" label="品名" align="center"/>
+          <el-table-column prop="prodColor" label="色号" align="center"/>
+          <el-table-column prop="prodFineness" label="规格" align="center"/>
           <el-table-column
             :formatter="kgformatter"
             prop="totalWeight"
@@ -285,6 +286,7 @@ export default {
         scanNumber: '',
         contactPhone: '',
         contacts: '',
+        fax: '',
         createDate: ''
       },
       queryTypeOptions: [
@@ -408,7 +410,8 @@ export default {
         scanNumber: data.scanNumber,
         contactPhone: data.contactPhone,
         contacts: data.contacts,
-        createDate: data.createDate
+        createDate: data.createDate,
+        fax: data.fax
       }
       this.detailLoading = true
       this.dialogVisible = true

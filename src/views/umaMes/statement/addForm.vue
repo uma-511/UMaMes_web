@@ -163,7 +163,8 @@ export default {
         contactPhone: '',
         receivable: '',
         accumulatedArrears: '',
-        totalArrears: ''
+        totalArrears: '',
+        fax: ''
       },
       tableData: [],
       rules: {
@@ -339,6 +340,7 @@ export default {
       _this.form.customerName = data.name
       _this.form.contacts = data.contacts
       _this.form.contactPhone = data.contactPhone
+      _this.form.fax = data.fax
     },
     initEdit(data) {
       var parameter = {

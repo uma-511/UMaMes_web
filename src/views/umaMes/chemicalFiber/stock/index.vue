@@ -32,6 +32,14 @@
         icon="el-icon-search"
         @click="toQuery"
       >搜索</el-button>
+      <el-button
+        class="filter-item"
+        size="mini"
+        type="success"
+        icon="el-icon-search"
+        @click="WasteOutOfWarehouse()"
+      >废料出仓</el-button>
+      <!-- 新增 -->
       <!-- 新增 -->
       <!-- <div style="display: inline-block;margin: 0px 2px;">
         <el-button
@@ -135,6 +143,7 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del, downloadChemicalFiberStock, getSummaryData } from '@/api/chemicalFiberStock'
+import {getWasteOutOfWarehouse } from '@/api/chemicalFiberDeliveryNote'
 import { downloadFile } from '@/utils/index'
 import eForm from './form'
 export default {
@@ -254,7 +263,30 @@ export default {
       } else {
         return cellValue
       }
+    },
+    WasteOutOfWarehouse() {
+      this.$confirm('此操作将废料全部出仓, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        getWasteOutOfWarehouse().then(res => {
+          this.$notify({
+            title: '废料出仓成功',
+            type: 'success',
+            duration: 2500
+          })
+        })
+      }).catch(() => {
+        this.$notify({
+          title: '取消废料出仓',
+          type: 'info',
+          duration: 2500
+        })
+      });
     }
+
+
   }
 }
 </script>

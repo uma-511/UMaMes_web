@@ -13,11 +13,11 @@
       <el-form-item label="规格" prop="fineness">
         <el-input v-model="form.fineness" style="width: 370px;" maxlength="10"/>
       </el-form-item>
-      <el-form-item label="纸芯" prop="fineness">
+      <el-form-item label="纸芯" prop="coreWeight">
         <el-input v-model="form.coreWeight" style="width: 370px;" maxlength="10"/>
       </el-form-item>
-      <el-form-item label="备注" prop="fineness">
-        <el-input v-model="form.fineness" style="width: 370px;" maxlength="10"/>
+      <el-form-item label="备注" prop="remark">
+        <el-input v-model="form.remark" style="width: 370px;" maxlength="10"/>
       </el-form-item>
       <!-- <el-form-item label="创建日期" >
         <el-date-picker v-model="form.createDate" type="datetime" style="width: 370px;"/>
@@ -57,7 +57,9 @@ export default {
         fineness: '',
         createDate: '',
         createUser: '',
-        delFlag: ''
+        coreWeight: '',
+        delFlag: '',
+        remark: ''
       },
       rules: {
         model: [
@@ -158,7 +160,8 @@ export default {
         fineness: '',
         createDate: '',
         createUser: '',
-        delFlag: ''
+        delFlag: '',
+        coreWeight: ''
       }
     }
   }

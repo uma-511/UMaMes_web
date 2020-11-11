@@ -23,6 +23,13 @@ export function del(id) {
   })
 }
 
+export function delex(id) {
+  return request({
+    url: 'api/chemicalFiberProduction/' + id,
+    method: 'delete'
+  })
+}
+
 export function edit(data) {
   return request({
     url: 'api/chemicalFiberProduction',

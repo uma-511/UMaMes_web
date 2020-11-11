@@ -33,11 +33,12 @@
     <eForm ref="form" :is-add="isAdd"/>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
-      <el-table-column prop="model" label="产品型号"/>
+      <el-table-column prop="model" label="产品编号"/>
       <el-table-column prop="name" label="产品名称"/>
       <el-table-column prop="color" label="色号"/>
       <el-table-column prop="fineness" label="规格"/>
-      <el-table-column prop="coreWeight" label="规格"/>
+      <el-table-column prop="coreWeight" label="纸芯"/>
+      <el-table-column prop="remark" label="备注"/>
       <el-table-column prop="createDate" label="创建日期">
         <template slot-scope="scope">
           <span>{{ parseTimeToDate(scope.row.createDate) }}</span>
@@ -147,7 +148,9 @@ export default {
         fineness: data.coreWeight,
         createDate: data.createDate,
         createUser: data.createUser,
-        delFlag: data.delFlag
+        delFlag: data.delFlag,
+        coreWeight: data.coreWeight,
+        coreWeight: data.remark
       }
       _this.dialog = true
     },
