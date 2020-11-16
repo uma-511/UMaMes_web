@@ -130,13 +130,14 @@
     <!--表格渲染-->
     <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
       <el-table-column prop="labelNumber" label="条码号"/>
-      <el-table-column prop="flowingWater" label="流水"/>
+      <el-table-column prop="prodctionNumber" label="规格"/>
       <el-table-column prop="fineness" label="规格"/>
       <el-table-column prop="color" label="色号"/>
       <el-table-column prop="factPerBagNumber" label="每包个数"/>
       <el-table-column :formatter="kgformatter" prop="netWeight" label="净重"/>
       <el-table-column :formatter="kgformatter" prop="tare" label="皮重"/>
       <el-table-column :formatter="kgformatter" prop="grossWeight" label="毛重"/>
+      <el-table-column prop="flowingWater" label="流水"/>
       <el-table-column prop="shifts" label="班次"/>
       <el-table-column prop="machine" label="机台号"/>
       <el-table-column prop="packer" label="包装员"/>

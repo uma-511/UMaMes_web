@@ -220,12 +220,23 @@
             </template>
           </el-table-column>
           <el-table-column prop="totalCost" label="总成本（元）" width="80%" align="center"/>
+          <el-table-column prop="shuiDian" label="税点" width="200%" align="center">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.shuiDian" :min="0" placeholder="请输入税点"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="editionFee" label="版费" width="200%" align="center">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.editionFee" :min="0" placeholder="请输入版费"/>
+            </template>
+          </el-table-column>
           <el-table-column prop="sellingPrice" label="销售单价" width="200%" align="center">
             <template slot-scope="scope">
               <el-input-number v-model="scope.row.sellingPrice" :min="0" placeholder="请输入销售单价"/>
             </template>
           </el-table-column>
           <el-table-column prop="totalPrice" label="总金额（元）" width="80%" align="center"/>
+          <el-table-column prop="totalPriceShuiDian" label="总金额（元）税" width="80%" align="center"/>
           <el-table-column prop="remark" label="备注" width="150%" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" placeholder="备注" maxlength="6"/>
@@ -256,7 +267,8 @@
       </el-row>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单</el-button>
+        <el-button :loading="downloadLoading" type="primary" @click="exportDelivery()">导出送货单不含税</el-button>
+        <el-button :loading="downloadLoading" type="primary" @click="exportDelivery1()">导出送货单含税</el-button>
       </span>
     </el-dialog>
   </div>
@@ -265,7 +277,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, exportPoundExcel, getSalesReportSummaries, getNoteSumm, getWasteOutOfWarehouse } from '@/api/chemicalFiberDeliveryNote'
+import { del, downloadChemicalFiberDeliveryNote, downloadDeliveryNote, downloadDeliveryNote1, exportPoundExcel, getSalesReportSummaries, getNoteSumm, getWasteOutOfWarehouse } from '@/api/chemicalFiberDeliveryNote'
 import { edit, getChemicalFiberDeliveryDetailsList } from '@/api/chemicalFiberDeliveryDetail'
 import { parseTime, downloadFile } from '@/utils/index'
 import eForm from './form'
@@ -444,6 +456,20 @@ export default {
           data.totalPrice = temp.toFixed(2)
         }
       }
+      var temp1
+      if (data.shuiDian == null || data.shuiDian == '' || data.shuiDian == 0) {
+
+        data.totalPriceShuiDian = data.totalPrice
+      } else {
+        if (data.editionFee == null || data.editionFee == '' || data.editionFee == 0) {
+          temp1 = data.totalPrice * data.sellingPrice
+          data.totalPriceShuiDian = temp1.toFixed(2)
+        } else {
+          temp1 = data.totalPrice * data.sellingPrice + data.editionFee
+          data.totalPriceShuiDian = temp1.toFixed(2)
+        }
+      }
+      console.log(data)
       edit(data).then(res => {
         this.detailLoading = false
         this.$notify({
@@ -507,7 +533,7 @@ export default {
           }, 0)
           sums[index]
         }
-        if (index === 7) {
+        if (index === 8) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
@@ -518,7 +544,18 @@ export default {
           }, 0).toFixed(2)
           sums[index] += ' 元'
         }
-        if (index === 9) {
+        if (index === 12) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0).toFixed(2)
+          sums[index] += ' 元'
+        }
+        if (index === 13) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
@@ -543,6 +580,23 @@ export default {
       }
       this.downloadLoading = true
       downloadDeliveryNote(this.unitInfoMsg.id).then(result => {
+        this.downloadLoading = false
+        downloadFile(result, '生产单导出', 'xls')
+      }).catch(() => {
+        this.downloadLoading = false
+      })
+    },
+    exportDelivery1() {
+      if (this.unitInfoMsg.customerName === null) {
+        this.$notify({
+          title: '请返回填写客户信息',
+          type: 'warning',
+          duration: 2500
+        })
+        return
+      }
+      this.downloadLoading = true
+      downloadDeliveryNote1(this.unitInfoMsg.id).then(result => {
         this.downloadLoading = false
         downloadFile(result, '生产单导出', 'xls')
       }).catch(() => {

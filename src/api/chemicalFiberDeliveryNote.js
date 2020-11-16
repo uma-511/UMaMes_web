@@ -40,6 +40,14 @@ export function downloadDeliveryNote(id) {
   })
 }
 
+export function downloadDeliveryNote1(id) {
+  return request({
+    url: 'api/chemicalFiberDeliveryNote/downloadDeliveryNote1/' + id,
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
 export function exportPoundExcel(data) {
   return request({
     url: 'api/chemicalFiberDeliveryNote/exportPoundExcel',

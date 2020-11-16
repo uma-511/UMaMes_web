@@ -145,12 +145,10 @@ export default {
         name: data.name,
         color: data.color,
         fineness: data.fineness,
-        fineness: data.coreWeight,
         createDate: data.createDate,
         createUser: data.createUser,
         delFlag: data.delFlag,
         coreWeight: data.coreWeight,
-        coreWeight: data.remark
       }
       _this.dialog = true
     },
